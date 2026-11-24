@@ -104,14 +104,14 @@ async function relayDocument(model, documentId) {
  * Moves the pending events of one entity into the event log and notifies subscribers.
  * Safe to call repeatedly and concurrently; an event is logged exactly once.
  */
-export function flushOutbox(model, documentId, userId) {
-  return enqueue(userId, async () => {
-    const published = await relayDocument(model, documentId);
-    for (const event of published) {
-      await dispatch(event);
-    }
-    return published;
-  });
+export async function flushOutbox(model, documentId, userId) {
+  const published = await enqueue(userId, () => relayDocument(model, documentId));
+  // Subscribers run after the relay has left the per-user queue: a subscriber may itself
+  // write an entity of the same user, and that write needs the queue to log its own event.
+  for (const event of published) {
+    await dispatch(event);
+  }
+  return published;
 }
 
 /**

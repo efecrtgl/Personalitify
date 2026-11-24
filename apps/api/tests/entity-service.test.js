@@ -348,6 +348,35 @@ describe('entity service', () => {
       expect((await TestNote.findById(note.id).select('+_outbox').lean())._outbox).toEqual([]);
     });
 
+    it('lets a subscriber write another entity of the same user', async () => {
+      // A subscriber reacting to one change with a second write must not wait on the relay
+      // of the event it is handling (this used to deadlock).
+      const context = newContext();
+      const followers = [];
+      const unsubscribe = subscribe(
+        'follow-up',
+        async (event) => {
+          const follower = await notes.create(
+            { userId: event.userId },
+            { title: `Follow-up of ${event.data.title}` },
+          );
+          followers.push(follower.id);
+        },
+        { types: ['testNote.updated'] },
+      );
+      const note = await notes.create(context, { title: 'Original' });
+      await notes.update(context, note.id, { title: 'Edited' });
+      unsubscribe();
+
+      expect(followers).toHaveLength(1);
+      const events = await eventsOf(context.userId);
+      expect(events.map((event) => [event.seq, event.type])).toEqual([
+        [1, 'testNote.created'],
+        [2, 'testNote.updated'],
+        [3, 'testNote.created'],
+      ]);
+    });
+
     it('keeps the request successful when a subscriber throws', async () => {
       const context = newContext();
       const handler = vi.fn().mockRejectedValue(new Error('subscriber is broken'));

@@ -8,7 +8,7 @@ documented, committed and pushed. Each completed phase has a report in
 | ----- | ------------------------------------------------ | ------- | ---------------------------------- |
 | 0     | Repository audit and technical planning          | Done    | [phase-00](./releases/phase-00.md) |
 | 1     | Monorepo and development infrastructure          | Done    | [phase-01](./releases/phase-01.md) |
-| 2     | Backend core and security                        | Planned |                                    |
+| 2     | Backend core and security                        | Done    | [phase-02](./releases/phase-02.md) |
 | 3     | Frontend foundation and design system            | Planned |                                    |
 | 4     | Habits and routines                              | Planned |                                    |
 | 5     | Goals and tasks                                  | Planned |                                    |

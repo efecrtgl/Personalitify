@@ -141,7 +141,7 @@ no replica set, no Docker).
 - Bounded embedding only (for example subtasks inside a task, capped). Anything that can grow
   without limit lives in its own collection.
 
-Details: [database.md](./database.md) (written in Phase 2 alongside the first models).
+Details: [database.md](./database.md) and [backend.md](./backend.md).
 
 ## 5. Events and synchronization
 

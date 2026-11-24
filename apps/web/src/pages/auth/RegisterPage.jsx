@@ -3,16 +3,19 @@ import { Link, useNavigate } from 'react-router';
 import { useErrorMessage } from '../../hooks/useAccount.js';
 import { rules, useForm } from '../../hooks/useForm.js';
 import { AuthHeading } from '../../layout/AuthLayout.jsx';
+import { useRemoteConfig } from '../../lib/platform.js';
 import { useAuth } from '../../providers/AuthProvider.jsx';
 import { Button } from '../../ui/Button.jsx';
 import { Banner } from '../../ui/feedback.jsx';
 import { Field, Input, PasswordInput } from '../../ui/fields.jsx';
+import { LinkButton } from '../../ui/LinkButton.jsx';
 
 export function RegisterPage() {
   const { t } = useTranslation();
   const { register } = useAuth();
   const navigate = useNavigate();
   const errorMessage = useErrorMessage();
+  const { registrationOpen } = useRemoteConfig();
 
   const form = useForm({
     initialValues: { displayName: '', email: '', password: '' },
@@ -26,6 +29,21 @@ export function RegisterPage() {
       navigate('/', { replace: true });
     },
   });
+
+  // The server refuses registrations while they are closed; the form is not offered then.
+  if (!registrationOpen) {
+    return (
+      <>
+        <AuthHeading
+          title={t('platform:registrationClosed.title')}
+          subtitle={t('platform:registrationClosed.description')}
+        />
+        <LinkButton to="/login" variant="primary" size="lg" fullWidth>
+          {t('platform:registrationClosed.signIn')}
+        </LinkButton>
+      </>
+    );
+  }
 
   return (
     <>

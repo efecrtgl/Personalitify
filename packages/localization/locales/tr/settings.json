@@ -10,7 +10,8 @@
     "privacy": "Gizlilik",
     "security": "Güvenlik",
     "devices": "Cihazlar",
-    "account": "Hesap"
+    "account": "Hesap",
+    "admin": "Yönetim"
   },
   "profile": {
     "title": "Profil",

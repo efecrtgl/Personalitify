@@ -1,5 +1,6 @@
 import {
   Bell,
+  Wrench,
   Clock,
   EyeOff,
   MonitorSmartphone,
@@ -12,7 +13,9 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, Navigate, useParams } from 'react-router';
 import { cn } from '../../lib/cn.js';
 import { PageHeader } from '../../ui/display.jsx';
+import { useAuth } from '../../providers/AuthProvider.jsx';
 import { AccountSection } from './AccountSection.jsx';
+import { AdminSection } from './AdminSection.jsx';
 import { AppearanceSection } from './AppearanceSection.jsx';
 import { DevicesSection } from './DevicesSection.jsx';
 import { NotificationsSection } from './NotificationsSection.jsx';
@@ -30,15 +33,19 @@ const SECTIONS = [
   { id: 'security', icon: ShieldCheck, component: SecuritySection },
   { id: 'devices', icon: MonitorSmartphone, component: DevicesSection },
   { id: 'account', icon: UserRoundX, component: AccountSection },
+  // Shown to administrators only; the server enforces the role on every request.
+  { id: 'admin', icon: Wrench, component: AdminSection, adminOnly: true },
 ];
 
 export function SettingsPage() {
   const { t } = useTranslation();
   const { section } = useParams();
-  const active = SECTIONS.find((entry) => entry.id === section);
+  const { user } = useAuth();
+  const sections = SECTIONS.filter((entry) => !entry.adminOnly || user.role === 'admin');
+  const active = sections.find((entry) => entry.id === section);
 
   if (!active) {
-    return <Navigate to={`/settings/${SECTIONS[0].id}`} replace />;
+    return <Navigate to={`/settings/${sections[0].id}`} replace />;
   }
   const ActiveSection = active.component;
 
@@ -51,7 +58,7 @@ export function SettingsPage() {
           className="-mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:sticky lg:top-24 lg:mx-0 lg:w-52 lg:shrink-0 lg:overflow-visible lg:px-0"
         >
           <ul className="flex gap-1 lg:flex-col">
-            {SECTIONS.map(({ id, icon: Icon }) => (
+            {sections.map(({ id, icon: Icon }) => (
               <li key={id} className="shrink-0">
                 <NavLink
                   to={`/settings/${id}`}

@@ -5,7 +5,7 @@ import { readStored, writeStored } from './storage.js';
 export const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : '0.0.0';
 
 /** Stable identifier of this browser installation; created on first use. */
-function installationId() {
+export function getInstallationId() {
   const existing = readStored('installationId');
   if (existing) return existing;
   const created = crypto.randomUUID();
@@ -43,7 +43,7 @@ function describeBrowser() {
 /** The `device` object sent when registering or signing in. */
 export function deviceDescriptor() {
   return {
-    installationId: installationId(),
+    installationId: getInstallationId(),
     name: describeBrowser(),
     clientType: 'web',
     platform: 'web',

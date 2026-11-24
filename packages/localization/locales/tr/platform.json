@@ -1,0 +1,97 @@
+{
+  "announcement": {
+    "label": "Duyuru"
+  },
+  "update": {
+    "available": "Yeni bir sürüm hazır: {{version}}",
+    "reload": "Şimdi yenile",
+    "later": "Daha sonra",
+    "requiredTitle": "Güncelleme gerekli",
+    "requiredDescription": "Bu sürüm artık desteklenmiyor. Devam etmek için uygulamayı yenileyin.",
+    "requiredVersion": "Yeni sürüm: {{version}}",
+    "notes": "Bu sürümde"
+  },
+  "registrationClosed": {
+    "title": "Kayıtlar şu anda kapalı",
+    "description": "Yeni hesap oluşturma geçici olarak durduruldu. Hesabınız varsa giriş yapabilirsiniz.",
+    "signIn": "Giriş yap"
+  },
+  "admin": {
+    "title": "Yönetim",
+    "description": "Bu kurulumdaki herkesi etkileyen ayarlar. Yaptığınız her değişiklik güvenlik günlüğünüze yazılır.",
+    "saved": "Kaydedildi",
+    "announcement": {
+      "title": "Duyuru",
+      "description": "Uygulamanın en üstünde herkese gösterilen kısa bir ileti.",
+      "enabled": "Duyuruyu göster",
+      "tone": "Tür",
+      "tones": {
+        "info": "Bilgi",
+        "warning": "Uyarı"
+      },
+      "messageTr": "İleti (Türkçe)",
+      "messageEn": "İleti (İngilizce)",
+      "bothRequired": "İki dilde de bir ileti yazın.",
+      "save": "Duyuruyu kaydet",
+      "remove": "Duyuruyu kaldır",
+      "removed": "Duyuru kaldırıldı"
+    },
+    "registration": {
+      "title": "Yeni hesaplar",
+      "open": "Yeni hesap oluşturulabilsin",
+      "openDescription": "Kapatıldığında kayıt formu gizlenir ve sunucu yeni kayıtları reddeder. Mevcut hesaplar etkilenmez."
+    },
+    "releases": {
+      "title": "Sürümler",
+      "description": "Uygulamaların yayımlanmış sürümlerinin kaydı. Sunucu uygulama derlemez ya da barındırmaz; bu kayıt, istemcilere yeni bir sürüm olduğunu ve nereden alınacağını söyler.",
+      "empty": "Henüz bir sürüm kaydı yok.",
+      "draft": "Taslak",
+      "published": "Yayında",
+      "mandatory": "Zorunlu",
+      "rollout": "%{{value}} dağıtım",
+      "minSupported": "en az {{version}}",
+      "publish": "{{version}} sürümünü yayımla",
+      "withdraw": "{{version}} sürümünü geri çek",
+      "delete": "{{version}} sürümünü sil",
+      "deleted": "Sürüm silindi",
+      "publishAction": "Yayımla",
+      "withdrawAction": "Geri çek",
+      "add": "Sürüm ekle",
+      "addTitle": "Yeni sürüm",
+      "app": "Uygulama",
+      "apps": {
+        "personalitify-web": "Web",
+        "personalitify-desktop": "Masaüstü",
+        "personalitify-mobile": "Mobil"
+      },
+      "platform": "Platform",
+      "platforms": {
+        "any": "Tümü",
+        "web": "Web",
+        "windows": "Windows",
+        "macos": "macOS",
+        "linux": "Linux",
+        "android": "Android",
+        "ios": "iOS"
+      },
+      "channel": "Kanal",
+      "channels": {
+        "stable": "Kararlı",
+        "beta": "Beta"
+      },
+      "version": "Sürüm",
+      "versionHint": "Örnek: 1.2.0",
+      "versionInvalid": "Sürüm 1.2.0 biçiminde olmalıdır.",
+      "minSupportedVersion": "Desteklenen en eski sürüm",
+      "rolloutPercent": "Dağıtım oranı (%)",
+      "downloadUrl": "İndirme adresi",
+      "downloadUrlHint": "https ile başlamalıdır. Web sürümü için gerekmez.",
+      "notesTr": "Sürüm notları (Türkçe)",
+      "notesEn": "Sürüm notları (İngilizce)",
+      "mandatoryLabel": "Zorunlu güncelleme",
+      "publishNow": "Hemen yayımla",
+      "create": "Sürümü kaydet",
+      "created": "Sürüm kaydedildi"
+    }
+  }
+}

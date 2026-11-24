@@ -12,6 +12,7 @@ import { Brand } from './Brand.jsx';
 import { EmailVerificationBanner } from './EmailVerificationBanner.jsx';
 import { primaryNavigation, secondaryNavigation } from './navigation.js';
 import { NotificationsMenu } from './NotificationsMenu.jsx';
+import { AnnouncementBanner, UpdateBanner } from './PlatformNotices.jsx';
 import { ThemeMenu } from './PreferenceMenus.jsx';
 
 function NavItem({ item, onNavigate }) {
@@ -212,6 +213,8 @@ export function AppShell() {
           tabIndex={-1}
           className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 outline-none sm:px-6 sm:py-8 lg:px-8"
         >
+          <UpdateBanner />
+          <AnnouncementBanner />
           {user && !user.emailVerified && <EmailVerificationBanner />}
           <Outlet />
         </main>

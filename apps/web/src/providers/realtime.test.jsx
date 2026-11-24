@@ -2,8 +2,8 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import {
+  anonymousRoutes,
   emptyDashboard,
-  fail,
   mockApi,
   noContent,
   ok,
@@ -59,7 +59,7 @@ describe('realtime', () => {
   });
 
   it('does not connect for a visitor who is not signed in', async () => {
-    mockApi({ 'POST /auth/refresh': () => fail(401, 'INVALID_REFRESH_TOKEN') });
+    mockApi(anonymousRoutes());
     const realtime = fakeRealtime();
     renderApp('/login', { realtime: realtime.connect });
     await screen.findByRole('button', { name: 'Giriş yap' });

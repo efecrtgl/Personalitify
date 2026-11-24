@@ -110,9 +110,33 @@ export function mockApi(routes) {
   };
 }
 
+/** What every client asks about itself; `overrides` replace parts of the answers. */
+export const platformRoutes = ({ config = {}, update = {} } = {}) => ({
+  'GET /config': () =>
+    ok({
+      values: { announcement: null, registrationOpen: true, ...config },
+      fetchedAt: '2026-11-24T09:00:00.000Z',
+    }),
+  'GET /updates/check': () =>
+    ok({
+      appId: 'personalitify-web',
+      platform: 'web',
+      channel: 'stable',
+      currentVersion: '0.1.0',
+      supported: true,
+      minSupportedVersion: null,
+      updateAvailable: false,
+      mandatory: false,
+      latest: null,
+      checkedAt: '2026-11-24T09:00:00.000Z',
+      ...update,
+    }),
+});
+
 /** Routes of a visitor without a session. */
 export const anonymousRoutes = () => ({
   'POST /auth/refresh': () => fail(401, 'INVALID_REFRESH_TOKEN'),
+  ...platformRoutes(),
 });
 
 /** An account's dashboard with nothing on it yet. */
@@ -155,6 +179,7 @@ export const signedInRoutes = (me = account()) => ({
   'GET /dashboard': () => ok(emptyDashboard()),
   'GET /notifications': () => ok([], { page: 1, limit: 20, total: 0, totalPages: 1, unread: 0 }),
   'GET /categories': () => ok([]),
+  ...platformRoutes(),
   'GET /sync/status': () =>
     ok({
       headSeq: 0,

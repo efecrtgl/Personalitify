@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useErrorMessage } from '../../hooks/useAccount.js';
 import { rules, useForm } from '../../hooks/useForm.js';
 import { AuthHeading } from '../../layout/AuthLayout.jsx';
+import { useRemoteConfig } from '../../lib/platform.js';
 import { useAuth } from '../../providers/AuthProvider.jsx';
 import { Button } from '../../ui/Button.jsx';
 import { Banner } from '../../ui/feedback.jsx';
@@ -11,6 +12,7 @@ import { Field, Input, PasswordInput } from '../../ui/fields.jsx';
 export function LoginPage() {
   const { t } = useTranslation();
   const { login, endedReason } = useAuth();
+  const { registrationOpen } = useRemoteConfig();
   const navigate = useNavigate();
   const location = useLocation();
   const errorMessage = useErrorMessage();
@@ -67,12 +69,14 @@ export function LoginPage() {
           {t('auth:login.submit')}
         </Button>
       </form>
-      <p className="mt-6 text-center text-body text-ink-2">
-        {t('auth:login.noAccount')}{' '}
-        <Link to="/register" className="font-medium text-accent hover:underline">
-          {t('auth:login.createAccount')}
-        </Link>
-      </p>
+      {registrationOpen && (
+        <p className="mt-6 text-center text-body text-ink-2">
+          {t('auth:login.noAccount')}{' '}
+          <Link to="/register" className="font-medium text-accent hover:underline">
+            {t('auth:login.createAccount')}
+          </Link>
+        </p>
+      )}
     </>
   );
 }

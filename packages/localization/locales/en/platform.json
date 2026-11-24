@@ -1,0 +1,97 @@
+{
+  "announcement": {
+    "label": "Announcement"
+  },
+  "update": {
+    "available": "A new version is ready: {{version}}",
+    "reload": "Reload now",
+    "later": "Later",
+    "requiredTitle": "Update required",
+    "requiredDescription": "This version is no longer supported. Reload the application to continue.",
+    "requiredVersion": "New version: {{version}}",
+    "notes": "In this version"
+  },
+  "registrationClosed": {
+    "title": "Registration is closed",
+    "description": "Creating new accounts is paused for now. If you have an account you can sign in.",
+    "signIn": "Sign in"
+  },
+  "admin": {
+    "title": "Administration",
+    "description": "Settings that affect everyone on this installation. Every change you make is written to your security log.",
+    "saved": "Saved",
+    "announcement": {
+      "title": "Announcement",
+      "description": "A short message shown to everyone at the top of the application.",
+      "enabled": "Show the announcement",
+      "tone": "Kind",
+      "tones": {
+        "info": "Information",
+        "warning": "Warning"
+      },
+      "messageTr": "Message (Turkish)",
+      "messageEn": "Message (English)",
+      "bothRequired": "Write a message in both languages.",
+      "save": "Save announcement",
+      "remove": "Remove announcement",
+      "removed": "Announcement removed"
+    },
+    "registration": {
+      "title": "New accounts",
+      "open": "Allow new accounts",
+      "openDescription": "When off, the registration form is hidden and the server refuses new registrations. Existing accounts are not affected."
+    },
+    "releases": {
+      "title": "Releases",
+      "description": "The record of published versions of the applications. The server neither builds nor hosts applications; this record tells clients that a new version exists and where to get it.",
+      "empty": "No releases recorded yet.",
+      "draft": "Draft",
+      "published": "Published",
+      "mandatory": "Mandatory",
+      "rollout": "{{value}}% rollout",
+      "minSupported": "at least {{version}}",
+      "publish": "Publish version {{version}}",
+      "withdraw": "Withdraw version {{version}}",
+      "delete": "Delete version {{version}}",
+      "deleted": "Release deleted",
+      "publishAction": "Publish",
+      "withdrawAction": "Withdraw",
+      "add": "Add release",
+      "addTitle": "New release",
+      "app": "Application",
+      "apps": {
+        "personalitify-web": "Web",
+        "personalitify-desktop": "Desktop",
+        "personalitify-mobile": "Mobile"
+      },
+      "platform": "Platform",
+      "platforms": {
+        "any": "All",
+        "web": "Web",
+        "windows": "Windows",
+        "macos": "macOS",
+        "linux": "Linux",
+        "android": "Android",
+        "ios": "iOS"
+      },
+      "channel": "Channel",
+      "channels": {
+        "stable": "Stable",
+        "beta": "Beta"
+      },
+      "version": "Version",
+      "versionHint": "For example 1.2.0",
+      "versionInvalid": "A version looks like 1.2.0.",
+      "minSupportedVersion": "Oldest supported version",
+      "rolloutPercent": "Rollout (%)",
+      "downloadUrl": "Download address",
+      "downloadUrlHint": "Must start with https. Not needed for the web version.",
+      "notesTr": "Release notes (Turkish)",
+      "notesEn": "Release notes (English)",
+      "mandatoryLabel": "Mandatory update",
+      "publishNow": "Publish right away",
+      "create": "Save release",
+      "created": "Release saved"
+    }
+  }
+}

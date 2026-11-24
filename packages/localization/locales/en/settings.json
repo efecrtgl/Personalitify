@@ -10,7 +10,8 @@
     "privacy": "Privacy",
     "security": "Security",
     "devices": "Devices",
-    "account": "Account"
+    "account": "Account",
+    "admin": "Administration"
   },
   "profile": {
     "title": "Profile",

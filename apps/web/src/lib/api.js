@@ -55,6 +55,14 @@ export const queryKeys = {
   securityLog: (page) => ['account', 'security-log', page],
   categories: ['categories'],
   dashboard: ['dashboard'],
+  platform: {
+    config: ['platform', 'config'],
+    update: ['platform', 'update'],
+  },
+  admin: {
+    config: ['admin', 'config'],
+    releases: ['admin', 'releases'],
+  },
   notifications: ['notifications'],
   achievements: ['achievements'],
   focus: {

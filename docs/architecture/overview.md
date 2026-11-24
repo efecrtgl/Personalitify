@@ -217,6 +217,10 @@ React + Vite + Tailwind CSS, Lucide icons, Motion for animation, Recharts for ch
 - Design system: tokens (color, type, spacing, radius, shadow), light/dark/system themes,
   reduced-motion support, accessible primitives.
 
+Details: [frontend.md](./frontend.md).
+
+Details: [frontend.md](./frontend.md).
+
 ## 8. Internationalization
 
 One catalog per language and namespace under `packages/localization/locales/<lang>/<ns>.json`.

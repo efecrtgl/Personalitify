@@ -42,6 +42,19 @@ The web client is running but the API is not. Look at the `[api]` lines in the t
 
 They need MongoDB. Start it, or set `MONGODB_TEST_URI` to a reachable server.
 
+### A test run ends with "Worker exited unexpectedly with exit code 3221226505" (Windows)
+
+That code (`0xC0000409`) is a native crash of a Node.js process, not a failing assertion.
+The tests it interrupted are simply not counted.
+
+It was observed on a development machine where a system customization tool injects a DLL
+into every process, including `node.exe` (in that case `windhawk.dll`). The crash appeared
+in roughly one run out of five, in a different test file each time, and never on Linux CI.
+
+- Run the suite again; a clean run is the valid result.
+- If it keeps happening, exclude `node.exe` from tools that inject code into processes
+  (shell customizers, overlays, some antivirus products).
+
 ### `npm install` fails
 
 Check `node --version`: Node.js 22 or newer is required.
@@ -87,6 +100,20 @@ Web istemcisi çalışıyor ancak API çalışmıyor. `npm run dev` komutunun ç
 
 MongoDB gerekir. Sunucuyu başlatın veya `MONGODB_TEST_URI` değişkenini erişilebilir bir
 sunucuya ayarlayın.
+
+### Test çalıştırması "Worker exited unexpectedly with exit code 3221226505" ile bitiyor (Windows)
+
+Bu kod (`0xC0000409`), başarısız bir doğrulama değil, bir Node.js sürecinin yerel (native)
+çökmesidir. Yarıda kalan testler yalnızca sayılmamış olur.
+
+Bu durum, bir sistem özelleştirme aracının `node.exe` dâhil her sürece DLL enjekte ettiği
+bir geliştirme makinesinde gözlemlendi (o örnekte `windhawk.dll`). Çökme yaklaşık beş
+çalıştırmadan birinde, her seferinde farklı bir test dosyasında görüldü; Linux CI üzerinde
+hiç görülmedi.
+
+- Testleri yeniden çalıştırın; temiz geçen çalıştırma geçerli sonuçtur.
+- Sürekli tekrarlanıyorsa, süreçlere kod enjekte eden araçlarda (kabuk özelleştiriciler,
+  ekran katmanları, bazı antivirüs ürünleri) `node.exe` için istisna tanımlayın.
 
 ### `npm install` başarısız oluyor
 

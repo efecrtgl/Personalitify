@@ -59,6 +59,7 @@ export function account(overrides = {}) {
         quietHours: { enabled: false, start: '22:00', end: '07:00' },
       },
       privacy: { hideSensitivePreviews: false },
+      focus: { focusMinutes: 25, shortBreakMinutes: 5, longBreakMinutes: 15, longBreakEvery: 4 },
       dashboard: {
         widgets: DASHBOARD_WIDGETS.map((id) => ({ id, visible: true })),
       },

@@ -15,6 +15,10 @@ import { HabitDetailPage } from './pages/habits/HabitDetailPage.jsx';
 import { HabitsManagePage } from './pages/habits/HabitsManagePage.jsx';
 import { HabitsPage } from './pages/habits/HabitsPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
+import { FocusPage } from './pages/focus/FocusPage.jsx';
+import { JournalEditorPage } from './pages/journal/JournalEditorPage.jsx';
+import { JournalPage } from './pages/journal/JournalPage.jsx';
+import { MoodPage } from './pages/mood/MoodPage.jsx';
 import { AnalyticsPage } from './pages/analytics/AnalyticsPage.jsx';
 import { CalendarPage } from './pages/calendar/CalendarPage.jsx';
 import { DashboardPage } from './pages/dashboard/DashboardPage.jsx';
@@ -94,6 +98,10 @@ export function AppRoutes() {
           <Route path="settings/:section" element={<SettingsPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="focus" element={<FocusPage />} />
+          <Route path="journal" element={<JournalPage />} />
+          <Route path="journal/:entryId" element={<JournalEditorPage />} />
+          <Route path="mood" element={<MoodPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
@@ -123,6 +131,7 @@ function useDashboardRefresh(queryClient) {
         if (event.type === 'updated' && event.mutation.state.status === 'success') {
           queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
           queryClient.invalidateQueries({ queryKey: queryKeys.analytics.all });
+          queryClient.invalidateQueries({ queryKey: queryKeys.focus.state });
         }
       }),
     [queryClient],

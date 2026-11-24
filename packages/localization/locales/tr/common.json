@@ -30,7 +30,10 @@
     "goals": "Hedefler",
     "tasks": "Görevler",
     "calendar": "Takvim",
-    "analytics": "Analiz"
+    "analytics": "Analiz",
+    "focus": "Odak",
+    "journal": "Günlük",
+    "mood": "Ruh hali"
   },
   "theme": {
     "label": "Tema",

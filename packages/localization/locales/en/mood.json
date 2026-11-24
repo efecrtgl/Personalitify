@@ -1,0 +1,71 @@
+{
+  "title": "Mood",
+  "description": "Record how the day went and see how it changes over time. Your notes belong to you alone.",
+  "score": {
+    "1": "Very bad",
+    "2": "Bad",
+    "3": "Okay",
+    "4": "Good",
+    "5": "Very good"
+  },
+  "emotion": {
+    "happy": "Happy",
+    "calm": "Calm",
+    "grateful": "Grateful",
+    "energetic": "Energetic",
+    "proud": "Proud",
+    "hopeful": "Hopeful",
+    "focused": "Focused",
+    "tired": "Tired",
+    "bored": "Bored",
+    "stressed": "Stressed",
+    "anxious": "Anxious",
+    "sad": "Sad",
+    "angry": "Angry",
+    "lonely": "Lonely"
+  },
+  "entry": {
+    "today": "How are you today?",
+    "forDate": "How was {{date}}?",
+    "scoreLabel": "Mood",
+    "emotions": "What did you feel?",
+    "note": "Note",
+    "notePlaceholder": "What is on your mind…",
+    "save": "Save",
+    "saved": "Mood saved",
+    "remove": "Delete entry",
+    "removed": "Entry deleted",
+    "chooseScore": "Choose a mood first."
+  },
+  "month": {
+    "previous": "Previous month",
+    "next": "Next month",
+    "caption": "Mood calendar for {{month}}",
+    "day": "{{date}}: {{score}}",
+    "dayEmpty": "{{date}}: no entry",
+    "explain": "Select a day to add or change its entry. A darker color means a better day; each day's score is also written out."
+  },
+  "summary": {
+    "title": "Summary",
+    "average": "Average",
+    "averageValue": "{{value}} out of 5",
+    "days_one": "{{count}} day recorded",
+    "days_other": "{{count}} days recorded",
+    "empty": "No entries in the selected month.",
+    "distribution": "Distribution",
+    "distributionLabel": "{{name}}: {{count}} days",
+    "emotions": "Felt most often",
+    "emotionCount": "{{name}} · {{count}}",
+    "weekday": {
+      "title": "Average by day of the week",
+      "explain": "Each bar shows the average score (1–5) of the selected month's entries on that weekday. Days without entries are empty.",
+      "caption": "Average mood and number of entries by weekday",
+      "day": "Weekday",
+      "average": "Average",
+      "count": "Entries",
+      "none": "No entries",
+      "countValue_one": "{{count}} entry",
+      "countValue_other": "{{count}} entries"
+    }
+  }
+}

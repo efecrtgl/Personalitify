@@ -1,0 +1,83 @@
+{
+  "title": "Journal",
+  "description": "Journal entries and notes. What you write belongs to you alone.",
+  "kind": {
+    "all": "All",
+    "journal": "Journal",
+    "note": "Notes"
+  },
+  "kindLabel": "Type",
+  "kindName": {
+    "journal": "Journal entry",
+    "note": "Note"
+  },
+  "new": {
+    "journal": "New entry",
+    "note": "New note"
+  },
+  "search": {
+    "label": "Search entries",
+    "placeholder": "Search title, text or tag",
+    "results_one": "{{count}} result",
+    "results_other": "{{count}} results"
+  },
+  "tags": {
+    "label": "Filter by tag",
+    "all": "All tags",
+    "tag": "#{{tag}}",
+    "tagCount": "#{{tag}} ({{count}})"
+  },
+  "list": {
+    "untitled": "Untitled",
+    "pinned": "Pinned",
+    "words_one": "{{count}} word",
+    "words_other": "{{count}} words",
+    "hiddenPreview": "The preview is hidden by your privacy setting.",
+    "emptyTitle": "Nothing written yet",
+    "emptyDescription": "Start with a few sentences about today, or jot down what is on your mind.",
+    "noResultsTitle": "No results",
+    "noResultsDescription": "Try another word or clear the filters.",
+    "clearFilters": "Clear filters"
+  },
+  "editor": {
+    "newJournal": "New journal entry",
+    "newNote": "New note",
+    "back": "Back to the journal",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Title",
+    "date": "Date",
+    "tagsLabel": "Tags",
+    "tagsHint": "Separate with spaces or commas. Up to {{max}} tags.",
+    "tooManyTags": "At most {{max}} tags can be added.",
+    "tagTooLong": "A tag can have at most {{max}} characters.",
+    "bodyLabel": "Text",
+    "bodyPlaceholder": "Start writing… You can use Markdown: **bold**, _italic_, # heading, - list.",
+    "mode": "View",
+    "write": "Write",
+    "preview": "Preview",
+    "emptyPreview": "Nothing to preview.",
+    "save": "Save",
+    "saved": "Saved",
+    "unsaved": "There are unsaved changes",
+    "allSaved": "All changes saved",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "history": "History",
+    "delete": "Delete",
+    "deleteTitle": "Delete this entry?",
+    "deleteDescription": "The entry and its earlier versions are deleted. This cannot be undone.",
+    "deleted": "Entry deleted",
+    "conflict": "This entry was changed somewhere else. The current version has been loaded; apply your changes again.",
+    "notFoundTitle": "Entry not found",
+    "notFoundDescription": "It may have been deleted."
+  },
+  "revisions": {
+    "title": "Earlier versions",
+    "description": "Whenever the title or text changes, the previous content is kept. The newest {{max}} versions are stored.",
+    "empty": "No earlier versions yet.",
+    "replacedAt": "Current until {{date}}",
+    "restore": "Restore",
+    "restored": "Earlier version restored",
+    "emptyBody": "(empty)"
+  }
+}

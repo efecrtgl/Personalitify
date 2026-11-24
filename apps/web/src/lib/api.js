@@ -54,6 +54,22 @@ export const queryKeys = {
   securityLog: (page) => ['account', 'security-log', page],
   categories: ['categories'],
   dashboard: ['dashboard'],
+  focus: {
+    all: ['focus'],
+    state: ['focus', 'state'],
+    sessions: (page) => ['focus', 'sessions', page],
+  },
+  journal: {
+    all: ['journal'],
+    list: (filter) => ['journal', 'list', filter],
+    tags: ['journal', 'tags'],
+    entry: (entryId) => ['journal', 'entry', entryId],
+    revisions: (entryId) => ['journal', 'entry', entryId, 'revisions'],
+  },
+  mood: {
+    all: ['mood'],
+    range: (from, to) => ['mood', 'range', from, to],
+  },
   analytics: {
     all: ['analytics'],
     overview: (period, date) => ['analytics', 'overview', period, date ?? 'current'],

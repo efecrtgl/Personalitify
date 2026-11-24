@@ -26,11 +26,12 @@ function HoverCard({ active, payload }) {
  * @param {{ key: string, label: string, title: string, value: number|null, display: string, detail?: string }[]} props.rows
  *   `label` goes on the axis, `title` names the step in full, `display` is the value as text.
  * @param {'percent'|'count'} props.scale  Percent charts always run from 0 to 100.
+ * @param {number} [props.max]    Upper end of a count scale that has a natural one.
  * @param {string} props.color    CSS color of the bars.
  * @param {string} props.caption  What the table holds.
  * @param {{ step: string, value: string, detail?: string }} props.columns  Table headings.
  */
-export function BarSeries({ rows, scale, color, caption, columns, height = 'h-44' }) {
+export function BarSeries({ rows, scale, color, caption, columns, max, height = 'h-44' }) {
   const data = rows.map((row) => ({ ...row, amount: row.value ?? 0 }));
   return (
     <>
@@ -55,7 +56,16 @@ export function BarSeries({ rows, scale, color, caption, columns, height = 'h-44
                 tick={AXIS_TICK}
               />
             ) : (
-              <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={AXIS_TICK} />
+              <YAxis
+                allowDecimals={false}
+                // A scale with a natural top shows every step; otherwise at least 0 to 4, so a
+                // week without data still reads as an empty chart and not as a broken one.
+                domain={[0, max ?? ((dataMax) => Math.max(4, dataMax))]}
+                ticks={max && max <= 10 ? Array.from({ length: max + 1 }, (_, i) => i) : undefined}
+                tickLine={false}
+                axisLine={false}
+                tick={AXIS_TICK}
+              />
             )}
             <Tooltip
               content={<HoverCard />}

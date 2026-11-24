@@ -1,0 +1,71 @@
+{
+  "title": "Ruh hali",
+  "description": "Günün nasıl geçtiğini kaydedin; zamanla nasıl değiştiğini görün. Notlarınız yalnızca size aittir.",
+  "score": {
+    "1": "Çok kötü",
+    "2": "Kötü",
+    "3": "Orta",
+    "4": "İyi",
+    "5": "Çok iyi"
+  },
+  "emotion": {
+    "happy": "Mutlu",
+    "calm": "Sakin",
+    "grateful": "Minnettar",
+    "energetic": "Enerjik",
+    "proud": "Gururlu",
+    "hopeful": "Umutlu",
+    "focused": "Odaklı",
+    "tired": "Yorgun",
+    "bored": "Sıkılmış",
+    "stressed": "Stresli",
+    "anxious": "Kaygılı",
+    "sad": "Üzgün",
+    "angry": "Öfkeli",
+    "lonely": "Yalnız"
+  },
+  "entry": {
+    "today": "Bugün nasılsınız?",
+    "forDate": "{{date}} nasıldı?",
+    "scoreLabel": "Ruh hali",
+    "emotions": "Neler hissettiniz?",
+    "note": "Not",
+    "notePlaceholder": "Aklınızdan geçenler…",
+    "save": "Kaydet",
+    "saved": "Ruh hali kaydedildi",
+    "remove": "Kaydı sil",
+    "removed": "Kayıt silindi",
+    "chooseScore": "Önce bir ruh hali seçin."
+  },
+  "month": {
+    "previous": "Önceki ay",
+    "next": "Sonraki ay",
+    "caption": "{{month}} ruh hali takvimi",
+    "day": "{{date}}: {{score}}",
+    "dayEmpty": "{{date}}: kayıt yok",
+    "explain": "Bir güne tıklayarak o günün kaydını ekleyebilir ya da değiştirebilirsiniz. Koyu renk daha iyi bir günü gösterir; her günün puanı ayrıca yazılıdır."
+  },
+  "summary": {
+    "title": "Özet",
+    "average": "Ortalama",
+    "averageValue": "5 üzerinden {{value}}",
+    "days_one": "{{count}} gün kaydedildi",
+    "days_other": "{{count}} gün kaydedildi",
+    "empty": "Seçili ayda kayıt yok.",
+    "distribution": "Dağılım",
+    "distributionLabel": "{{name}}: {{count}} gün",
+    "emotions": "En sık hissedilenler",
+    "emotionCount": "{{name}} · {{count}}",
+    "weekday": {
+      "title": "Hafta günlerine göre ortalama",
+      "explain": "Her çubuk, seçili ayda o hafta gününe düşen kayıtların ortalama puanını (1–5) gösterir. Kayıt olmayan günler boştur.",
+      "caption": "Hafta günlerine göre ortalama ruh hali ve kayıt sayısı",
+      "day": "Hafta günü",
+      "average": "Ortalama",
+      "count": "Kayıt",
+      "none": "Kayıt yok",
+      "countValue_one": "{{count}} kayıt",
+      "countValue_other": "{{count}} kayıt"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "title": "Odak",
+  "description": "Odak oturumları ve molalar için zamanlayıcı. Süre sunucuda tutulur; başka bir cihazda da aynı yerden devam eder.",
+  "kindLabel": "Oturum türü",
+  "kind": {
+    "focus": "Odak",
+    "short_break": "Kısa mola",
+    "long_break": "Uzun mola"
+  },
+  "status": {
+    "ready": "Hazır",
+    "running": "Sürüyor",
+    "paused": "Duraklatıldı",
+    "completed": "Tamamlandı",
+    "cancelled": "Vazgeçildi"
+  },
+  "timerLabel": "Kalan süre: {{minutes}} dakika {{seconds}} saniye",
+  "planned_one": "{{count}} dakika",
+  "planned_other": "{{count}} dakika",
+  "suggested": "Sıradaki öneri",
+  "actions": {
+    "start": "Başlat",
+    "pause": "Duraklat",
+    "resume": "Devam et",
+    "complete": "Bitir",
+    "cancel": "Vazgeç",
+    "lengths": "Süreler"
+  },
+  "task": {
+    "label": "Üzerinde çalışılan görev",
+    "none": "Görev seçilmedi",
+    "working": "Görev: {{title}}"
+  },
+  "documentTitle": "{{time}} · {{kind}}",
+  "toast": {
+    "focusDone": "Odak oturumu tamamlandı. Mola zamanı.",
+    "breakDone": "Mola bitti.",
+    "activeElsewhere": "Zaten süren bir oturum var; o gösteriliyor."
+  },
+  "today": {
+    "title": "Bugün",
+    "sessions_one": "{{count}} odak oturumu",
+    "sessions_other": "{{count}} odak oturumu",
+    "minutes_one": "{{count}} dakika odak",
+    "minutes_other": "{{count}} dakika odak"
+  },
+  "week": {
+    "title": "Son 7 gün",
+    "explain": "Her çubuk, o gün tamamlanan odak oturumlarının duraklamalar hariç toplam süresini dakika olarak gösterir. Molalar ve vazgeçilen oturumlar sayılmaz.",
+    "caption": "Son yedi günün her birinde odakta geçen dakika ve oturum sayısı",
+    "day": "Gün",
+    "minutes": "Odak süresi",
+    "sessions": "Oturum",
+    "minutesValue_one": "{{count}} dakika",
+    "minutesValue_other": "{{count}} dakika",
+    "sessionsValue_one": "{{count}} oturum",
+    "sessionsValue_other": "{{count}} oturum"
+  },
+  "history": {
+    "title": "Son oturumlar",
+    "empty": "Henüz tamamlanmış bir oturum yok",
+    "duration_one": "{{count}} dk",
+    "duration_other": "{{count}} dk",
+    "delete": "{{kind}} oturumunu sil",
+    "deleted": "Oturum silindi"
+  },
+  "lengths": {
+    "title": "Zamanlayıcı süreleri",
+    "description": "Süreler hesabınıza kaydedilir ve tüm cihazlarınızda geçerlidir.",
+    "focusMinutes": "Odak (dakika)",
+    "shortBreakMinutes": "Kısa mola (dakika)",
+    "longBreakMinutes": "Uzun mola (dakika)",
+    "longBreakEvery": "Uzun moladan önceki odak oturumu sayısı",
+    "range": "{{min}} ile {{max}} arasında bir tam sayı girin."
+  }
+}

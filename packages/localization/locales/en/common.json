@@ -30,7 +30,10 @@
     "goals": "Goals",
     "tasks": "Tasks",
     "calendar": "Calendar",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "focus": "Focus",
+    "journal": "Journal",
+    "mood": "Mood"
   },
   "theme": {
     "label": "Theme",

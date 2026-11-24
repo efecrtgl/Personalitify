@@ -1,0 +1,76 @@
+{
+  "title": "Focus",
+  "description": "A timer for focus sessions and breaks. The time is kept on the server, so it continues from the same point on another device.",
+  "kindLabel": "Session type",
+  "kind": {
+    "focus": "Focus",
+    "short_break": "Short break",
+    "long_break": "Long break"
+  },
+  "status": {
+    "ready": "Ready",
+    "running": "Running",
+    "paused": "Paused",
+    "completed": "Completed",
+    "cancelled": "Abandoned"
+  },
+  "timerLabel": "Time left: {{minutes}} minutes {{seconds}} seconds",
+  "planned_one": "{{count}} minute",
+  "planned_other": "{{count}} minutes",
+  "suggested": "Suggested next",
+  "actions": {
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "complete": "Finish",
+    "cancel": "Abandon",
+    "lengths": "Lengths"
+  },
+  "task": {
+    "label": "Task being worked on",
+    "none": "No task selected",
+    "working": "Task: {{title}}"
+  },
+  "documentTitle": "{{time}} · {{kind}}",
+  "toast": {
+    "focusDone": "Focus session completed. Time for a break.",
+    "breakDone": "The break is over.",
+    "activeElsewhere": "A session is already running; showing that one."
+  },
+  "today": {
+    "title": "Today",
+    "sessions_one": "{{count}} focus session",
+    "sessions_other": "{{count}} focus sessions",
+    "minutes_one": "{{count}} minute of focus",
+    "minutes_other": "{{count}} minutes of focus"
+  },
+  "week": {
+    "title": "Last 7 days",
+    "explain": "Each bar shows the total length, without pauses, of the focus sessions completed that day, in minutes. Breaks and abandoned sessions are not counted.",
+    "caption": "Minutes of focus and number of sessions on each of the last seven days",
+    "day": "Day",
+    "minutes": "Focus time",
+    "sessions": "Sessions",
+    "minutesValue_one": "{{count}} minute",
+    "minutesValue_other": "{{count}} minutes",
+    "sessionsValue_one": "{{count}} session",
+    "sessionsValue_other": "{{count}} sessions"
+  },
+  "history": {
+    "title": "Recent sessions",
+    "empty": "No finished sessions yet",
+    "duration_one": "{{count}} min",
+    "duration_other": "{{count}} min",
+    "delete": "Delete the {{kind}} session",
+    "deleted": "Session deleted"
+  },
+  "lengths": {
+    "title": "Timer lengths",
+    "description": "Lengths are saved to your account and apply on all your devices.",
+    "focusMinutes": "Focus (minutes)",
+    "shortBreakMinutes": "Short break (minutes)",
+    "longBreakMinutes": "Long break (minutes)",
+    "longBreakEvery": "Focus sessions before a long break",
+    "range": "Enter a whole number between {{min}} and {{max}}."
+  }
+}

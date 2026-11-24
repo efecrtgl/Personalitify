@@ -1,0 +1,83 @@
+{
+  "title": "Günlük",
+  "description": "Günlük yazıları ve notlar. Yazdıklarınız yalnızca size aittir.",
+  "kind": {
+    "all": "Tümü",
+    "journal": "Günlük",
+    "note": "Notlar"
+  },
+  "kindLabel": "Tür",
+  "kindName": {
+    "journal": "Günlük yazısı",
+    "note": "Not"
+  },
+  "new": {
+    "journal": "Yeni yazı",
+    "note": "Yeni not"
+  },
+  "search": {
+    "label": "Yazılarda ara",
+    "placeholder": "Başlık, metin ya da etiket ara",
+    "results_one": "{{count}} sonuç",
+    "results_other": "{{count}} sonuç"
+  },
+  "tags": {
+    "label": "Etikete göre süz",
+    "all": "Tüm etiketler",
+    "tag": "#{{tag}}",
+    "tagCount": "#{{tag}} ({{count}})"
+  },
+  "list": {
+    "untitled": "Başlıksız",
+    "pinned": "Sabitlendi",
+    "words_one": "{{count}} kelime",
+    "words_other": "{{count}} kelime",
+    "hiddenPreview": "Önizleme, gizlilik ayarınız nedeniyle gizlendi.",
+    "emptyTitle": "Henüz bir yazı yok",
+    "emptyDescription": "Bugünü birkaç cümleyle yazarak başlayın ya da aklınızdakini not alın.",
+    "noResultsTitle": "Sonuç bulunamadı",
+    "noResultsDescription": "Başka bir kelime deneyin ya da süzgeçleri kaldırın.",
+    "clearFilters": "Süzgeçleri kaldır"
+  },
+  "editor": {
+    "newJournal": "Yeni günlük yazısı",
+    "newNote": "Yeni not",
+    "back": "Günlüğe dön",
+    "titleLabel": "Başlık",
+    "titlePlaceholder": "Başlık",
+    "date": "Tarih",
+    "tagsLabel": "Etiketler",
+    "tagsHint": "Boşluk ya da virgülle ayırın. En fazla {{max}} etiket.",
+    "tooManyTags": "En fazla {{max}} etiket eklenebilir.",
+    "tagTooLong": "Bir etiket en fazla {{max}} karakter olabilir.",
+    "bodyLabel": "Metin",
+    "bodyPlaceholder": "Yazmaya başlayın… Markdown kullanabilirsiniz: **kalın**, _eğik_, # başlık, - liste.",
+    "mode": "Görünüm",
+    "write": "Yaz",
+    "preview": "Önizle",
+    "emptyPreview": "Önizlenecek bir şey yok.",
+    "save": "Kaydet",
+    "saved": "Kaydedildi",
+    "unsaved": "Kaydedilmemiş değişiklikler var",
+    "allSaved": "Tüm değişiklikler kaydedildi",
+    "pin": "Sabitle",
+    "unpin": "Sabitlemeyi kaldır",
+    "history": "Geçmiş",
+    "delete": "Sil",
+    "deleteTitle": "Bu yazı silinsin mi?",
+    "deleteDescription": "Yazı ve önceki sürümleri silinir. Bu işlem geri alınamaz.",
+    "deleted": "Yazı silindi",
+    "conflict": "Bu yazı başka bir yerde değiştirildi. Güncel hâli yüklendi; değişikliklerinizi yeniden uygulayın.",
+    "notFoundTitle": "Yazı bulunamadı",
+    "notFoundDescription": "Silinmiş olabilir."
+  },
+  "revisions": {
+    "title": "Önceki sürümler",
+    "description": "Başlık ya da metin her değiştiğinde önceki hâli saklanır. En yeni {{max}} sürüm tutulur.",
+    "empty": "Henüz önceki bir sürüm yok.",
+    "replacedAt": "{{date}} tarihine kadar geçerliydi",
+    "restore": "Geri yükle",
+    "restored": "Önceki sürüm geri yüklendi",
+    "emptyBody": "(boş)"
+  }
+}

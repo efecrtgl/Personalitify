@@ -5,8 +5,11 @@ import enCommon from '../locales/en/common.json' with { type: 'json' };
 import enDashboard from '../locales/en/dashboard.json' with { type: 'json' };
 import enEmails from '../locales/en/emails.json' with { type: 'json' };
 import enErrors from '../locales/en/errors.json' with { type: 'json' };
+import enFocus from '../locales/en/focus.json' with { type: 'json' };
 import enGoals from '../locales/en/goals.json' with { type: 'json' };
 import enHabits from '../locales/en/habits.json' with { type: 'json' };
+import enJournal from '../locales/en/journal.json' with { type: 'json' };
+import enMood from '../locales/en/mood.json' with { type: 'json' };
 import enSettings from '../locales/en/settings.json' with { type: 'json' };
 import enTasks from '../locales/en/tasks.json' with { type: 'json' };
 import trAnalytics from '../locales/tr/analytics.json' with { type: 'json' };
@@ -16,8 +19,11 @@ import trCommon from '../locales/tr/common.json' with { type: 'json' };
 import trDashboard from '../locales/tr/dashboard.json' with { type: 'json' };
 import trEmails from '../locales/tr/emails.json' with { type: 'json' };
 import trErrors from '../locales/tr/errors.json' with { type: 'json' };
+import trFocus from '../locales/tr/focus.json' with { type: 'json' };
 import trGoals from '../locales/tr/goals.json' with { type: 'json' };
 import trHabits from '../locales/tr/habits.json' with { type: 'json' };
+import trJournal from '../locales/tr/journal.json' with { type: 'json' };
+import trMood from '../locales/tr/mood.json' with { type: 'json' };
 import trSettings from '../locales/tr/settings.json' with { type: 'json' };
 import trTasks from '../locales/tr/tasks.json' with { type: 'json' };
 
@@ -42,8 +48,11 @@ export const resources = Object.freeze({
     dashboard: trDashboard,
     emails: trEmails,
     errors: trErrors,
+    focus: trFocus,
     goals: trGoals,
     habits: trHabits,
+    journal: trJournal,
+    mood: trMood,
     settings: trSettings,
     tasks: trTasks,
   },
@@ -55,8 +64,11 @@ export const resources = Object.freeze({
     dashboard: enDashboard,
     emails: enEmails,
     errors: enErrors,
+    focus: enFocus,
     goals: enGoals,
     habits: enHabits,
+    journal: enJournal,
+    mood: enMood,
     settings: enSettings,
     tasks: enTasks,
   },

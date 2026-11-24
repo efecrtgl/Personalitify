@@ -148,6 +148,12 @@ export function createApiClient(options) {
         http.delete(`/calendar/events/${eventId}/occurrences/${date}`),
     },
 
+    analytics: {
+      /** Statistics of the week, month, quarter or year that contains `date` (default: today). */
+      overview: ({ period, date } = {}) =>
+        http.get('/analytics/overview', { query: { period, date } }),
+    },
+
     dashboard: {
       /** Everything the personal dashboard shows, in one request. */
       get: () => http.get('/dashboard'),

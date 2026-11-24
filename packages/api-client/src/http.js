@@ -168,10 +168,23 @@ export function createHttpClient({
     }
   }
 
+  /**
+   * An access token that is valid for a while yet, refreshed first if it is about to
+   * expire. For connections that authenticate outside of `request`, such as realtime.
+   */
+  async function getFreshAccessToken() {
+    const expiry = tokenStore.getAccessTokenExpiry?.();
+    if (tokenStore.getAccessToken() && expiry && expiry - Date.now() < EXPIRY_MARGIN_MS) {
+      await refreshOrEnd();
+    }
+    return tokenStore.getAccessToken();
+  }
+
   return {
     tokenStore,
     request,
     refresh: refreshOrEnd,
+    getFreshAccessToken,
     get: async (path, options) => (await request('GET', path, options)).data,
     post: async (path, body, options) => (await request('POST', path, { ...options, body })).data,
     patch: async (path, body, options) => (await request('PATCH', path, { ...options, body })).data,

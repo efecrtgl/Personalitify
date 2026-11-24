@@ -1,7 +1,9 @@
 import { createHttpClient } from './http.js';
 
 export { ApiError, CLIENT_ERROR_CODES } from './errors.js';
+export { EventSequencer } from './event-sequencer.js';
 export { createHttpClient } from './http.js';
+export { createRealtime } from './realtime.js';
 export { createMemoryTokenStore } from './token-store.js';
 
 /**
@@ -208,6 +210,11 @@ export function createApiClient(options) {
       range: ({ from, to }) => http.get('/mood', { query: { from, to } }),
       set: (date, input) => http.put(`/mood/${date}`, input),
       clear: (date) => http.delete(`/mood/${date}`),
+    },
+
+    events: {
+      /** Events after a sequence number, in order: `{ items, meta: { headSeq, hasMore } }`. */
+      list: ({ after, limit } = {}) => http.list('/events', { after, limit }),
     },
 
     devices: {

@@ -1,0 +1,105 @@
+{
+  "title": "Görevler",
+  "description": "Yapılacaklar ve zamanları.",
+  "tabs": {
+    "label": "Görev görünümleri",
+    "today": "Bugün",
+    "upcoming": "Yaklaşan",
+    "all": "Tümü",
+    "done": "Tamamlanan"
+  },
+  "actions": {
+    "new": "Yeni görev",
+    "edit": "Düzenle",
+    "markDone": "\"{{title}}\" görevini tamamlandı olarak işaretle",
+    "more": "\"{{title}}\" için diğer işlemler",
+    "postponeTomorrow": "Yarına taşı",
+    "postponeWeek": "Bir hafta ileri taşı",
+    "delete": "Sil"
+  },
+  "due": {
+    "today": "Bugün",
+    "tomorrow": "Yarın",
+    "yesterday": "Dün"
+  },
+  "priority": {
+    "none": "Yok",
+    "low": "Düşük",
+    "medium": "Orta",
+    "high": "Yüksek"
+  },
+  "status": {
+    "cancelled": "İptal edildi"
+  },
+  "row": {
+    "subtasks": "{{done}}/{{total}}",
+    "repeats": "Tekrarlanır",
+    "postponed_one": "{{count}} kez ertelendi",
+    "postponed_other": "{{count}} kez ertelendi"
+  },
+  "sections": {
+    "overdue": "Geciken",
+    "today": "Bugün",
+    "completed": "Tamamlanan",
+    "dated": "Tarihi olanlar",
+    "undated": "Tarihsiz"
+  },
+  "quickAdd": {
+    "label": "Yeni görev",
+    "placeholder": "Bir görev yazıp Enter'a basın",
+    "submit": "Ekle"
+  },
+  "search": {
+    "label": "Görevlerde ara",
+    "placeholder": "Başlığa göre ara"
+  },
+  "loadMore": "Daha fazla göster ({{shown}} / {{total}})",
+  "empty": {
+    "todayTitle": "Bugün için görev yok",
+    "todayDescription": "Yukarıdan bir görev ekleyin ya da boş günün tadını çıkarın.",
+    "upcomingTitle": "Önümüzdeki iki haftada görev yok",
+    "upcomingDescription": "Son tarihi önümüzdeki 14 gün içinde olan görevler burada görünür.",
+    "allTitle": "Açık görev yok",
+    "allDescription": "Her şey tamamlandı. Yeni görevler burada görünür.",
+    "doneTitle": "Henüz tamamlanan görev yok",
+    "doneDescription": "Bitirdiğiniz görevler burada saklanır.",
+    "searchTitle": "Eşleşen görev yok",
+    "searchDescription": "Farklı bir sözcük deneyin."
+  },
+  "toast": {
+    "created": "Görev eklendi",
+    "deleted": "Görev silindi",
+    "postponed": "Görev taşındı",
+    "nextCreated": "Görevin bir sonraki tekrarı oluşturuldu."
+  },
+  "form": {
+    "newTitle": "Yeni görev",
+    "editTitle": "Görevi düzenle",
+    "create": "Görev oluştur",
+    "title": "Başlık",
+    "description": "Notlar",
+    "priority": "Öncelik",
+    "datesTitle": "Tarihler",
+    "dueDate": "Son tarih",
+    "dueTime": "Saat",
+    "startDate": "Başlangıç",
+    "repeat": "Tekrar",
+    "repeatNone": "Tekrarlanmaz",
+    "repeatUntil": "Şu tarihe kadar tekrarla",
+    "repeatHint": "Görevi tamamladığınızda bir sonraki tekrarı oluşturulur.",
+    "planTitle": "Zaman bloğu",
+    "planHint": "Üzerinde çalışmayı planladığınız zaman. Takvimde gösterilir.",
+    "scheduledDate": "Gün",
+    "scheduledTime": "Başlangıç saati",
+    "duration": "Dakika",
+    "subtasksTitle": "Alt görevler",
+    "newSubtask": "Yeni alt görev",
+    "addSubtask": "Ekle",
+    "removeSubtask": "\"{{title}}\" alt görevini kaldır",
+    "goal": "Hedef",
+    "noGoal": "Hedef yok",
+    "errors": {
+      "repeatNeedsDate": "Tekrarlanan bir görevin son tarihi olmalıdır."
+    }
+  }
+}

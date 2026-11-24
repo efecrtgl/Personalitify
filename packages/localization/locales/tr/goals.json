@@ -1,0 +1,143 @@
+{
+  "title": "Hedefler",
+  "description": "Varmak istediğiniz yer, atabileceğiniz adımlara bölünmüş hâlde.",
+  "actions": {
+    "new": "Yeni hedef",
+    "complete": "Ulaşıldı olarak işaretle",
+    "reopen": "Yeniden aç",
+    "pause": "Duraklat",
+    "resume": "Sürdür",
+    "edit": "Düzenle",
+    "delete": "Sil"
+  },
+  "filter": {
+    "label": "Göster",
+    "open": "Devam eden",
+    "completed": "Ulaşılan",
+    "all": "Tümü"
+  },
+  "horizon": {
+    "short": "Kısa vadeli",
+    "long": "Uzun vadeli"
+  },
+  "status": {
+    "active": "Etkin",
+    "paused": "Duraklatıldı",
+    "completed": "Ulaşıldı",
+    "abandoned": "Vazgeçildi"
+  },
+  "progress": {
+    "label": "{{title}} hedefinin ilerlemesi",
+    "percent": "%{{value}}"
+  },
+  "deadline": {
+    "today": "Hedef tarihi bugün",
+    "left_one": "{{count}} gün kaldı",
+    "left_other": "{{count}} gün kaldı",
+    "overdue_one": "{{count}} gün gecikti",
+    "overdue_other": "{{count}} gün gecikti"
+  },
+  "card": {
+    "milestones": "{{done}}/{{total}} kilometre taşı",
+    "tasks": "{{done}}/{{total}} görev"
+  },
+  "empty": {
+    "title": "Henüz hedef yok",
+    "description": "Ulaşmak istediğiniz bir şeyi yazın. Sonrasında kilometre taşlarına bölebilirsiniz.",
+    "completedTitle": "Henüz ulaşılan hedef yok",
+    "completedDescription": "Ulaşıldı olarak işaretlediğiniz hedefler burada saklanır."
+  },
+  "toast": {
+    "created": "Hedef oluşturuldu",
+    "deleted": "Hedef silindi"
+  },
+  "form": {
+    "newTitle": "Yeni hedef",
+    "newSubGoalTitle": "Yeni alt hedef",
+    "editTitle": "Hedefi düzenle",
+    "create": "Hedef oluştur",
+    "title": "Hedef",
+    "titlePlaceholder": "Yarı maraton koşmak",
+    "description": "Neden önemli",
+    "descriptionHint": "Buna ulaşmanın sizin için ne anlama geleceğini anlatan bir cümle.",
+    "timeTitle": "Zaman aralığı",
+    "horizon": "Vade",
+    "startDate": "Başlangıç",
+    "targetDate": "Hedef tarihi",
+    "progressTitle": "İlerlemeyi ölçme",
+    "mode": "İlerleme şuna göre hesaplanır",
+    "modes": {
+      "manual": "Kendi tahminim",
+      "milestones": "Tamamlanan kilometre taşları",
+      "tasks": "Tamamlanan görevler",
+      "metric": "Bir sayı"
+    },
+    "modeHints": {
+      "manual": "Yüzdeyi kendiniz belirlersiniz.",
+      "milestones": "Bu hedefin kilometre taşlarından tamamlananların oranı.",
+      "tasks": "Bu hedefe bağlı görevlerden tamamlananların oranı. İptal edilen görevler sayılmaz.",
+      "metric": "Güncel miktarın hedef miktara oranı."
+    },
+    "metricTarget": "Hedef miktar",
+    "metricUnit": "Birim",
+    "metricUnitPlaceholder": "km",
+    "habits": "Destekleyen alışkanlıklar",
+    "habitsHint": "Sizi bu hedefe yaklaştıran alışkanlıklar."
+  },
+  "detail": {
+    "back": "Tüm hedefler",
+    "notFound": "Bu hedef mevcut değil",
+    "target": "Hedef tarihi: {{date}}",
+    "progressTitle": "İlerleme",
+    "setProgress": "Tahmininiz",
+    "current": "Güncel miktar (hedef {{target}} {{unit}})",
+    "milestonesTitle": "Kilometre taşları",
+    "milestonesHint": "Yol üzerindeki adımlar.",
+    "newMilestone": "Yeni kilometre taşı",
+    "addMilestone": "Ekle",
+    "removeMilestone": "\"{{title}}\" kilometre taşını kaldır",
+    "tasksTitle": "Görevler",
+    "tasksHint": "Bu hedef için yapılacaklar.",
+    "subGoalsTitle": "Alt hedefler",
+    "subGoalsHint": "Bu hedefin parçası olan daha küçük hedefler.",
+    "addSubGoal": "Alt hedef ekle",
+    "habitsTitle": "Destekleyen alışkanlıklar",
+    "habitsHint": "Ne kadar düzenli sürdürdüğünüzü görmek için bir alışkanlığı açın.",
+    "reviewsTitle": "Değerlendirmeler",
+    "reviewsHint": "Ara sıra geriye dönüp bakın. Her değerlendirme o andaki ilerlemeyi saklar.",
+    "reviewNote": "Nasıl gidiyor?",
+    "reviewRating": "Bu konuda nasıl hissediyorsunuz",
+    "noRating": "Puan yok",
+    "rating_one": "{{count}} yıldız",
+    "rating_other": "{{count}} yıldız",
+    "addReview": "Değerlendirme ekle",
+    "removeReview": "Değerlendirmeyi kaldır",
+    "historyTitle": "Son değişiklikler"
+  },
+  "history": {
+    "created": "Hedef oluşturuldu",
+    "updated": "Değişti: {{fields}}"
+  },
+  "fields": {
+    "title": "başlık",
+    "description": "açıklama",
+    "categoryId": "kategori",
+    "color": "renk",
+    "icon": "simge",
+    "horizon": "vade",
+    "startDate": "başlangıç tarihi",
+    "targetDate": "hedef tarihi",
+    "status": "durum",
+    "completedAt": "tamamlanma",
+    "progress": "ilerleme",
+    "milestones": "kilometre taşları",
+    "reviews": "değerlendirmeler",
+    "parentGoalId": "üst hedef",
+    "habitIds": "alışkanlıklar",
+    "sortOrder": "sıra"
+  },
+  "delete": {
+    "title": "\"{{title}}\" silinsin mi?",
+    "description": "Hedef, kilometre taşları ve değerlendirmeleriyle birlikte silinir. Görevleri ve alt hedefleri korunur."
+  }
+}

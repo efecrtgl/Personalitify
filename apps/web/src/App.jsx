@@ -9,6 +9,8 @@ import { BrandMark } from './layout/Brand.jsx';
 import { queryClient as defaultQueryClient } from './lib/api.js';
 import './lib/i18n.js';
 import { HomePage } from './pages/HomePage.jsx';
+import { GoalDetailPage } from './pages/goals/GoalDetailPage.jsx';
+import { GoalsPage } from './pages/goals/GoalsPage.jsx';
 import { HabitDetailPage } from './pages/habits/HabitDetailPage.jsx';
 import { HabitsManagePage } from './pages/habits/HabitsManagePage.jsx';
 import { HabitsPage } from './pages/habits/HabitsPage.jsx';
@@ -18,6 +20,7 @@ import { ForgotPasswordPage, ResetPasswordPage } from './pages/auth/PasswordPage
 import { RegisterPage } from './pages/auth/RegisterPage.jsx';
 import { VerifyEmailPage } from './pages/auth/VerifyEmailPage.jsx';
 import { SettingsPage } from './pages/settings/SettingsPage.jsx';
+import { TasksPage } from './pages/tasks/TasksPage.jsx';
 import { AuthProvider, useAuth } from './providers/AuthProvider.jsx';
 import { ThemeProvider } from './providers/ThemeProvider.jsx';
 import { ErrorState, Spinner } from './ui/feedback.jsx';
@@ -78,6 +81,12 @@ export function AppRoutes() {
           <Route path="habits" element={<HabitsPage />} />
           <Route path="habits/all" element={<HabitsManagePage />} />
           <Route path="habits/:habitId" element={<HabitDetailPage />} />
+          <Route path="tasks" element={<TasksPage view="today" />} />
+          <Route path="tasks/upcoming" element={<TasksPage view="upcoming" />} />
+          <Route path="tasks/all" element={<TasksPage view="all" />} />
+          <Route path="tasks/done" element={<TasksPage view="done" />} />
+          <Route path="goals" element={<GoalsPage />} />
+          <Route path="goals/:goalId" element={<GoalDetailPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="settings/:section" element={<SettingsPage />} />
           <Route path="*" element={<NotFoundPage />} />

@@ -2,16 +2,20 @@ import enAuth from '../locales/en/auth.json' with { type: 'json' };
 import enCommon from '../locales/en/common.json' with { type: 'json' };
 import enEmails from '../locales/en/emails.json' with { type: 'json' };
 import enErrors from '../locales/en/errors.json' with { type: 'json' };
+import enGoals from '../locales/en/goals.json' with { type: 'json' };
 import enHabits from '../locales/en/habits.json' with { type: 'json' };
 import enHome from '../locales/en/home.json' with { type: 'json' };
 import enSettings from '../locales/en/settings.json' with { type: 'json' };
+import enTasks from '../locales/en/tasks.json' with { type: 'json' };
 import trAuth from '../locales/tr/auth.json' with { type: 'json' };
 import trCommon from '../locales/tr/common.json' with { type: 'json' };
 import trEmails from '../locales/tr/emails.json' with { type: 'json' };
 import trErrors from '../locales/tr/errors.json' with { type: 'json' };
+import trGoals from '../locales/tr/goals.json' with { type: 'json' };
 import trHabits from '../locales/tr/habits.json' with { type: 'json' };
 import trHome from '../locales/tr/home.json' with { type: 'json' };
 import trSettings from '../locales/tr/settings.json' with { type: 'json' };
+import trTasks from '../locales/tr/tasks.json' with { type: 'json' };
 
 /** Language used when a client expresses no preference. */
 export const DEFAULT_LANGUAGE = 'tr';
@@ -31,18 +35,22 @@ export const resources = Object.freeze({
     common: trCommon,
     emails: trEmails,
     errors: trErrors,
+    goals: trGoals,
     habits: trHabits,
     home: trHome,
     settings: trSettings,
+    tasks: trTasks,
   },
   en: {
     auth: enAuth,
     common: enCommon,
     emails: enEmails,
     errors: enErrors,
+    goals: enGoals,
     habits: enHabits,
     home: enHome,
     settings: enSettings,
+    tasks: enTasks,
   },
 });
 

@@ -1,0 +1,143 @@
+{
+  "title": "Goals",
+  "description": "Where you want to get to, broken into steps you can take.",
+  "actions": {
+    "new": "New goal",
+    "complete": "Mark as achieved",
+    "reopen": "Reopen",
+    "pause": "Pause",
+    "resume": "Resume",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "filter": {
+    "label": "Show",
+    "open": "In progress",
+    "completed": "Achieved",
+    "all": "All"
+  },
+  "horizon": {
+    "short": "Short term",
+    "long": "Long term"
+  },
+  "status": {
+    "active": "Active",
+    "paused": "Paused",
+    "completed": "Achieved",
+    "abandoned": "Abandoned"
+  },
+  "progress": {
+    "label": "Progress of {{title}}",
+    "percent": "{{value}}%"
+  },
+  "deadline": {
+    "today": "Due today",
+    "left_one": "{{count}} day left",
+    "left_other": "{{count}} days left",
+    "overdue_one": "{{count}} day overdue",
+    "overdue_other": "{{count}} days overdue"
+  },
+  "card": {
+    "milestones": "{{done}}/{{total}} milestones",
+    "tasks": "{{done}}/{{total}} tasks"
+  },
+  "empty": {
+    "title": "No goals yet",
+    "description": "Write down one thing you want to achieve. You can break it into milestones afterwards.",
+    "completedTitle": "No achieved goals yet",
+    "completedDescription": "Goals you mark as achieved are kept here."
+  },
+  "toast": {
+    "created": "Goal created",
+    "deleted": "Goal deleted"
+  },
+  "form": {
+    "newTitle": "New goal",
+    "newSubGoalTitle": "New sub-goal",
+    "editTitle": "Edit goal",
+    "create": "Create goal",
+    "title": "Goal",
+    "titlePlaceholder": "Run a half marathon",
+    "description": "Why it matters",
+    "descriptionHint": "A sentence about what achieving this will mean to you.",
+    "timeTitle": "Time frame",
+    "horizon": "Time frame",
+    "startDate": "Starts",
+    "targetDate": "Target date",
+    "progressTitle": "Measuring progress",
+    "mode": "Progress comes from",
+    "modes": {
+      "manual": "My own estimate",
+      "milestones": "Completed milestones",
+      "tasks": "Completed tasks",
+      "metric": "A number"
+    },
+    "modeHints": {
+      "manual": "You set the percentage yourself.",
+      "milestones": "The share of this goal's milestones that are done.",
+      "tasks": "The share of the tasks linked to this goal that are done. Cancelled tasks are not counted.",
+      "metric": "The current amount divided by the target amount."
+    },
+    "metricTarget": "Target amount",
+    "metricUnit": "Unit",
+    "metricUnitPlaceholder": "km",
+    "habits": "Supporting habits",
+    "habitsHint": "Habits that move you towards this goal."
+  },
+  "detail": {
+    "back": "All goals",
+    "notFound": "This goal does not exist",
+    "target": "Target: {{date}}",
+    "progressTitle": "Progress",
+    "setProgress": "Your estimate",
+    "current": "Current amount (target {{target}} {{unit}})",
+    "milestonesTitle": "Milestones",
+    "milestonesHint": "The steps on the way.",
+    "newMilestone": "New milestone",
+    "addMilestone": "Add",
+    "removeMilestone": "Remove \"{{title}}\"",
+    "tasksTitle": "Tasks",
+    "tasksHint": "Things to do for this goal.",
+    "subGoalsTitle": "Sub-goals",
+    "subGoalsHint": "Smaller goals that are part of this one.",
+    "addSubGoal": "Add sub-goal",
+    "habitsTitle": "Supporting habits",
+    "habitsHint": "Open a habit to see how consistently you keep it.",
+    "reviewsTitle": "Reviews",
+    "reviewsHint": "Look back from time to time. Each review keeps the progress at that moment.",
+    "reviewNote": "How is it going?",
+    "reviewRating": "How do you feel about it",
+    "noRating": "No rating",
+    "rating_one": "{{count}} star",
+    "rating_other": "{{count}} stars",
+    "addReview": "Add review",
+    "removeReview": "Remove review",
+    "historyTitle": "Recent changes"
+  },
+  "history": {
+    "created": "Goal created",
+    "updated": "Changed: {{fields}}"
+  },
+  "fields": {
+    "title": "title",
+    "description": "description",
+    "categoryId": "category",
+    "color": "color",
+    "icon": "icon",
+    "horizon": "time frame",
+    "startDate": "start date",
+    "targetDate": "target date",
+    "status": "status",
+    "completedAt": "completion",
+    "progress": "progress",
+    "milestones": "milestones",
+    "reviews": "reviews",
+    "parentGoalId": "parent goal",
+    "habitIds": "habits",
+    "sortOrder": "order"
+  },
+  "delete": {
+    "title": "Delete \"{{title}}\"?",
+    "description": "The goal with its milestones and reviews is removed. Its tasks and sub-goals are kept."
+  }
+}

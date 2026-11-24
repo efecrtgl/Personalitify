@@ -53,6 +53,17 @@ export const queryKeys = {
   devices: ['devices'],
   securityLog: (page) => ['account', 'security-log', page],
   categories: ['categories'],
+  goals: {
+    all: ['goals'],
+    list: (filter) => ['goals', 'list', filter],
+    detail: (goalId) => ['goals', 'detail', goalId],
+    history: (goalId) => ['goals', 'detail', goalId, 'history'],
+  },
+  tasks: {
+    all: ['tasks'],
+    day: (date) => ['tasks', 'day', date ?? 'today'],
+    list: (filter) => ['tasks', 'list', filter],
+  },
   habits: {
     all: ['habits'],
     list: (archived) => ['habits', 'list', archived],

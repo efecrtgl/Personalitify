@@ -1,0 +1,105 @@
+{
+  "title": "Tasks",
+  "description": "What needs doing, and when.",
+  "tabs": {
+    "label": "Task views",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "all": "All",
+    "done": "Completed"
+  },
+  "actions": {
+    "new": "New task",
+    "edit": "Edit",
+    "markDone": "Mark \"{{title}}\" as done",
+    "more": "More actions for \"{{title}}\"",
+    "postponeTomorrow": "Move to tomorrow",
+    "postponeWeek": "Move one week ahead",
+    "delete": "Delete"
+  },
+  "due": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday"
+  },
+  "priority": {
+    "none": "None",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "status": {
+    "cancelled": "Cancelled"
+  },
+  "row": {
+    "subtasks": "{{done}}/{{total}}",
+    "repeats": "Repeats",
+    "postponed_one": "Moved {{count}} time",
+    "postponed_other": "Moved {{count}} times"
+  },
+  "sections": {
+    "overdue": "Overdue",
+    "today": "Today",
+    "completed": "Completed",
+    "dated": "With a date",
+    "undated": "No date"
+  },
+  "quickAdd": {
+    "label": "New task",
+    "placeholder": "Add a task and press Enter",
+    "submit": "Add"
+  },
+  "search": {
+    "label": "Search tasks",
+    "placeholder": "Search by title"
+  },
+  "loadMore": "Show more ({{shown}} of {{total}})",
+  "empty": {
+    "todayTitle": "Nothing due today",
+    "todayDescription": "Add a task above, or enjoy the free day.",
+    "upcomingTitle": "Nothing in the next two weeks",
+    "upcomingDescription": "Tasks with a due date in the coming 14 days appear here.",
+    "allTitle": "No open tasks",
+    "allDescription": "Everything is done. New tasks appear here.",
+    "doneTitle": "No completed tasks yet",
+    "doneDescription": "Tasks you finish are kept here.",
+    "searchTitle": "No matching tasks",
+    "searchDescription": "Try a different word."
+  },
+  "toast": {
+    "created": "Task added",
+    "deleted": "Task deleted",
+    "postponed": "Task moved",
+    "nextCreated": "The next occurrence was created."
+  },
+  "form": {
+    "newTitle": "New task",
+    "editTitle": "Edit task",
+    "create": "Create task",
+    "title": "Title",
+    "description": "Notes",
+    "priority": "Priority",
+    "datesTitle": "Dates",
+    "dueDate": "Due",
+    "dueTime": "Time",
+    "startDate": "Start",
+    "repeat": "Repeats",
+    "repeatNone": "Does not repeat",
+    "repeatUntil": "Repeat until",
+    "repeatHint": "When you complete the task, its next occurrence is created.",
+    "planTitle": "Time block",
+    "planHint": "When you plan to work on it. Shown in the calendar.",
+    "scheduledDate": "Day",
+    "scheduledTime": "From",
+    "duration": "Minutes",
+    "subtasksTitle": "Subtasks",
+    "newSubtask": "New subtask",
+    "addSubtask": "Add",
+    "removeSubtask": "Remove \"{{title}}\"",
+    "goal": "Goal",
+    "noGoal": "No goal",
+    "errors": {
+      "repeatNeedsDate": "A repeating task needs a due date."
+    }
+  }
+}

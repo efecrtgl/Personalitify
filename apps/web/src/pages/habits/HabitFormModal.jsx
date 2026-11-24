@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useErrorMessage } from '../../hooks/useAccount.js';
 import { useFormat } from '../../lib/format.js';
+import { REPEAT_CHOICES, recurrenceOf, repeatOf } from '../../lib/recurrenceForm.js';
 import { Button, IconButton } from '../../ui/Button.jsx';
 import { Banner } from '../../ui/feedback.jsx';
 import { Field, Input, SegmentedControl, Select, Textarea } from '../../ui/fields.jsx';
@@ -12,16 +13,6 @@ import { ChipToggleGroup, ColorPicker, IconPicker } from '../../ui/pickers.jsx';
 import { useCategories, useHabitActions } from './useHabits.js';
 
 const MAX_REMINDERS = 8;
-const REPEATS = ['daily', 'weekdays', 'interval', 'monthly', 'yearly'];
-
-/** Which of the form's repeat choices describes a stored recurrence rule. */
-function repeatOf(recurrence) {
-  if (recurrence.frequency === 'weekly') return 'weekdays';
-  if (recurrence.frequency === 'monthly') return 'monthly';
-  if (recurrence.frequency === 'yearly') return 'yearly';
-  return recurrence.interval > 1 ? 'interval' : 'daily';
-}
-
 function initialState(habit, defaultStartDate) {
   if (!habit) {
     return {
@@ -69,21 +60,6 @@ function initialState(habit, defaultStartDate) {
     reminders: habit.reminders.map((reminder) => reminder.time),
     streakGoal: habit.streakGoal ?? '',
   };
-}
-
-function recurrenceOf(state) {
-  switch (state.repeat) {
-    case 'weekdays':
-      return { frequency: 'weekly', interval: 1, weekdays: state.weekdays, monthDays: [] };
-    case 'interval':
-      return { frequency: 'daily', interval: Number(state.interval), weekdays: [], monthDays: [] };
-    case 'monthly':
-      return { frequency: 'monthly', interval: 1, weekdays: [], monthDays: state.monthDays };
-    case 'yearly':
-      return { frequency: 'yearly', interval: 1, weekdays: [], monthDays: [] };
-    default:
-      return { frequency: 'daily', interval: 1, weekdays: [], monthDays: [] };
-  }
 }
 
 /** The request body for the API, built from the form's state. */
@@ -287,7 +263,7 @@ export function HabitFormModal({ habit, defaultStartDate, onClose }) {
                   <Select
                     value={state.repeat}
                     onChange={(event) => set({ repeat: event.target.value })}
-                    options={REPEATS.map((repeat) => ({
+                    options={REPEAT_CHOICES.map((repeat) => ({
                       value: repeat,
                       label: t(`habits:form.repeats.${repeat}`),
                     }))}

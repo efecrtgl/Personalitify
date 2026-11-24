@@ -26,7 +26,9 @@
     "openMenu": "Menüyü aç",
     "closeMenu": "Menüyü kapat",
     "skipToContent": "İçeriğe geç",
-    "habits": "Alışkanlıklar"
+    "habits": "Alışkanlıklar",
+    "goals": "Hedefler",
+    "tasks": "Görevler"
   },
   "theme": {
     "label": "Tema",

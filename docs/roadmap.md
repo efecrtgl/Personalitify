@@ -12,7 +12,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 3     | Frontend foundation and design system            | Done    | [phase-03](./releases/phase-03.md) |
 | 4     | Habits and routines                              | Done    | [phase-04](./releases/phase-04.md) |
 | 5     | Goals and tasks                                  | Done    | [phase-05](./releases/phase-05.md) |
-| 6     | Calendar and planning                            | Planned |                                    |
+| 6     | Calendar and planning                            | Done    | [phase-06](./releases/phase-06.md) |
 | 7     | Personal dashboard                               | Planned |                                    |
 | 8     | Analytics and insights                           | Planned |                                    |
 | 9     | Focus, journal and mood                          | Planned |                                    |

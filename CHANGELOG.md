@@ -43,6 +43,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   dated reviews and a change history; tasks with priorities, start and due dates, planned
   time blocks, subtasks, repeating series, postponing that remembers the first due date, a
   day view with overdue tasks, search and filters; goal and task screens in the web client.
+- Phase 6: calendar and planning — events and time blocks stored as wall-clock times in
+  their own time zone, repeating events with removable occurrences, reminders and links; a
+  unified calendar that merges events, tasks and habits into display-ready items in the
+  user's time zone; overlap detection; rescheduling by day and time; month, week and day
+  views in the web client with drag-and-drop.
 
 ### Fixed
 

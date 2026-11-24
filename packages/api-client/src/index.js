@@ -164,6 +164,11 @@ export function createApiClient(options) {
         http.delete(`/calendar/events/${eventId}/occurrences/${date}`),
     },
 
+    achievements: {
+      /** XP, level, every achievement with its progress, and the latest XP earned. */
+      get: () => http.get('/achievements'),
+    },
+
     analytics: {
       /** Statistics of the week, month, quarter or year that contains `date` (default: today). */
       overview: ({ period, date } = {}) =>

@@ -2,6 +2,7 @@ import { SUPPORTED_LANGUAGES } from '@personalitify/localization';
 import {
   DASHBOARD_WIDGETS,
   DATE_FORMATS,
+  FOCUS_LIMITS,
   THEMES,
   TIME_FORMATS,
   WEEK_STARTS,
@@ -36,6 +37,20 @@ const privacySchema = z.strictObject({
     .describe('Hide journal and mood text in previews, summaries and notifications'),
 });
 
+const focusMinutes = z.int().min(FOCUS_LIMITS.minMinutes).max(FOCUS_LIMITS.maxMinutes);
+const focusSchema = z
+  .strictObject({
+    focusMinutes,
+    shortBreakMinutes: focusMinutes,
+    longBreakMinutes: focusMinutes,
+    longBreakEvery: z
+      .int()
+      .min(1)
+      .max(FOCUS_LIMITS.maxLongBreakEvery)
+      .describe('A long break follows every this many focus sessions'),
+  })
+  .describe('Timer lengths in minutes');
+
 const dashboardSchema = z
   .strictObject({
     widgets: z
@@ -59,6 +74,7 @@ export const settingsSchema = z
     weekStart: weekStartSchema,
     notifications: notificationPreferencesSchema,
     privacy: privacySchema,
+    focus: focusSchema,
     dashboard: dashboardSchema,
   })
   .describe('User settings');
@@ -76,6 +92,7 @@ export const updateSettingsBody = z.strictObject({
     .extend({ quietHours: quietHoursSchema.partial().optional() })
     .optional(),
   privacy: privacySchema.partial().optional(),
+  focus: focusSchema.partial().optional(),
   dashboard: dashboardSchema.optional().describe('Replaces the whole layout'),
   baseVersion: baseVersionSchema,
 });

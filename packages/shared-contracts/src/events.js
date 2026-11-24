@@ -17,6 +17,9 @@ export const ENTITY_TYPES = Object.freeze({
   GOAL: 'goal',
   TASK: 'task',
   CALENDAR_EVENT: 'calendarEvent',
+  FOCUS_SESSION: 'focusSession',
+  JOURNAL_ENTRY: 'journalEntry',
+  MOOD_ENTRY: 'moodEntry',
 });
 
 /** Builds an event name such as `habit.updated`. */

@@ -23,7 +23,7 @@ export async function updateSettings(auth, { baseVersion, ...patch }) {
  */
 export async function getUserPreferences(userId) {
   const settings = await Settings.findOne({ userId })
-    .select('language timeZone weekStart notifications privacy')
+    .select('language timeZone weekStart notifications privacy focus')
     .lean();
   return settings;
 }

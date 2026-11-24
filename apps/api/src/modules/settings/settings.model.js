@@ -3,6 +3,8 @@ import {
   DASHBOARD_WIDGETS,
   DATE_FORMATS,
   DEFAULT_TIME_ZONE,
+  FOCUS_DEFAULTS,
+  FOCUS_LIMITS,
   THEMES,
   TIME_FORMATS,
   WEEK_STARTS,
@@ -17,6 +19,8 @@ const timeOfDay = { type: String, match: /^([01]\d|2[0-3]):[0-5]\d$/ };
  * Preferences that follow the user to every client. One document per user; `_id` equals the
  * user id.
  */
+const minutes = { min: FOCUS_LIMITS.minMinutes, max: FOCUS_LIMITS.maxMinutes };
+
 const settingsSchema = new mongoose.Schema(
   {
     language: { type: String, enum: SUPPORTED_LANGUAGES, default: DEFAULT_LANGUAGE },
@@ -41,6 +45,18 @@ const settingsSchema = new mongoose.Schema(
     privacy: {
       // Hide journal and mood text in previews, summaries and notifications.
       hideSensitivePreviews: { type: Boolean, default: false },
+    },
+    focus: {
+      // Timer lengths in minutes; a long break follows every `longBreakEvery` focus sessions.
+      focusMinutes: { type: Number, default: FOCUS_DEFAULTS.focusMinutes, ...minutes },
+      shortBreakMinutes: { type: Number, default: FOCUS_DEFAULTS.shortBreakMinutes, ...minutes },
+      longBreakMinutes: { type: Number, default: FOCUS_DEFAULTS.longBreakMinutes, ...minutes },
+      longBreakEvery: {
+        type: Number,
+        default: FOCUS_DEFAULTS.longBreakEvery,
+        min: 1,
+        max: FOCUS_LIMITS.maxLongBreakEvery,
+      },
     },
     dashboard: {
       // The user's order and visibility of dashboard widgets. Bounded by the known widgets.
@@ -79,6 +95,17 @@ export function dashboardLayout(stored = []) {
   ];
 }
 
+/** Timer preferences; accounts created before the timer existed get the defaults. */
+export function focusPreferences(settings) {
+  const stored = settings?.focus ?? {};
+  return {
+    focusMinutes: stored.focusMinutes ?? FOCUS_DEFAULTS.focusMinutes,
+    shortBreakMinutes: stored.shortBreakMinutes ?? FOCUS_DEFAULTS.shortBreakMinutes,
+    longBreakMinutes: stored.longBreakMinutes ?? FOCUS_DEFAULTS.longBreakMinutes,
+    longBreakEvery: stored.longBreakEvery ?? FOCUS_DEFAULTS.longBreakEvery,
+  };
+}
+
 export function serializeSettings(settings) {
   const { notifications, privacy } = settings;
   return {
@@ -105,6 +132,7 @@ export function serializeSettings(settings) {
     privacy: {
       hideSensitivePreviews: privacy.hideSensitivePreviews,
     },
+    focus: focusPreferences(settings),
     dashboard: { widgets: dashboardLayout(settings.dashboard?.widgets) },
   };
 }

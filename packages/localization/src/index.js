@@ -1,0 +1,51 @@
+import enCommon from '../locales/en/common.json' with { type: 'json' };
+import trCommon from '../locales/tr/common.json' with { type: 'json' };
+
+/** Language used when a client expresses no preference. */
+export const DEFAULT_LANGUAGE = 'tr';
+
+/** Languages with a complete catalog. Adding a language means adding a directory and an entry. */
+export const SUPPORTED_LANGUAGES = Object.freeze(['tr', 'en']);
+
+export const LANGUAGE_NAMES = Object.freeze({ tr: 'Türkçe', en: 'English' });
+
+/** BCP 47 locale used for date and number formatting in each language. */
+export const LANGUAGE_LOCALES = Object.freeze({ tr: 'tr-TR', en: 'en-US' });
+
+/** Catalogs in the shape i18next expects: language -> namespace -> messages. */
+export const resources = Object.freeze({
+  tr: { common: trCommon },
+  en: { common: enCommon },
+});
+
+export const NAMESPACES = Object.freeze(Object.keys(resources[DEFAULT_LANGUAGE]));
+
+export function isSupportedLanguage(language) {
+  return SUPPORTED_LANGUAGES.includes(language);
+}
+
+/**
+ * Picks the best supported language from an Accept-Language header or a language tag.
+ * Falls back to the default language.
+ */
+export function resolveLanguage(input) {
+  if (typeof input !== 'string' || input.trim() === '') {
+    return DEFAULT_LANGUAGE;
+  }
+  const candidates = input
+    .split(',')
+    .map((part) => {
+      const [tag, quality] = part.trim().split(';q=');
+      return { tag: tag.toLowerCase(), quality: quality === undefined ? 1 : Number(quality) };
+    })
+    .filter((candidate) => candidate.tag && !Number.isNaN(candidate.quality))
+    .sort((a, b) => b.quality - a.quality);
+
+  for (const { tag } of candidates) {
+    const base = tag.split('-')[0];
+    if (isSupportedLanguage(base)) {
+      return base;
+    }
+  }
+  return DEFAULT_LANGUAGE;
+}

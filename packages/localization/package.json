@@ -1,0 +1,16 @@
+{
+  "name": "@personalitify/localization",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Turkish and English message catalogs for every Personalitify client and the API.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./locales/*": "./locales/*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

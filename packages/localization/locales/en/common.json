@@ -1,0 +1,13 @@
+{
+  "app": {
+    "name": "Personalitify",
+    "tagline": "Your life. Your rhythm. Your progress."
+  },
+  "connection": {
+    "checking": "Checking the server connection…",
+    "online": "Connected to the server",
+    "offline": "The server cannot be reached",
+    "retry": "Try again",
+    "apiVersion": "API version {{version}}"
+  }
+}

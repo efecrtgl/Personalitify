@@ -1,0 +1,13 @@
+{
+  "app": {
+    "name": "Personalitify",
+    "tagline": "Hayatın. Ritmin. İlerlemen."
+  },
+  "connection": {
+    "checking": "Sunucu bağlantısı denetleniyor…",
+    "online": "Sunucuya bağlı",
+    "offline": "Sunucuya ulaşılamıyor",
+    "retry": "Yeniden dene",
+    "apiVersion": "API sürümü {{version}}"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@personalitify/shared-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Language-independent contracts of the Personalitify platform: API constants, error codes, event names and JSON Schemas.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  }
+}

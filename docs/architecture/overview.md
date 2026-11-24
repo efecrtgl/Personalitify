@@ -87,13 +87,13 @@ definitions and domain events:
 
 Layering inside a module:
 
-| Layer      | Responsibility                                                         |
-| ---------- | ---------------------------------------------------------------------- |
-| routes     | HTTP surface, declared with schemas (also feeds the OpenAPI document)  |
-| service    | Domain rules, ownership, orchestration                                 |
-| model      | Mongoose schema, indexes, persistence-level validation                 |
-| schemas    | Request/response validation (zod)                                      |
-| serializer | Shapes internal documents into public API resources                    |
+| Layer      | Responsibility                                                        |
+| ---------- | --------------------------------------------------------------------- |
+| routes     | HTTP surface, declared with schemas (also feeds the OpenAPI document) |
+| service    | Domain rules, ownership, orchestration                                |
+| model      | Mongoose schema, indexes, persistence-level validation                |
+| schemas    | Request/response validation (zod)                                     |
+| serializer | Shapes internal documents into public API resources                   |
 
 Controllers are intentionally thin: a route definition parses input, calls one service function
 and returns the shaped result.
@@ -194,12 +194,12 @@ Details: [synchronization.md](./synchronization.md) and [event-system.md](./even
 
 Four concerns that are kept strictly apart:
 
-| Concern                | What changes                  | Mechanism                                  |
-| ---------------------- | ----------------------------- | ------------------------------------------ |
-| User data sync         | A user's records              | Event log, cursors, WebSocket              |
-| Application updates    | The client binary / bundle    | Release metadata + update manifest API     |
-| Remote configuration   | Tunable values per client     | Versioned configuration documents          |
-| Feature flags          | On/off switches per client    | Targeted flag evaluation                   |
+| Concern              | What changes               | Mechanism                              |
+| -------------------- | -------------------------- | -------------------------------------- |
+| User data sync       | A user's records           | Event log, cursors, WebSocket          |
+| Application updates  | The client binary / bundle | Release metadata + update manifest API |
+| Remote configuration | Tunable values per client  | Versioned configuration documents      |
+| Feature flags        | On/off switches per client | Targeted flag evaluation               |
 
 The backend stores release metadata per application id (`personalitify-web`,
 `personalitify-desktop`, `personalitify-mobile`), channel, platform and architecture. A native

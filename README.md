@@ -19,6 +19,21 @@ istemciler.
 **Durum:** Proje aktif geliştirme aşamasındadır. Tamamlanan aşamalar
 [yol haritasında](docs/roadmap.md) ve [aşama raporlarında](docs/releases/) izlenebilir.
 
+### Hızlı başlangıç
+
+Gereksinimler: Node.js 22+ ve çalışır durumda MongoDB Community Server. Docker gerekmez.
+
+```bash
+git clone https://github.com/efecrtgl/Personalitify.git
+cd Personalitify
+npm install
+npm run dev
+```
+
+Web istemcisi `http://localhost:5173`, API `http://127.0.0.1:4000/api/v1` adresinde açılır.
+Ayrıntılar: [kurulum](docs/development/setup.md) ·
+[sorun giderme](docs/development/troubleshooting.md)
+
 - Mimari: [docs/architecture/overview.md](docs/architecture/overview.md)
 - Mimari kararlar: [docs/architecture/decisions.md](docs/architecture/decisions.md)
 - Katkı rehberi: [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -33,6 +48,21 @@ native desktop application written in Rust and mobile clients in the future.
 
 **Status:** under active development. Completed phases are tracked in the
 [roadmap](docs/roadmap.md) and the [phase reports](docs/releases/).
+
+### Quick start
+
+Requirements: Node.js 22+ and a running MongoDB Community Server. Docker is not needed.
+
+```bash
+git clone https://github.com/efecrtgl/Personalitify.git
+cd Personalitify
+npm install
+npm run dev
+```
+
+The web client opens at `http://localhost:5173`, the API at `http://127.0.0.1:4000/api/v1`.
+Details: [setup](docs/development/setup.md) ·
+[troubleshooting](docs/development/troubleshooting.md)
 
 - Architecture: [docs/architecture/overview.md](docs/architecture/overview.md)
 - Decisions: [docs/architecture/decisions.md](docs/architecture/decisions.md)

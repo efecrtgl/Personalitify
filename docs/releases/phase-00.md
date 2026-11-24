@@ -7,16 +7,16 @@ delivery plan that all later phases follow.
 
 ## Repository audit
 
-| Check            | Result                                                                    |
-| ---------------- | ------------------------------------------------------------------------- |
-| Remote           | `origin` → `https://github.com/efecrtgl/Personalitify.git`                |
-| Branch           | `main`, tracking `origin/main`                                            |
-| Existing commits | `934fb8a` Initial commit · `8ced769` Update README.md                     |
-| Existing files   | `LICENSE` (Apache-2.0, preserved unchanged), `README.md` (stub)           |
-| Working tree     | Clean before modification                                                 |
-| Local toolchain  | Node.js 24.15.0, npm 11.12.1, git 2.54.0                                  |
-| MongoDB          | Community Server running as a Windows service on `127.0.0.1:27017`        |
-| GitHub CLI       | Not installed; publishing uses plain `git` over HTTPS                     |
+| Check            | Result                                                             |
+| ---------------- | ------------------------------------------------------------------ |
+| Remote           | `origin` → `https://github.com/efecrtgl/Personalitify.git`         |
+| Branch           | `main`, tracking `origin/main`                                     |
+| Existing commits | `934fb8a` Initial commit · `8ced769` Update README.md              |
+| Existing files   | `LICENSE` (Apache-2.0, preserved unchanged), `README.md` (stub)    |
+| Working tree     | Clean before modification                                          |
+| Local toolchain  | Node.js 24.15.0, npm 11.12.1, git 2.54.0                           |
+| MongoDB          | Community Server running as a Windows service on `127.0.0.1:27017` |
+| GitHub CLI       | Not installed; publishing uses plain `git` over HTTPS              |
 
 ## Delivered
 
@@ -63,9 +63,9 @@ claimed.
 
 ## Git
 
-| Commit    | Message                                                                  |
-| --------- | ------------------------------------------------------------------------ |
-| `cde5d44` | docs(architecture): establish architecture plan, decisions and roadmap   |
+| Commit    | Message                                                                |
+| --------- | ---------------------------------------------------------------------- |
+| `cde5d44` | docs(architecture): establish architecture plan, decisions and roadmap |
 
 Push status: pushed to `origin/main` (`8ced769..cde5d44`) and verified. This report is
 published in the commit that follows it.

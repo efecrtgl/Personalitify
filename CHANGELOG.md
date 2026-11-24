@@ -38,6 +38,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   rates and weekday breakdowns derived on request; a day view, a management view and a
   detail view with a history grid in the web client. Calendar-date and recurrence rules are
   documented as a platform contract and evaluated in the user's time zone.
+- Phase 5: goals and tasks — short- and long-term goals with four ways of measuring progress
+  (own estimate, milestones, linked tasks, a number), milestones, sub-goals, linked habits,
+  dated reviews and a change history; tasks with priorities, start and due dates, planned
+  time blocks, subtasks, repeating series, postponing that remembers the first due date, a
+  day view with overdue tasks, search and filters; goal and task screens in the web client.
 
 ### Fixed
 

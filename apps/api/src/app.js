@@ -1,32 +1,57 @@
-import { readFileSync } from 'node:fs';
-import { API_PREFIX, ERROR_CODES } from '@personalitify/shared-contracts';
+import { API_PREFIX } from '@personalitify/shared-contracts';
 import express from 'express';
-import { createHealthRouter } from './modules/health/health.routes.js';
-
-const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
+import { generalRateLimit } from './middleware/rate-limit.js';
+import { requestContext } from './middleware/request-context.js';
+import {
+  corsPolicy,
+  rejectOperatorKeys,
+  requireJsonBody,
+  securityHeaders,
+} from './middleware/security.js';
+import { accountRouter } from './modules/account/account.routes.js';
+import { authRouter } from './modules/auth/auth.routes.js';
+import { devicesRouter } from './modules/devices/devices.routes.js';
+import { createDocsRouter } from './modules/docs/docs.routes.js';
+import { healthRouter } from './modules/health/health.routes.js';
+import { settingsRouter } from './modules/settings/settings.routes.js';
+import { usersRouter } from './modules/users/users.routes.js';
 
 export { API_PREFIX };
-export const API_PACKAGE_VERSION = packageJson.version;
+
+/** Routers of all domain modules, in the order they appear in the API reference. */
+const moduleRouters = [
+  healthRouter,
+  authRouter,
+  usersRouter,
+  settingsRouter,
+  devicesRouter,
+  accountRouter,
+];
 
 /** Builds the Express application. Has no network or database side effects. */
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
+  app.set('query parser', 'simple');
 
+  app.use(requestContext);
+  app.use(securityHeaders());
+  app.use(corsPolicy());
+  app.use(generalRateLimit);
+  app.use(requireJsonBody);
   app.use(express.json({ limit: '1mb' }));
+  app.use(rejectOperatorKeys);
 
   const v1 = express.Router();
-  v1.use('/health', createHealthRouter({ version: API_PACKAGE_VERSION }));
+  for (const router of moduleRouters) {
+    v1.use(router);
+  }
+  v1.use(createDocsRouter());
   app.use(API_PREFIX, v1);
 
-  app.use((req, res) => {
-    res.status(404).json({
-      error: {
-        code: ERROR_CODES.ROUTE_NOT_FOUND,
-        message: `No route for ${req.method} ${req.path}`,
-      },
-    });
-  });
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }

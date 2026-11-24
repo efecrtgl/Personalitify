@@ -1,19 +1,227 @@
 @import 'tailwindcss';
 
+/* Dark styles follow the resolved theme on <html data-theme>, not the OS setting directly. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/*
+ * Design tokens.
+ * Components use the semantic Tailwind names below (bg-surface, text-ink-2, border-line …);
+ * raw color values appear only in this file.
+ */
 :root {
-  color-scheme: light dark;
-  font-family:
-    'Inter',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  color-scheme: light;
+
+  --pfy-canvas: #f5f5f7;
+  --pfy-surface: #ffffff;
+  --pfy-surface-2: #f0f0f3;
+  --pfy-surface-3: #e6e6ea;
+  --pfy-line: rgb(0 0 0 / 0.09);
+  --pfy-line-strong: rgb(0 0 0 / 0.16);
+
+  --pfy-ink: #1d1d1f;
+  --pfy-ink-2: #5c5c61;
+  --pfy-ink-3: #86868b;
+
+  --pfy-accent: #0071e3;
+  --pfy-accent-hover: #0064c8;
+  --pfy-accent-soft: rgb(0 113 227 / 0.1);
+  --pfy-on-accent: #ffffff;
+
+  --pfy-success: #1d7d36;
+  --pfy-success-soft: rgb(36 138 61 / 0.12);
+  --pfy-warning: #9a5b00;
+  --pfy-warning-soft: rgb(255 159 10 / 0.16);
+  --pfy-danger: #c9131d;
+  --pfy-danger-hover: #ab0f18;
+  --pfy-danger-soft: rgb(215 0 21 / 0.1);
+  --pfy-on-danger: #ffffff;
+
+  --pfy-overlay: rgb(0 0 0 / 0.32);
+  --pfy-shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 1px rgb(0 0 0 / 0.02);
+  --pfy-shadow-raised: 0 4px 16px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.06);
+  --pfy-shadow-pop: 0 12px 40px rgb(0 0 0 / 0.16), 0 2px 8px rgb(0 0 0 / 0.08);
 }
 
-body {
-  margin: 0;
-  min-height: 100dvh;
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --pfy-canvas: #0d0d0f;
+  --pfy-surface: #1a1a1d;
+  --pfy-surface-2: #242428;
+  --pfy-surface-3: #303035;
+  --pfy-line: rgb(255 255 255 / 0.1);
+  --pfy-line-strong: rgb(255 255 255 / 0.2);
+
+  --pfy-ink: #f5f5f7;
+  --pfy-ink-2: #b0b0b6;
+  --pfy-ink-3: #8a8a90;
+
+  --pfy-accent: #2f9bff;
+  --pfy-accent-hover: #54adff;
+  --pfy-accent-soft: rgb(47 155 255 / 0.16);
+  --pfy-on-accent: #00172e;
+
+  --pfy-success: #3ecf62;
+  --pfy-success-soft: rgb(48 209 88 / 0.16);
+  --pfy-warning: #ffb340;
+  --pfy-warning-soft: rgb(255 159 10 / 0.16);
+  --pfy-danger: #ff6961;
+  --pfy-danger-hover: #ff8a84;
+  --pfy-danger-soft: rgb(255 69 58 / 0.16);
+  --pfy-on-danger: #2b0303;
+
+  --pfy-overlay: rgb(0 0 0 / 0.6);
+  --pfy-shadow-card: 0 0 0 1px rgb(255 255 255 / 0.04);
+  --pfy-shadow-raised: 0 4px 16px rgb(0 0 0 / 0.4);
+  --pfy-shadow-pop: 0 16px 48px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', Inter,
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --color-canvas: var(--pfy-canvas);
+  --color-surface: var(--pfy-surface);
+  --color-surface-2: var(--pfy-surface-2);
+  --color-surface-3: var(--pfy-surface-3);
+  --color-line: var(--pfy-line);
+  --color-line-strong: var(--pfy-line-strong);
+  --color-ink: var(--pfy-ink);
+  --color-ink-2: var(--pfy-ink-2);
+  --color-ink-3: var(--pfy-ink-3);
+  --color-accent: var(--pfy-accent);
+  --color-accent-hover: var(--pfy-accent-hover);
+  --color-accent-soft: var(--pfy-accent-soft);
+  --color-on-accent: var(--pfy-on-accent);
+  --color-success: var(--pfy-success);
+  --color-success-soft: var(--pfy-success-soft);
+  --color-warning: var(--pfy-warning);
+  --color-warning-soft: var(--pfy-warning-soft);
+  --color-danger: var(--pfy-danger);
+  --color-danger-hover: var(--pfy-danger-hover);
+  --color-danger-soft: var(--pfy-danger-soft);
+  --color-on-danger: var(--pfy-on-danger);
+  --color-overlay: var(--pfy-overlay);
+
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --radius-sheet: 1.25rem;
+
+  --shadow-card: var(--pfy-shadow-card);
+  --shadow-raised: var(--pfy-shadow-raised);
+  --shadow-pop: var(--pfy-shadow-pop);
+
+  --text-display: 2rem;
+  --text-display--line-height: 1.15;
+  --text-display--letter-spacing: -0.022em;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.016em;
+  --text-heading: 1.0625rem;
+  --text-heading--line-height: 1.35;
+  --text-heading--letter-spacing: -0.01em;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.5;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--pfy-canvas);
+    color: var(--pfy-ink);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  /* One consistent, visible focus indicator for keyboard users. */
+  :focus-visible {
+    outline: 2px solid var(--pfy-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--pfy-accent-soft);
+  }
+
+  button,
+  [role='button'],
+  summary {
+    cursor: pointer;
+  }
+
+  /* The design system provides its own show/hide control for passwords. */
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes pfy-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes pfy-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pfy-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes pfy-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@utility skeleton {
+  border-radius: var(--radius-control);
+  background: linear-gradient(
+    90deg,
+    var(--pfy-surface-2) 25%,
+    var(--pfy-surface-3) 37%,
+    var(--pfy-surface-2) 63%
+  );
+  background-size: 200% 100%;
+  animation: pfy-shimmer 1.4s linear infinite;
 }

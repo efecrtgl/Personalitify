@@ -40,6 +40,9 @@ const syncCounterSchema = new mongoose.Schema(
   {
     _id: { type: String }, // userId
     seq: { type: Number, required: true, default: 0 },
+    // Events up to this number have been removed by retention. A reader whose position is
+    // lower cannot catch up from the log and starts again from a snapshot.
+    prunedThrough: { type: Number, default: 0 },
   },
   { collection: 'syncCounters', versionKey: false },
 );

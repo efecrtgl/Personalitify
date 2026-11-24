@@ -89,6 +89,10 @@
       "description": "Preferences that follow the user to every client: language, theme, time zone, date and time formats, notification and privacy preferences."
     },
     {
+      "name": "Sync",
+      "description": "Keeps a device that stores its own copy of the data in step with the account. A device starts from a snapshot, then repeatedly pulls the changes after its cursor, pushes the operations it queued while offline, and confirms how far it has come. See docs/architecture/synchronization.md."
+    },
+    {
       "name": "Users",
       "description": "The signed-in account and its profile."
     }
@@ -28935,6 +28939,785 @@
                     "maximum": 9007199254740991
                   }
                 },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/status": {
+      "get": {
+        "operationId": "getSyncStatus",
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Where the account and the calling device stand",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "headSeq": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "The account’s latest position"
+                        },
+                        "oldestCursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Positions below this have left the history; catching up from them is not possible"
+                        },
+                        "retentionDays": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "device": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "cursor": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "The last position this device confirmed"
+                            },
+                            "lastSyncAt": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "behind": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "How many positions the device has not confirmed yet"
+                            },
+                            "canCatchUp": {
+                              "type": "boolean",
+                              "description": "False: the device must start again from a snapshot"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "cursor",
+                            "lastSyncAt",
+                            "behind",
+                            "canCatchUp"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "headSeq",
+                        "oldestCursor",
+                        "retentionDays",
+                        "device"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/snapshot": {
+      "get": {
+        "operationId": "getSyncSnapshot",
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Start a full copy",
+        "description": "Returns the cursor at which the copy starts and what there is to fetch. Fetch every type with `GET /sync/snapshot/{entityType}`, then pull the changes after `cursor`.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "cursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "serverTime": {
+                          "type": "string"
+                        },
+                        "types": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "entityType": {
+                                "type": "string"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "entityType",
+                              "count"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "cursor",
+                        "serverTime",
+                        "types"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/snapshot/{entityType}": {
+      "get": {
+        "operationId": "getSyncSnapshotEntityType",
+        "tags": [
+          "Sync"
+        ],
+        "summary": "One page of the entities of a type",
+        "description": "Live entities only, ordered by id. Pass `next` as `after` for the next page.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entityType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "entityType": {
+                          "type": "string"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          }
+                        },
+                        "next": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "items",
+                        "next"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable — `UNKNOWN_ENTITY_TYPE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/changes": {
+      "get": {
+        "operationId": "getSyncChanges",
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Pull what changed after a cursor",
+        "description": "The latest state of every entity that changed after `cursor`, deleted ones as tombstones, ordered by position. Send the returned `cursor` next time; while `hasMore` is true, ask again at once. Answers `CURSOR_EXPIRED` (410) when the cursor is older than the history that is kept: start again from a snapshot.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "seq": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "Position of the entity’s latest change"
+                              },
+                              "entityType": {
+                                "type": "string"
+                              },
+                              "entityId": {
+                                "type": "string"
+                              },
+                              "version": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "deleted": {
+                                "type": "boolean"
+                              },
+                              "changedAt": {
+                                "type": "string"
+                              },
+                              "data": {
+                                "nullable": true,
+                                "description": "The entity as it is now; null for a deletion",
+                                "type": "object",
+                                "additionalProperties": {}
+                              }
+                            },
+                            "required": [
+                              "seq",
+                              "entityType",
+                              "entityId",
+                              "version",
+                              "deleted",
+                              "changedAt",
+                              "data"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "cursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "The position this answer reaches"
+                        },
+                        "headSeq": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "changes",
+                        "cursor",
+                        "headSeq",
+                        "hasMore"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Gone — `CURSOR_EXPIRED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/ack": {
+      "post": {
+        "operationId": "postSyncAck",
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Confirm how far the device has applied the changes",
+        "description": "A device’s position never moves back; a lower value is ignored.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "headSeq": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "The account’s latest position"
+                        },
+                        "oldestCursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Positions below this have left the history; catching up from them is not possible"
+                        },
+                        "retentionDays": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "device": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "cursor": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "The last position this device confirmed"
+                            },
+                            "lastSyncAt": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "behind": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "How many positions the device has not confirmed yet"
+                            },
+                            "canCatchUp": {
+                              "type": "boolean",
+                              "description": "False: the device must start again from a snapshot"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "cursor",
+                            "lastSyncAt",
+                            "behind",
+                            "canCatchUp"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "headSeq",
+                        "oldestCursor",
+                        "retentionDays",
+                        "device"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cursor": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "cursor"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/push": {
+      "post": {
+        "operationId": "postSyncPush",
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Carry out queued operations",
+        "description": "Each operation is a request the client would have made while online: a method, a path below the API prefix and a body, with an id (`opId`) the client chose. Operations are carried out in order, each exactly like that request, and each gets its own outcome — one failing does not stop the next. Sending an operation again with the same `opId` returns its first outcome (`replayed: true`) without doing anything twice. Sign-in, account, device and synchronization operations cannot be pushed. At most 100 operations per request.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "opId": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "The HTTP status the request would have been answered with"
+                              },
+                              "ok": {
+                                "type": "boolean"
+                              },
+                              "replayed": {
+                                "type": "boolean",
+                                "description": "True: carried out before; this is the stored outcome"
+                              },
+                              "data": {},
+                              "error": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  },
+                                  "details": {}
+                                },
+                                "required": [
+                                  "code",
+                                  "message"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "opId",
+                              "status",
+                              "ok",
+                              "replayed"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "cursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "The account’s position after the operations"
+                        }
+                      },
+                      "required": [
+                        "results",
+                        "cursor"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "operations": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "opId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                          "description": "Chosen by the client; unique per operation"
+                        },
+                        "method": {
+                          "type": "string",
+                          "enum": [
+                            "POST",
+                            "PUT",
+                            "PATCH",
+                            "DELETE"
+                          ]
+                        },
+                        "path": {
+                          "type": "string",
+                          "minLength": 2,
+                          "maxLength": 300,
+                          "pattern": "^\\/[^?#\\s]*$",
+                          "description": "For example `/tasks` or `/tasks/{id}/complete`"
+                        },
+                        "body": {
+                          "type": "object",
+                          "additionalProperties": {}
+                        }
+                      },
+                      "required": [
+                        "opId",
+                        "method",
+                        "path"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "operations"
+                ],
                 "additionalProperties": false
               }
             }

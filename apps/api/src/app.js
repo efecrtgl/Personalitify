@@ -27,6 +27,7 @@ import { journalRouter } from './modules/journal/journal.routes.js';
 import { moodRouter } from './modules/mood/mood.routes.js';
 import { notificationsRouter } from './modules/notifications/notifications.routes.js';
 import { settingsRouter } from './modules/settings/settings.routes.js';
+import { syncRouter } from './modules/sync/sync.routes.js';
 import { tasksRouter } from './modules/tasks/tasks.routes.js';
 import { usersRouter } from './modules/users/users.routes.js';
 
@@ -51,6 +52,7 @@ const moduleRouters = [
   achievementsRouter,
   notificationsRouter,
   eventsRouter,
+  syncRouter,
   devicesRouter,
   accountRouter,
 ];

@@ -29,6 +29,7 @@ async function main() {
   const { startJobs, stopJobs } = await import('./core/jobs.js');
   const { attachRealtime, closeRealtime } = await import('./modules/realtime/realtime.server.js');
   await import('./modules/notifications/notifications.jobs.js');
+  await import('./modules/sync/sync.jobs.js');
 
   const server = createServer(createApp());
   // Pushes the event log to connected clients over the same port.

@@ -45,6 +45,8 @@ const schema = z.object({
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(365).default(30),
   COOKIE_SECURE: booleanFlag,
 
+  SYNC_RETENTION_DAYS: z.coerce.number().int().min(7).max(3650).default(90),
+
   SMTP_HOST: optionalString,
   SMTP_PORT: z.preprocess(emptyToUndefined, z.coerce.number().int().default(587)),
   SMTP_USER: optionalString,
@@ -84,6 +86,10 @@ export function parseEnv(source) {
       accessTtlSeconds: value.ACCESS_TOKEN_TTL_SECONDS,
       refreshTtlDays: value.REFRESH_TOKEN_TTL_DAYS,
       cookieSecure: value.COOKIE_SECURE,
+    }),
+    sync: Object.freeze({
+      // How long the event log and deletion markers are kept for devices that are away.
+      retentionDays: value.SYNC_RETENTION_DAYS,
     }),
     mail: Object.freeze({
       host: value.SMTP_HOST,

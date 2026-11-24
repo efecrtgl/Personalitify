@@ -236,7 +236,8 @@ export function Menu({ trigger, items, align = 'end', label }) {
 }
 
 /** Short explanatory text shown on hover and keyboard focus. */
-export function Tooltip({ content, children, side = 'top' }) {
+// `align`: where the bubble sits against its trigger, `center` or `end`.
+export function Tooltip({ content, children, side = 'top', align = 'center' }) {
   const id = useId();
   return (
     <span className="group/tooltip relative inline-flex">
@@ -245,7 +246,9 @@ export function Tooltip({ content, children, side = 'top' }) {
         id={id}
         role="tooltip"
         className={cn(
-          'pointer-events-none absolute left-1/2 z-50 w-max max-w-56 -translate-x-1/2 rounded-[0.5rem] bg-ink px-2.5 py-1.5 text-caption text-canvas shadow-raised',
+          'pointer-events-none absolute z-50 w-max max-w-56 rounded-[0.5rem] bg-ink px-2.5 py-1.5 text-left text-caption font-normal text-canvas shadow-raised',
+          // `end` keeps the bubble inside the page when its trigger sits at the right edge.
+          align === 'end' ? 'right-0' : 'left-1/2 -translate-x-1/2',
           'opacity-0 transition-opacity duration-150 group-focus-within/tooltip:opacity-100 group-hover/tooltip:opacity-100',
           side === 'top' ? 'bottom-full mb-2' : 'top-full mt-2',
         )}

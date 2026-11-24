@@ -334,25 +334,27 @@ export function WeekWidget({ data }) {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <table className="sr-only">
-        <caption>{t('dashboard:week.tableCaption')}</caption>
-        <thead>
-          <tr>
-            <th scope="col">{t('dashboard:week.day')}</th>
-            <th scope="col">{t('dashboard:week.habitsColumn')}</th>
-            <th scope="col">{t('dashboard:week.tasksColumn')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {days.map((day) => (
-            <tr key={day.date}>
-              <th scope="row">{format.calendarWeekdayDate(day.date)}</th>
-              <td>{t('dashboard:progress.fraction', { done: day.completed, total: day.due })}</td>
-              <td>{day.tasksCompleted}</td>
+      <div className="sr-only">
+        <table>
+          <caption>{t('dashboard:week.tableCaption')}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t('dashboard:week.day')}</th>
+              <th scope="col">{t('dashboard:week.habitsColumn')}</th>
+              <th scope="col">{t('dashboard:week.tasksColumn')}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {days.map((day) => (
+              <tr key={day.date}>
+                <th scope="row">{format.calendarWeekdayDate(day.date)}</th>
+                <td>{t('dashboard:progress.fraction', { done: day.completed, total: day.due })}</td>
+                <td>{day.tasksCompleted}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <p className="mt-2 text-caption text-ink-3">{t('dashboard:week.explanation')}</p>
     </div>
   );
@@ -421,7 +423,7 @@ export function InsightsWidget({ data }) {
             <p className="min-w-0 flex-1 pt-1 text-body text-ink">
               {t(`dashboard:insights.${insight.kind}.text`, params)}
             </p>
-            <Tooltip content={t(`dashboard:insights.${insight.kind}.rule`)}>
+            <Tooltip align="end" content={t(`dashboard:insights.${insight.kind}.rule`)}>
               <button
                 type="button"
                 aria-label={t('dashboard:insights.how')}

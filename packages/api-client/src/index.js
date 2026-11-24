@@ -4,6 +4,7 @@ export { ApiError, CLIENT_ERROR_CODES } from './errors.js';
 export { EventSequencer } from './event-sequencer.js';
 export { createHttpClient } from './http.js';
 export { createRealtime } from './realtime.js';
+export { createSyncReplica } from './sync-replica.js';
 export { createMemoryTokenStore } from './token-store.js';
 
 /**
@@ -75,6 +76,21 @@ export function createApiClient(options) {
       markUnread: (notificationId) => http.post(`/notifications/${notificationId}/unread`),
       markAllRead: () => http.post('/notifications/read-all'),
       remove: (notificationId) => http.delete(`/notifications/${notificationId}`),
+    },
+
+    sync: {
+      /** Where the account and this device stand. */
+      status: () => http.get('/sync/status'),
+      /** Starts a full copy: the cursor it starts at and what there is to fetch. */
+      snapshot: () => http.get('/sync/snapshot'),
+      snapshotPage: (entityType, { after, limit } = {}) =>
+        http.get(`/sync/snapshot/${entityType}`, { query: { after, limit } }),
+      /** The latest state of everything that changed after `cursor`. */
+      changes: ({ cursor, limit } = {}) => http.get('/sync/changes', { query: { cursor, limit } }),
+      /** Confirms how far this device has applied the changes. */
+      ack: (cursor) => http.post('/sync/ack', { cursor }),
+      /** Carries out queued operations `{ opId, method, path, body }`. */
+      push: (operations) => http.post('/sync/push', { operations }),
     },
 
     settings: {

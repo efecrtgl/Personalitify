@@ -11,6 +11,9 @@ export const ENTITY_ACTIONS = Object.freeze(['created', 'updated', 'deleted']);
 export const ENTITY_TYPES = Object.freeze({
   PROFILE: 'profile',
   SETTINGS: 'settings',
+  CATEGORY: 'category',
+  HABIT: 'habit',
+  HABIT_ENTRY: 'habitEntry',
 });
 
 /** Builds an event name such as `habit.updated`. */

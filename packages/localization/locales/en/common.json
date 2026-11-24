@@ -29,7 +29,8 @@
     "habits": "Habits",
     "goals": "Goals",
     "tasks": "Tasks",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "analytics": "Analytics"
   },
   "theme": {
     "label": "Theme",

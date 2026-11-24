@@ -1,0 +1,207 @@
+{
+  "title": "Analytics",
+  "description": "Your habits, tasks and goals, counted from your own records.",
+  "periodLabel": "Period",
+  "period": {
+    "week": "Week",
+    "month": "Month",
+    "quarter": "Quarter",
+    "year": "Year"
+  },
+  "nav": {
+    "previous": "Previous period",
+    "next": "Next period",
+    "current": "This period"
+  },
+  "rangeTitle": "{{from}} – {{to}}",
+  "quarterTitle": "Q{{quarter}} {{year}}",
+  "running": "This period is still running; the numbers show it up to today.",
+  "percent": "{{value}}%",
+  "none": "–",
+  "fraction": "{{done}} / {{total}}",
+  "kpi": {
+    "habitRate": {
+      "label": "Habit completion",
+      "detail": "{{done}} of {{total}} days completed",
+      "empty": "No habits were due in this period",
+      "explain": "Completed days divided by due days. Skipped and postponed days, and a today that is still open, are not counted."
+    },
+    "tasks": {
+      "label": "Tasks completed",
+      "detail": "Previous period: {{value}}",
+      "explain": "Tasks finished on a day of this period."
+    },
+    "onTime": {
+      "label": "Tasks finished on time",
+      "detail": "{{done}} of {{total}} tasks with a due date",
+      "empty": "No task with a due date was finished",
+      "explain": "Tasks finished on or before their due date, divided by all finished tasks that had a due date."
+    },
+    "goals": {
+      "label": "Milestones completed",
+      "detail_one": "{{count}} goal completed",
+      "detail_other": "{{count}} goals completed",
+      "explain": "Milestones and goals marked as completed during this period."
+    }
+  },
+  "change": {
+    "up": "{{value}} points more than the previous period",
+    "down": "{{value}} points less than the previous period",
+    "same": "Same as the previous period",
+    "noPrevious": "Nothing to compare in the previous period"
+  },
+  "how": "How is this calculated?",
+  "charts": {
+    "step": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "habits": {
+      "title": "Habit completion rate",
+      "explain": "Each bar shows the share of due habit days that were completed in that step. Steps without any due habit are empty.",
+      "caption": "Due and completed habit days in each step of the period",
+      "column": "Completed / due",
+      "rate": "Rate",
+      "tooltip": "{{done}} of {{total}} days",
+      "nothingDue": "Nothing due"
+    },
+    "tasks": {
+      "title": "Tasks completed",
+      "explain": "Each bar shows how many tasks were finished in that step.",
+      "caption": "Tasks finished in each step of the period",
+      "column": "Tasks finished",
+      "tooltip_one": "{{count}} task",
+      "tooltip_other": "{{count}} tasks"
+    },
+    "weekday": {
+      "title": "By day of the week",
+      "explain": "The share of habit days that were completed on each weekday of this period. It shows which days come easily and which do not.",
+      "caption": "Due and completed habit days by weekday",
+      "day": "Weekday"
+    }
+  },
+  "habits": {
+    "title": "Habits",
+    "description": "How each habit did in this period, next to the period before.",
+    "empty": "No habit was active in this period",
+    "name": "Habit",
+    "completed": "Completed",
+    "missed": "Missed",
+    "skipped": "Skipped",
+    "rate": "Rate",
+    "previous": "Previous period",
+    "archived": "Archived",
+    "unit": {
+      "days": "{{done}} / {{total}} days",
+      "weeks": "{{done}} / {{total}} weeks",
+      "months": "{{done}} / {{total}} months"
+    },
+    "progressLabel": "{{name}}: {{value}} percent"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "description": "A breakdown of the tasks you finished in this period.",
+    "empty": "No task was finished in this period",
+    "due": "Due in this period",
+    "dueValue": "{{done}} of {{total}} tasks done",
+    "late": "Finished late",
+    "withoutDueDate": "Without a due date",
+    "overdueOpen": "Open and overdue right now",
+    "byPriority": "By priority",
+    "byCategory": "By category",
+    "uncategorized": "No category",
+    "shareLabel": "{{name}}: {{count}} tasks"
+  },
+  "goals": {
+    "title": "Goals",
+    "description": "Your active goals and where they stand against the time that has passed.",
+    "empty": "No active goals",
+    "active_one": "{{count}} active goal",
+    "active_other": "{{count}} active goals",
+    "progressLabel": "Progress of {{title}}",
+    "expected": "Expected by time passed: {{value}}%",
+    "noTarget": "No target date",
+    "daysLeft_one": "{{count}} day left",
+    "daysLeft_other": "{{count}} days left",
+    "overdue_one": "{{count}} day overdue",
+    "overdue_other": "{{count}} days overdue",
+    "dueToday": "Target date is today",
+    "milestones_one": "{{count}} milestone this period",
+    "milestones_other": "{{count}} milestones this period",
+    "tasks_one": "{{count}} linked task finished",
+    "tasks_other": "{{count}} linked tasks finished",
+    "pace": {
+      "ahead": "Ahead",
+      "on_track": "On track",
+      "behind": "Behind"
+    },
+    "paceRule": "Progress is compared with the share of the time from start to target date that has passed. Within ten points it is “On track”, above that “Ahead”, below that “Behind”."
+  },
+  "highlights": {
+    "title": "Period report",
+    "description": "What stands out in this period. Each line comes from a fixed rule.",
+    "empty": "There is not enough data in this period to point anything out.",
+    "habit_rate_up": {
+      "text": "Your habit completion rate rose by {{points}} points over the previous period.",
+      "rule": "Shown when both periods have at least 5 days that could be judged and the difference is at least 5 points."
+    },
+    "habit_rate_down": {
+      "text": "Your habit completion rate fell by {{points}} points from the previous period.",
+      "rule": "Shown when both periods have at least 5 days that could be judged and the difference is at least 5 points."
+    },
+    "top_habit": {
+      "text": "Your most reliable habit is {{name}}: {{percent}}%.",
+      "rule": "The highest rate among habits with at least 3 days that could be judged; shown when it is at least 80%."
+    },
+    "struggling_habit": {
+      "text": "{{name}} had a hard time this period: {{percent}}%, missed {{missed}} times.",
+      "rule": "The lowest rate among habits with at least 3 days that could be judged and a rate below 50%."
+    },
+    "best_weekday": {
+      "text": "Your strongest day is {{weekday}}: {{percent}}%.",
+      "rule": "The highest rate among weekdays with at least 3 habit days; shown when the best and weakest day are at least 15 points apart."
+    },
+    "weakest_weekday": {
+      "text": "Your weakest day is {{weekday}}: {{percent}}%.",
+      "rule": "The lowest rate among weekdays with at least 3 habit days; shown when the best and weakest day are at least 15 points apart."
+    },
+    "tasks_on_time": {
+      "text": "You finished {{onTime}} of {{total}} tasks with a due date on time ({{percent}}%).",
+      "rule": "Shown when at least 5 tasks with a due date were finished in this period."
+    },
+    "tasks_completed_up": {
+      "text": "You finished {{count}} more tasks than in the previous period ({{completed}} in total).",
+      "rule": "Only finished periods are compared; a running period always looks behind."
+    },
+    "tasks_completed_down": {
+      "text": "You finished {{count}} fewer tasks than in the previous period ({{completed}} in total).",
+      "rule": "Only finished periods are compared; a running period always looks behind."
+    },
+    "most_productive_day": {
+      "text": "You finished the most tasks on {{date}}: {{count}} tasks.",
+      "rule": "The single day with the most finished tasks; shown when at least 3 tasks were finished that day."
+    },
+    "goals_completed": {
+      "text_one": "You completed {{count}} goal in this period.",
+      "text_other": "You completed {{count}} goals in this period.",
+      "rule": "Goals whose completion time falls in this period."
+    },
+    "milestones_completed": {
+      "text_one": "You reached {{count}} milestone in this period.",
+      "text_other": "You reached {{count}} milestones in this period.",
+      "rule": "Milestones whose completion time falls in this period."
+    }
+  },
+  "export": {
+    "csv": "Download CSV",
+    "print": "Print",
+    "fileName": "personalitify-analytics-{{from}}-{{to}}",
+    "from": "From",
+    "to": "To",
+    "habitsDue": "Habit days due",
+    "habitsCompleted": "Habit days completed",
+    "habitRate": "Habit rate (%)",
+    "tasksCompleted": "Tasks finished"
+  }
+}

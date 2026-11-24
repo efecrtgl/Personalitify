@@ -1,0 +1,207 @@
+{
+  "title": "Analiz",
+  "description": "Alışkanlıklarınız, görevleriniz ve hedefleriniz; kendi kayıtlarınızdan sayılır.",
+  "periodLabel": "Dönem",
+  "period": {
+    "week": "Hafta",
+    "month": "Ay",
+    "quarter": "Çeyrek",
+    "year": "Yıl"
+  },
+  "nav": {
+    "previous": "Önceki dönem",
+    "next": "Sonraki dönem",
+    "current": "Bu dönem"
+  },
+  "rangeTitle": "{{from}} – {{to}}",
+  "quarterTitle": "{{year}} · {{quarter}}. çeyrek",
+  "running": "Bu dönem sürüyor; sayılar bugüne kadar olanı gösterir.",
+  "percent": "%{{value}}",
+  "none": "–",
+  "fraction": "{{done}} / {{total}}",
+  "kpi": {
+    "habitRate": {
+      "label": "Alışkanlık tamamlama",
+      "detail": "{{total}} günden {{done}} tanesi tamamlandı",
+      "empty": "Bu dönemde zamanı gelen alışkanlık yok",
+      "explain": "Tamamlanan günlerin, zamanı gelen günlere oranı. Atlanan ve ertelenen günler ile henüz bitmemiş bugün sayılmaz."
+    },
+    "tasks": {
+      "label": "Tamamlanan görevler",
+      "detail": "Önceki dönem: {{value}}",
+      "explain": "Bu dönemin bir gününde bitirilen görevler."
+    },
+    "onTime": {
+      "label": "Zamanında biten görevler",
+      "detail": "Son tarihi olan {{total}} görevden {{done}} tanesi",
+      "empty": "Son tarihi olan görev bitirilmedi",
+      "explain": "Son tarihinde ya da daha önce bitirilen görevlerin, son tarihi olup bitirilen görevlere oranı."
+    },
+    "goals": {
+      "label": "Tamamlanan kilometre taşları",
+      "detail_one": "{{count}} hedef tamamlandı",
+      "detail_other": "{{count}} hedef tamamlandı",
+      "explain": "Bu dönemde tamamlandı olarak işaretlenen kilometre taşları ve hedefler."
+    }
+  },
+  "change": {
+    "up": "Önceki döneme göre {{value}} puan fazla",
+    "down": "Önceki döneme göre {{value}} puan az",
+    "same": "Önceki dönemle aynı",
+    "noPrevious": "Önceki dönemde karşılaştıracak veri yok"
+  },
+  "how": "Bu nasıl hesaplanır?",
+  "charts": {
+    "step": {
+      "day": "Gün",
+      "week": "Hafta",
+      "month": "Ay"
+    },
+    "habits": {
+      "title": "Alışkanlık tamamlama oranı",
+      "explain": "Her çubuk, o adımda zamanı gelen alışkanlık günlerinden tamamlananların oranını gösterir. Zamanı gelen alışkanlık olmayan adımlar boştur.",
+      "caption": "Dönemin her adımında zamanı gelen ve tamamlanan alışkanlık günleri",
+      "column": "Tamamlanan / zamanı gelen",
+      "rate": "Oran",
+      "tooltip": "{{total}} günden {{done}} tanesi",
+      "nothingDue": "Zamanı gelen yok"
+    },
+    "tasks": {
+      "title": "Tamamlanan görevler",
+      "explain": "Her çubuk, o adımda bitirilen görevlerin sayısını gösterir.",
+      "caption": "Dönemin her adımında bitirilen görevler",
+      "column": "Bitirilen görevler",
+      "tooltip_one": "{{count}} görev",
+      "tooltip_other": "{{count}} görev"
+    },
+    "weekday": {
+      "title": "Haftanın günlerine göre",
+      "explain": "Bu dönemde her hafta gününe düşen alışkanlık günlerinden tamamlananların oranı. Hangi günlerin daha kolay, hangilerinin daha zor geçtiğini gösterir.",
+      "caption": "Hafta günlerine göre zamanı gelen ve tamamlanan alışkanlık günleri",
+      "day": "Hafta günü"
+    }
+  },
+  "habits": {
+    "title": "Alışkanlıklar",
+    "description": "Her alışkanlığın bu dönemdeki durumu, önceki dönemle birlikte.",
+    "empty": "Bu dönemde etkin bir alışkanlık yok",
+    "name": "Alışkanlık",
+    "completed": "Tamamlanan",
+    "missed": "Kaçırılan",
+    "skipped": "Atlanan",
+    "rate": "Oran",
+    "previous": "Önceki dönem",
+    "archived": "Arşivlendi",
+    "unit": {
+      "days": "{{done}} / {{total}} gün",
+      "weeks": "{{done}} / {{total}} hafta",
+      "months": "{{done}} / {{total}} ay"
+    },
+    "progressLabel": "{{name}}: yüzde {{value}}"
+  },
+  "tasks": {
+    "title": "Görevler",
+    "description": "Bu dönemde bitirdiğiniz görevlerin dağılımı.",
+    "empty": "Bu dönemde bitirilen görev yok",
+    "due": "Son tarihi bu dönemde olanlar",
+    "dueValue": "{{total}} görevden {{done}} tanesi bitti",
+    "late": "Geç bitenler",
+    "withoutDueDate": "Son tarihi olmayanlar",
+    "overdueOpen": "Şu anda gecikmiş açık görevler",
+    "byPriority": "Önceliğe göre",
+    "byCategory": "Kategoriye göre",
+    "uncategorized": "Kategorisiz",
+    "shareLabel": "{{name}}: {{count}} görev"
+  },
+  "goals": {
+    "title": "Hedefler",
+    "description": "Etkin hedefleriniz ve geçen süreye göre nerede oldukları.",
+    "empty": "Etkin hedef yok",
+    "active_one": "{{count}} etkin hedef",
+    "active_other": "{{count}} etkin hedef",
+    "progressLabel": "{{title}} hedefinin ilerlemesi",
+    "expected": "Geçen süreye göre beklenen: %{{value}}",
+    "noTarget": "Hedef tarihi yok",
+    "daysLeft_one": "{{count}} gün kaldı",
+    "daysLeft_other": "{{count}} gün kaldı",
+    "overdue_one": "{{count}} gün gecikti",
+    "overdue_other": "{{count}} gün gecikti",
+    "dueToday": "Hedef tarihi bugün",
+    "milestones_one": "Bu dönemde {{count}} kilometre taşı",
+    "milestones_other": "Bu dönemde {{count}} kilometre taşı",
+    "tasks_one": "{{count}} bağlı görev bitti",
+    "tasks_other": "{{count}} bağlı görev bitti",
+    "pace": {
+      "ahead": "Önde",
+      "on_track": "Yolunda",
+      "behind": "Geride"
+    },
+    "paceRule": "İlerleme yüzdesi, başlangıçtan hedef tarihine kadar geçen sürenin yüzdesiyle karşılaştırılır. On puanlık fark içinde “Yolunda”, daha fazlası “Önde”, daha azı “Geride” sayılır."
+  },
+  "highlights": {
+    "title": "Dönem raporu",
+    "description": "Bu dönemin öne çıkanları. Her biri sabit bir kuralla hesaplanır.",
+    "empty": "Bu dönem için öne çıkarılacak yeterli veri yok.",
+    "habit_rate_up": {
+      "text": "Alışkanlık tamamlama oranınız önceki döneme göre {{points}} puan arttı.",
+      "rule": "İki dönemde de en az 5 değerlendirilebilir gün varsa ve fark en az 5 puansa gösterilir."
+    },
+    "habit_rate_down": {
+      "text": "Alışkanlık tamamlama oranınız önceki döneme göre {{points}} puan düştü.",
+      "rule": "İki dönemde de en az 5 değerlendirilebilir gün varsa ve fark en az 5 puansa gösterilir."
+    },
+    "top_habit": {
+      "text": "En düzenli alışkanlığınız {{name}}: %{{percent}}.",
+      "rule": "En az 3 değerlendirilebilir günü olan alışkanlıklar arasında oranı en yüksek olan; oran en az %80 ise gösterilir."
+    },
+    "struggling_habit": {
+      "text": "{{name}} bu dönemde zorlandı: %{{percent}}, {{missed}} kez kaçırıldı.",
+      "rule": "En az 3 değerlendirilebilir günü olan ve oranı %50'nin altında kalan alışkanlıklar arasında oranı en düşük olan."
+    },
+    "best_weekday": {
+      "text": "En güçlü gününüz {{weekday}}: %{{percent}}.",
+      "rule": "En az 3 alışkanlık günü olan hafta günleri arasında oranı en yüksek olan; en iyi ve en zayıf gün arasında en az 15 puan fark varsa gösterilir."
+    },
+    "weakest_weekday": {
+      "text": "En zayıf gününüz {{weekday}}: %{{percent}}.",
+      "rule": "En az 3 alışkanlık günü olan hafta günleri arasında oranı en düşük olan; en iyi ve en zayıf gün arasında en az 15 puan fark varsa gösterilir."
+    },
+    "tasks_on_time": {
+      "text": "Son tarihi olan {{total}} görevden {{onTime}} tanesini zamanında bitirdiniz (%{{percent}}).",
+      "rule": "Bu dönemde bitirilen ve son tarihi olan en az 5 görev varsa gösterilir."
+    },
+    "tasks_completed_up": {
+      "text": "Önceki döneme göre {{count}} görev daha fazla bitirdiniz (toplam {{completed}}).",
+      "rule": "Yalnızca biten dönemler karşılaştırılır; süren bir dönem her zaman geride görünür."
+    },
+    "tasks_completed_down": {
+      "text": "Önceki döneme göre {{count}} görev daha az bitirdiniz (toplam {{completed}}).",
+      "rule": "Yalnızca biten dönemler karşılaştırılır; süren bir dönem her zaman geride görünür."
+    },
+    "most_productive_day": {
+      "text": "En çok görev bitirdiğiniz gün {{date}}: {{count}} görev.",
+      "rule": "Tek başına en çok görevin bitirildiği gün; o gün en az 3 görev bitirildiyse gösterilir."
+    },
+    "goals_completed": {
+      "text_one": "Bu dönemde {{count}} hedefi tamamladınız.",
+      "text_other": "Bu dönemde {{count}} hedefi tamamladınız.",
+      "rule": "Tamamlanma zamanı bu döneme düşen hedefler."
+    },
+    "milestones_completed": {
+      "text_one": "Bu dönemde {{count}} kilometre taşına ulaştınız.",
+      "text_other": "Bu dönemde {{count}} kilometre taşına ulaştınız.",
+      "rule": "Tamamlanma zamanı bu döneme düşen kilometre taşları."
+    }
+  },
+  "export": {
+    "csv": "CSV indir",
+    "print": "Yazdır",
+    "fileName": "personalitify-analiz-{{from}}-{{to}}",
+    "from": "Başlangıç",
+    "to": "Bitiş",
+    "habitsDue": "Zamanı gelen alışkanlık günleri",
+    "habitsCompleted": "Tamamlanan alışkanlık günleri",
+    "habitRate": "Alışkanlık oranı (%)",
+    "tasksCompleted": "Bitirilen görevler"
+  }
+}

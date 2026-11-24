@@ -157,7 +157,7 @@ function Topbar({ onOpenMenu }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-line bg-canvas/85 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-16 print:hidden shrink-0 items-center gap-3 border-b border-line bg-canvas/85 px-4 backdrop-blur-md sm:px-6 lg:px-8">
       <IconButton
         icon={MenuIcon}
         label={t('common:nav.openMenu')}
@@ -197,7 +197,7 @@ export function AppShell() {
         {t('common:nav.skipToContent')}
       </a>
 
-      <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex">
+      <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex print:hidden">
         <SidebarContent />
       </aside>
       <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />

@@ -54,6 +54,10 @@ export const queryKeys = {
   securityLog: (page) => ['account', 'security-log', page],
   categories: ['categories'],
   dashboard: ['dashboard'],
+  analytics: {
+    all: ['analytics'],
+    overview: (period, date) => ['analytics', 'overview', period, date ?? 'current'],
+  },
   calendar: {
     all: ['calendar'],
     range: (from, to, include) => ['calendar', 'range', from, to, include],

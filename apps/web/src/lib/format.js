@@ -74,6 +74,7 @@ export function createFormatters({ locale, timeZone, timeFormat = '24h', dateFor
   const calendarFull = calendar({ weekday: 'long', day: 'numeric', month: 'long' });
   const calendarShort = calendar({ day: 'numeric', month: 'short' });
   const calendarMonth = calendar({ month: 'long', year: 'numeric' });
+  const calendarMonthShort = calendar({ month: 'short' });
   const weekdayLong = calendar({ weekday: 'long' });
   const weekdayShort = calendar({ weekday: 'short' });
   const weekdayNarrow = calendar({ weekday: 'narrow' });
@@ -101,6 +102,8 @@ export function createFormatters({ locale, timeZone, timeFormat = '24h', dateFor
     calendarShortDate: calendarShort,
     /** The month of a calendar date: November 2026 */
     calendarMonth,
+    /** The month of a calendar date, short: Nov */
+    calendarMonthShort,
     /** Name of an ISO weekday (1 = Monday): `long`, `short` or `narrow`. */
     weekdayName: (weekday, style = 'long') =>
       ({ long: weekdayLong, short: weekdayShort, narrow: weekdayNarrow })[style](

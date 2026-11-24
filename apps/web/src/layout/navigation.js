@@ -1,4 +1,4 @@
-import { House, ListTodo, Repeat, Settings, Target } from 'lucide-react';
+import { CalendarDays, House, ListTodo, Repeat, Settings, Target } from 'lucide-react';
 
 /**
  * Primary navigation. Each module adds its entry here when it ships, so the sidebar never
@@ -9,6 +9,7 @@ export const primaryNavigation = [
   { to: '/habits', labelKey: 'common:nav.habits', icon: Repeat },
   { to: '/tasks', labelKey: 'common:nav.tasks', icon: ListTodo },
   { to: '/goals', labelKey: 'common:nav.goals', icon: Target },
+  { to: '/calendar', labelKey: 'common:nav.calendar', icon: CalendarDays },
 ];
 
 export const secondaryNavigation = [

@@ -1,4 +1,5 @@
 import enAuth from '../locales/en/auth.json' with { type: 'json' };
+import enCalendar from '../locales/en/calendar.json' with { type: 'json' };
 import enCommon from '../locales/en/common.json' with { type: 'json' };
 import enEmails from '../locales/en/emails.json' with { type: 'json' };
 import enErrors from '../locales/en/errors.json' with { type: 'json' };
@@ -8,6 +9,7 @@ import enHome from '../locales/en/home.json' with { type: 'json' };
 import enSettings from '../locales/en/settings.json' with { type: 'json' };
 import enTasks from '../locales/en/tasks.json' with { type: 'json' };
 import trAuth from '../locales/tr/auth.json' with { type: 'json' };
+import trCalendar from '../locales/tr/calendar.json' with { type: 'json' };
 import trCommon from '../locales/tr/common.json' with { type: 'json' };
 import trEmails from '../locales/tr/emails.json' with { type: 'json' };
 import trErrors from '../locales/tr/errors.json' with { type: 'json' };
@@ -32,6 +34,7 @@ export const LANGUAGE_LOCALES = Object.freeze({ tr: 'tr-TR', en: 'en-US' });
 export const resources = Object.freeze({
   tr: {
     auth: trAuth,
+    calendar: trCalendar,
     common: trCommon,
     emails: trEmails,
     errors: trErrors,
@@ -43,6 +46,7 @@ export const resources = Object.freeze({
   },
   en: {
     auth: enAuth,
+    calendar: enCalendar,
     common: enCommon,
     emails: enEmails,
     errors: enErrors,

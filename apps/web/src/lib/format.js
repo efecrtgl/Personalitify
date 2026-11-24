@@ -80,7 +80,19 @@ export function createFormatters({ locale, timeZone, timeFormat = '24h', dateFor
   // 2 January 2023 was a Monday, so adding (weekday - 1) days gives any ISO weekday.
   const dateOfWeekday = (weekday) => `2023-01-0${weekday + 1}`;
 
+  const wallClock = new Intl.DateTimeFormat(locale, {
+    timeZone: 'UTC',
+    hour: hour12 ? 'numeric' : '2-digit',
+    minute: '2-digit',
+    hour12,
+  });
+
   return {
+    /** A wall-clock time (`HH:mm`) in the user's 12- or 24-hour style, with no conversion. */
+    wallTime: (clock) =>
+      wallClock.format(
+        new Date(Date.UTC(2000, 0, 1, Number(clock.slice(0, 2)), Number(clock.slice(3, 5)))),
+      ),
     /** A calendar date: 24 November 2026 */
     calendarDate: calendarLong,
     /** A calendar date: Tuesday, 24 November */

@@ -15,6 +15,7 @@ import { HabitDetailPage } from './pages/habits/HabitDetailPage.jsx';
 import { HabitsManagePage } from './pages/habits/HabitsManagePage.jsx';
 import { HabitsPage } from './pages/habits/HabitsPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
+import { CalendarPage } from './pages/calendar/CalendarPage.jsx';
 import { LoginPage } from './pages/auth/LoginPage.jsx';
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/auth/PasswordPages.jsx';
 import { RegisterPage } from './pages/auth/RegisterPage.jsx';
@@ -89,6 +90,7 @@ export function AppRoutes() {
           <Route path="goals/:goalId" element={<GoalDetailPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="settings/:section" element={<SettingsPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>

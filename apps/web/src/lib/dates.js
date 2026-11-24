@@ -35,6 +35,23 @@ export function startOfWeek(date, weekStart = 1) {
   return addDays(date, -((weekdayOf(date) - weekStart + 7) % 7));
 }
 
+/**
+ * The calendar date it currently is in `timeZone`, by this device's clock.
+ *
+ * Only for choosing which part of a calendar to open first. What counts as "today" for the
+ * user's data is always the `today` returned by the API.
+ */
+export function currentDateInZone(timeZone) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const pick = (type) => parts.find((part) => part.type === type).value;
+  return `${pick('year')}-${pick('month')}-${pick('day')}`;
+}
+
 export function eachDate(from, to) {
   const dates = [];
   for (let date = from; date <= to; date = addDays(date, 1)) dates.push(date);

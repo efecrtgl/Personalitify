@@ -1,0 +1,86 @@
+{
+  "title": "Takvim",
+  "description": "Etkinlikler, planlanan görevler ve alışkanlıklar tek yerde.",
+  "actions": {
+    "new": "Yeni etkinlik",
+    "today": "Bugün"
+  },
+  "views": {
+    "label": "Takvim görünümü",
+    "month": "Ay",
+    "week": "Hafta",
+    "day": "Gün"
+  },
+  "previous": {
+    "month": "Önceki ay",
+    "week": "Önceki hafta",
+    "day": "Önceki gün"
+  },
+  "next": {
+    "month": "Sonraki ay",
+    "week": "Sonraki hafta",
+    "day": "Sonraki gün"
+  },
+  "show": "Göster",
+  "kinds": {
+    "event": "Etkinlik",
+    "task": "Görev",
+    "habit": "Alışkanlık"
+  },
+  "kindsPlural": {
+    "event": "Etkinlikler",
+    "task": "Görevler",
+    "habit": "Alışkanlıklar"
+  },
+  "eventKinds": {
+    "event": "Etkinlik",
+    "block": "Zaman bloğu"
+  },
+  "allDay": "Tüm gün",
+  "more_one": "{{count}} tane daha",
+  "more_other": "{{count}} tane daha",
+  "hint": "Saatler kendi saat diliminizde ({{zone}}) gösterilir. Taşımak için bir etkinliği veya görevi sürükleyin.",
+  "conflict": {
+    "label": "başka bir kayıtla çakışıyor",
+    "warning_one": "Kaydedildi. \"{{title}}\" ile çakışıyor.",
+    "warning_other": "Kaydedildi. \"{{title}}\" dâhil toplam {{count}} kayıtla çakışıyor."
+  },
+  "toast": {
+    "deleted": "Takvimden kaldırıldı"
+  },
+  "form": {
+    "newTitle": "Yeni etkinlik",
+    "editTitle": "Etkinliği düzenle",
+    "seriesNote": "Bu etkinlik tekrarlanıyor. Değişiklikler tüm tekrarlara uygulanır.",
+    "create": "Etkinlik oluştur",
+    "title": "Başlık",
+    "kind": "Tür",
+    "allDay": "Tüm gün",
+    "startDate": "Başlangıç",
+    "startTime": "Başlangıç saati",
+    "endDate": "Bitiş",
+    "endTime": "Bitiş saati",
+    "location": "Konum",
+    "reminder": "Hatırlatıcı",
+    "reminders": {
+      "none": "Hatırlatıcı yok",
+      "0": "Başladığında",
+      "10": "10 dakika önce",
+      "30": "30 dakika önce",
+      "60": "1 saat önce",
+      "1440": "1 gün önce"
+    },
+    "description": "Notlar",
+    "delete": "Sil",
+    "deleteSeries": "Seriyi sil",
+    "deleteOccurrence": "Bu tekrarı sil"
+  },
+  "delete": {
+    "title": "\"{{title}}\" silinsin mi?",
+    "description": "Etkinlik takviminizden kaldırılır.",
+    "seriesTitle": "\"{{title}}\" etkinliğinin tüm tekrarları silinsin mi?",
+    "seriesDescription": "Serinin tamamı takviminizden kaldırılır.",
+    "occurrenceTitle": "\"{{title}}\" etkinliğinin bu tekrarı silinsin mi?",
+    "occurrenceDescription": "Yalnızca bu gün kaldırılır. Serinin geri kalanı durur."
+  }
+}

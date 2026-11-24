@@ -1,0 +1,86 @@
+{
+  "title": "Calendar",
+  "description": "Events, planned tasks and habits in one place.",
+  "actions": {
+    "new": "New event",
+    "today": "Today"
+  },
+  "views": {
+    "label": "Calendar view",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day"
+  },
+  "previous": {
+    "month": "Previous month",
+    "week": "Previous week",
+    "day": "Previous day"
+  },
+  "next": {
+    "month": "Next month",
+    "week": "Next week",
+    "day": "Next day"
+  },
+  "show": "Show",
+  "kinds": {
+    "event": "Event",
+    "task": "Task",
+    "habit": "Habit"
+  },
+  "kindsPlural": {
+    "event": "Events",
+    "task": "Tasks",
+    "habit": "Habits"
+  },
+  "eventKinds": {
+    "event": "Event",
+    "block": "Time block"
+  },
+  "allDay": "All day",
+  "more_one": "{{count}} more",
+  "more_other": "{{count}} more",
+  "hint": "Times are shown in your time zone ({{zone}}). Drag an event or a task to move it.",
+  "conflict": {
+    "label": "overlaps another entry",
+    "warning_one": "Saved. It overlaps \"{{title}}\".",
+    "warning_other": "Saved. It overlaps \"{{title}}\" and {{count}} entries in total."
+  },
+  "toast": {
+    "deleted": "Removed from the calendar"
+  },
+  "form": {
+    "newTitle": "New event",
+    "editTitle": "Edit event",
+    "seriesNote": "This event repeats. Changes apply to every occurrence.",
+    "create": "Create event",
+    "title": "Title",
+    "kind": "Type",
+    "allDay": "All day",
+    "startDate": "Starts",
+    "startTime": "From",
+    "endDate": "Ends",
+    "endTime": "Until",
+    "location": "Location",
+    "reminder": "Reminder",
+    "reminders": {
+      "none": "No reminder",
+      "0": "At the start",
+      "10": "10 minutes before",
+      "30": "30 minutes before",
+      "60": "1 hour before",
+      "1440": "1 day before"
+    },
+    "description": "Notes",
+    "delete": "Delete",
+    "deleteSeries": "Delete series",
+    "deleteOccurrence": "Delete this occurrence"
+  },
+  "delete": {
+    "title": "Delete \"{{title}}\"?",
+    "description": "The event is removed from your calendar.",
+    "seriesTitle": "Delete every occurrence of \"{{title}}\"?",
+    "seriesDescription": "The whole series is removed from your calendar.",
+    "occurrenceTitle": "Delete this occurrence of \"{{title}}\"?",
+    "occurrenceDescription": "Only this day is removed. The rest of the series stays."
+  }
+}

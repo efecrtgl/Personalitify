@@ -244,6 +244,34 @@ Design notes:
 - **Dates are never silently lost.** The first due date survives postponing and editing in
   `originalDueDate`; overdue tasks are a query, not a state that expires.
 
+### `calendarEvents` (synchronized, entity type `calendarEvent`)
+
+| Field                                                             | Notes                                          |
+| ----------------------------------------------------------------- | ---------------------------------------------- |
+| `title`, `description`, `location`, `categoryId`, `color`, `kind` | `kind`: `event`                                | `block` |
+| `allDay`                                                          | All-day events are plain calendar dates        |
+| `timeZone`                                                        | IANA zone the wall-clock times are written in  |
+| `startDate`, `startTime`, `endDate`, `endTime`                    | First (or only) occurrence, in `timeZone`      |
+| `recurring`, `recurrence`, `recurrenceEndDate`                    | Repeating events                               |
+| `excludedDates`                                                   | Occurrences removed from a series; at most 366 |
+| `reminderMinutes`                                                 | Minutes before the start; at most 5            |
+| `taskId`, `habitId`, `goalId`                                     | Optional links                                 |
+
+At most 5000 per user.
+Indexes: `{ userId: 1, deletedAt: 1, recurring: 1, startDate: 1, endDate: 1 }` ·
+`{ userId: 1, categoryId: 1 }` · `{ userId: 1, goalId: 1 }` · `{ userId: 1, taskId: 1 }` ·
+`{ userId: 1, habitId: 1 }`.
+
+Design notes:
+
+- **A repeating event is one document.** Its occurrences are computed when a range is
+  requested, unlike repeating tasks, whose occurrences are separate documents because each
+  one has state of its own (done, notes, checklist). An event occurrence has no state.
+- **Wall-clock time plus zone, not instants.** Storing "10:00 Europe/Istanbul" keeps a
+  series at 10:00 through daylight-saving changes; storing instants would not.
+- **The unified calendar is not stored.** `GET /calendar` builds it per request from
+  events, tasks and habits.
+
 ### References between entities
 
 There are no database-level cascades. `core/entity/references.js` registers, per reference,

@@ -11,6 +11,7 @@ import {
 } from './middleware/security.js';
 import { accountRouter } from './modules/account/account.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { calendarRouter } from './modules/calendar/calendar.routes.js';
 import { categoriesRouter } from './modules/categories/categories.routes.js';
 import { devicesRouter } from './modules/devices/devices.routes.js';
 import { createDocsRouter } from './modules/docs/docs.routes.js';
@@ -33,6 +34,7 @@ const moduleRouters = [
   habitsRouter,
   goalsRouter,
   tasksRouter,
+  calendarRouter,
   devicesRouter,
   accountRouter,
 ];

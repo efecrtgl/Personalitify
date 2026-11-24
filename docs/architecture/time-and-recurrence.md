@@ -83,6 +83,46 @@ Rules are evaluated on calendar dates only (`apps/api/src/core/recurrence.js`:
 `occursOn`, `occurrencesBetween`, `nextOccurrence`, `previousOccurrence`). Clients ask the
 API for occurrences; they do not need their own implementation.
 
+## Calendar events
+
+A timed event is stored as wall-clock times in **its own** time zone:
+
+```json
+{
+  "timeZone": "Europe/Istanbul",
+  "startDate": "2026-11-24",
+  "startTime": "10:00",
+  "endDate": "2026-11-24",
+  "endTime": "11:00"
+}
+```
+
+- Every occurrence of a repeating event is at the same wall-clock time in that zone. A
+  09:00 stand-up in New York is at 14:00 UTC in winter and 13:00 UTC in summer.
+- The API converts each occurrence to instants and to the **viewer's** time zone. A user
+  who travels sees the event at the corresponding local time, possibly on a neighbouring
+  day; the stored event does not change.
+- All-day events are calendar dates and are never shifted.
+- An occurrence of a series is identified by its date in the event's zone
+  (`occurrenceDate`).
+
+### The unified calendar
+
+`GET /calendar?from=…&to=…` returns **items**: events (every occurrence), tasks (by their
+time block, otherwise by their due date) and habits (on the days they are due). Each item
+carries `date`, `startTime`, `endDate`, `endTime` in the viewer's zone and `startsAt`,
+`endsAt` as instants. A client draws from the former and needs no time zone database.
+
+Two timed items conflict when their instants overlap; items that merely touch (one ends
+when the next starts) do not. Habits, all-day items and finished or cancelled tasks never
+conflict. Conflicts are reported, never forbidden.
+
+### Rescheduling
+
+`POST /calendar/events/{id}/move` takes the new date (and optionally time) **as the viewer
+sees them** and keeps the event's length. Moving an occurrence of a repeating event takes
+it out of the series and makes it an event of its own.
+
 ## Habits
 
 ### Schedules

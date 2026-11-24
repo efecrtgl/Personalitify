@@ -20,3 +20,13 @@ export const TASK_STATUSES = Object.freeze(['todo', 'in_progress', 'done', 'canc
 
 /** Statuses of a task that still needs attention. */
 export const OPEN_TASK_STATUSES = Object.freeze(['todo', 'in_progress']);
+
+/**
+ * What a calendar entry is.
+ * - `event`  something that happens at a time: a meeting, an appointment.
+ * - `block`  time the user reserves for themselves: focus time, a workout.
+ */
+export const CALENDAR_EVENT_KINDS = Object.freeze(['event', 'block']);
+
+/** Where an item of the unified calendar comes from. */
+export const CALENDAR_ITEM_KINDS = Object.freeze(['event', 'task', 'habit']);

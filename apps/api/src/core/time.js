@@ -29,6 +29,11 @@ export function localDateInZone(instant, zone) {
   return DateTime.fromJSDate(new Date(instant), { zone }).toISODate();
 }
 
+/** The wall-clock time (`HH:mm`) it is at `instant` in `zone`. */
+export function localTimeInZone(instant, zone) {
+  return DateTime.fromJSDate(new Date(instant), { zone }).toFormat('HH:mm');
+}
+
 /** Today's calendar date in `zone`. */
 export function todayInZone(zone, now = new Date()) {
   return localDateInZone(now, zone);

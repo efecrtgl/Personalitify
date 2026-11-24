@@ -25,6 +25,10 @@
       "description": "Registration, sign-in, token refresh and session management. Access tokens are short-lived JWTs; refresh tokens are opaque, single-use and rotated on every refresh. Browser clients (`clientType: \"web\"`) receive the refresh token as an HttpOnly cookie; all other clients receive it in the response body."
     },
     {
+      "name": "Calendar",
+      "description": "Events and the unified calendar. `GET /calendar` merges events, tasks and habits into display-ready items positioned in the user’s time zone. Timed events keep their wall-clock time in their own zone on every occurrence."
+    },
+    {
       "name": "Categories",
       "description": "User-defined labels shared by habits, goals, tasks and calendar events."
     },
@@ -2035,6 +2039,2509 @@
           },
           "404": {
             "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar": {
+      "get": {
+        "operationId": "getCalendar",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Get the unified calendar for a date range",
+        "description": "At most 62 days. Returns every occurrence of repeating events, tasks by their time block or due date, habits on the days they are due, and the pairs of timed items that overlap.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated item kinds: event, task, habit",
+            "schema": {
+              "default": "event,task,habit",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "from": {
+                          "type": "string"
+                        },
+                        "to": {
+                          "type": "string"
+                        },
+                        "today": {
+                          "type": "string"
+                        },
+                        "timeZone": {
+                          "type": "string",
+                          "description": "The zone all item dates and times are expressed in"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Unique within a response: `<kind>:<sourceId>:<date>`"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "task",
+                                  "habit"
+                                ]
+                              },
+                              "sourceId": {
+                                "type": "string",
+                                "description": "Id of the event, task or habit"
+                              },
+                              "occurrenceDate": {
+                                "nullable": true,
+                                "description": "For events: the occurrence within its series, as a date in the event’s zone",
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "color": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "categoryId": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "eventKind": {
+                                "nullable": true,
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "block"
+                                ]
+                              },
+                              "recurring": {
+                                "type": "boolean"
+                              },
+                              "location": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "nullable": true,
+                                "description": "Task status or habit day state; null for events",
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "todo",
+                                      "in_progress",
+                                      "done",
+                                      "cancelled"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "completed",
+                                      "partial",
+                                      "pending",
+                                      "missed",
+                                      "skipped",
+                                      "postponed",
+                                      "not_due"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "allDay": {
+                                "type": "boolean"
+                              },
+                              "date": {
+                                "type": "string",
+                                "description": "Start date in the viewer’s time zone"
+                              },
+                              "startTime": {
+                                "nullable": true,
+                                "description": "Start time in the viewer’s time zone",
+                                "type": "string"
+                              },
+                              "endDate": {
+                                "type": "string"
+                              },
+                              "endTime": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "startsAt": {
+                                "nullable": true,
+                                "description": "Start instant (UTC); null for all-day items",
+                                "type": "string"
+                              },
+                              "endsAt": {
+                                "nullable": true,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "kind",
+                              "sourceId",
+                              "occurrenceDate",
+                              "title",
+                              "color",
+                              "categoryId",
+                              "eventKind",
+                              "recurring",
+                              "location",
+                              "status",
+                              "allDay",
+                              "date",
+                              "startTime",
+                              "endDate",
+                              "endTime",
+                              "startsAt",
+                              "endsAt"
+                            ],
+                            "additionalProperties": false,
+                            "description": "One entry of the unified calendar, already positioned in the viewer’s time zone. Clients lay items out from `date`, `startTime`, `endDate` and `endTime`."
+                          }
+                        },
+                        "conflicts": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                          },
+                          "description": "Pairs of item ids whose time ranges overlap"
+                        }
+                      },
+                      "required": [
+                        "from",
+                        "to",
+                        "today",
+                        "timeZone",
+                        "items",
+                        "conflicts"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar/events": {
+      "post": {
+        "operationId": "postCalendarEvents",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Create an event",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "location": {
+                              "type": "string"
+                            },
+                            "categoryId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "color": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "event",
+                                "block"
+                              ]
+                            },
+                            "allDay": {
+                              "type": "boolean"
+                            },
+                            "timeZone": {
+                              "type": "string",
+                              "description": "IANA zone the wall-clock times of the event are written in"
+                            },
+                            "startDate": {
+                              "type": "string",
+                              "description": "Date of the first (or only) occurrence, in `timeZone`"
+                            },
+                            "startTime": {
+                              "nullable": true,
+                              "description": "HH:mm; null for all-day events",
+                              "type": "string"
+                            },
+                            "endDate": {
+                              "type": "string",
+                              "description": "Inclusive for all-day events"
+                            },
+                            "endTime": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "recurrence": {
+                              "nullable": true,
+                              "type": "object",
+                              "properties": {
+                                "frequency": {
+                                  "type": "string",
+                                  "enum": [
+                                    "daily",
+                                    "weekly",
+                                    "monthly",
+                                    "yearly"
+                                  ]
+                                },
+                                "interval": {
+                                  "default": 1,
+                                  "description": "Repeat every N days/weeks/months/years",
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 365
+                                },
+                                "weekdays": {
+                                  "default": [],
+                                  "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                                  "maxItems": 7,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 7
+                                  }
+                                },
+                                "monthDays": {
+                                  "default": [],
+                                  "description": "Monthly rules: days of the month; -1 means the last day",
+                                  "maxItems": 31,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 31
+                                      },
+                                      {
+                                        "type": "number",
+                                        "enum": [
+                                          -1
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "frequency",
+                                "interval",
+                                "weekdays",
+                                "monthDays"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Recurrence rule evaluated on calendar dates"
+                            },
+                            "recurrenceEndDate": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "excludedDates": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "Occurrences removed from the series"
+                            },
+                            "reminderMinutes": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            },
+                            "taskId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "habitId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "goalId": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "title",
+                            "description",
+                            "location",
+                            "categoryId",
+                            "color",
+                            "kind",
+                            "allDay",
+                            "timeZone",
+                            "startDate",
+                            "startTime",
+                            "endDate",
+                            "endTime",
+                            "recurrence",
+                            "recurrenceEndDate",
+                            "excludedDates",
+                            "reminderMinutes",
+                            "taskId",
+                            "habitId",
+                            "goalId"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Calendar event"
+                        },
+                        "conflicts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Unique within a response: `<kind>:<sourceId>:<date>`"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "task",
+                                  "habit"
+                                ]
+                              },
+                              "sourceId": {
+                                "type": "string",
+                                "description": "Id of the event, task or habit"
+                              },
+                              "occurrenceDate": {
+                                "nullable": true,
+                                "description": "For events: the occurrence within its series, as a date in the event’s zone",
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "color": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "categoryId": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "eventKind": {
+                                "nullable": true,
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "block"
+                                ]
+                              },
+                              "recurring": {
+                                "type": "boolean"
+                              },
+                              "location": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "nullable": true,
+                                "description": "Task status or habit day state; null for events",
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "todo",
+                                      "in_progress",
+                                      "done",
+                                      "cancelled"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "completed",
+                                      "partial",
+                                      "pending",
+                                      "missed",
+                                      "skipped",
+                                      "postponed",
+                                      "not_due"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "allDay": {
+                                "type": "boolean"
+                              },
+                              "date": {
+                                "type": "string",
+                                "description": "Start date in the viewer’s time zone"
+                              },
+                              "startTime": {
+                                "nullable": true,
+                                "description": "Start time in the viewer’s time zone",
+                                "type": "string"
+                              },
+                              "endDate": {
+                                "type": "string"
+                              },
+                              "endTime": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "startsAt": {
+                                "nullable": true,
+                                "description": "Start instant (UTC); null for all-day items",
+                                "type": "string"
+                              },
+                              "endsAt": {
+                                "nullable": true,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "kind",
+                              "sourceId",
+                              "occurrenceDate",
+                              "title",
+                              "color",
+                              "categoryId",
+                              "eventKind",
+                              "recurring",
+                              "location",
+                              "status",
+                              "allDay",
+                              "date",
+                              "startTime",
+                              "endDate",
+                              "endTime",
+                              "startsAt",
+                              "endsAt"
+                            ],
+                            "additionalProperties": false,
+                            "description": "One entry of the unified calendar, already positioned in the viewer’s time zone. Clients lay items out from `date`, `startTime`, `endDate` and `endTime`."
+                          },
+                          "description": "Other timed items that overlap this event in the coming weeks. A warning only."
+                        }
+                      },
+                      "required": [
+                        "event",
+                        "conflicts"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `ID_ALREADY_EXISTS`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable — `LIMIT_EXCEEDED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Optional client-generated id",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "description": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "location": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "categoryId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "color": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$",
+                    "description": "Color as #RRGGBB"
+                  },
+                  "kind": {
+                    "default": "event",
+                    "type": "string",
+                    "enum": [
+                      "event",
+                      "block"
+                    ]
+                  },
+                  "allDay": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "timeZone": {
+                    "description": "Defaults to the user’s time zone",
+                    "type": "string",
+                    "maxLength": 64
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "startTime": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                    "description": "Time of day, HH:mm (24-hour)"
+                  },
+                  "endDate": {
+                    "description": "Defaults to the start date",
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "endTime": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                    "description": "Time of day, HH:mm (24-hour)"
+                  },
+                  "recurrence": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "object",
+                    "properties": {
+                      "frequency": {
+                        "type": "string",
+                        "enum": [
+                          "daily",
+                          "weekly",
+                          "monthly",
+                          "yearly"
+                        ]
+                      },
+                      "interval": {
+                        "default": 1,
+                        "description": "Repeat every N days/weeks/months/years",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 365
+                      },
+                      "weekdays": {
+                        "default": [],
+                        "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                        "maxItems": 7,
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 7
+                        }
+                      },
+                      "monthDays": {
+                        "default": [],
+                        "description": "Monthly rules: days of the month; -1 means the last day",
+                        "maxItems": 31,
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 31
+                            },
+                            {
+                              "type": "number",
+                              "enum": [
+                                -1
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "frequency"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Recurrence rule evaluated on calendar dates"
+                  },
+                  "recurrenceEndDate": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "reminderMinutes": {
+                    "default": [],
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 40320
+                    }
+                  },
+                  "taskId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "habitId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "goalId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  }
+                },
+                "required": [
+                  "title",
+                  "startDate"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar/events/{eventId}": {
+      "get": {
+        "operationId": "getCalendarEventsEventId",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Get an event",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "location": {
+                          "type": "string"
+                        },
+                        "categoryId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "color": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "event",
+                            "block"
+                          ]
+                        },
+                        "allDay": {
+                          "type": "boolean"
+                        },
+                        "timeZone": {
+                          "type": "string",
+                          "description": "IANA zone the wall-clock times of the event are written in"
+                        },
+                        "startDate": {
+                          "type": "string",
+                          "description": "Date of the first (or only) occurrence, in `timeZone`"
+                        },
+                        "startTime": {
+                          "nullable": true,
+                          "description": "HH:mm; null for all-day events",
+                          "type": "string"
+                        },
+                        "endDate": {
+                          "type": "string",
+                          "description": "Inclusive for all-day events"
+                        },
+                        "endTime": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "recurrence": {
+                          "nullable": true,
+                          "type": "object",
+                          "properties": {
+                            "frequency": {
+                              "type": "string",
+                              "enum": [
+                                "daily",
+                                "weekly",
+                                "monthly",
+                                "yearly"
+                              ]
+                            },
+                            "interval": {
+                              "default": 1,
+                              "description": "Repeat every N days/weeks/months/years",
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 365
+                            },
+                            "weekdays": {
+                              "default": [],
+                              "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                              "maxItems": 7,
+                              "type": "array",
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 7
+                              }
+                            },
+                            "monthDays": {
+                              "default": [],
+                              "description": "Monthly rules: days of the month; -1 means the last day",
+                              "maxItems": 31,
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 31
+                                  },
+                                  {
+                                    "type": "number",
+                                    "enum": [
+                                      -1
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "frequency",
+                            "interval",
+                            "weekdays",
+                            "monthDays"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Recurrence rule evaluated on calendar dates"
+                        },
+                        "recurrenceEndDate": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "excludedDates": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Occurrences removed from the series"
+                        },
+                        "reminderMinutes": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          }
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "title",
+                        "description",
+                        "location",
+                        "categoryId",
+                        "color",
+                        "kind",
+                        "allDay",
+                        "timeZone",
+                        "startDate",
+                        "startTime",
+                        "endDate",
+                        "endTime",
+                        "recurrence",
+                        "recurrenceEndDate",
+                        "excludedDates",
+                        "reminderMinutes",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Calendar event"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchCalendarEventsEventId",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Update an event",
+        "description": "Partial update of the event, or of the whole series for a repeating event. `recurrence: null` ends the series.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "location": {
+                              "type": "string"
+                            },
+                            "categoryId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "color": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "event",
+                                "block"
+                              ]
+                            },
+                            "allDay": {
+                              "type": "boolean"
+                            },
+                            "timeZone": {
+                              "type": "string",
+                              "description": "IANA zone the wall-clock times of the event are written in"
+                            },
+                            "startDate": {
+                              "type": "string",
+                              "description": "Date of the first (or only) occurrence, in `timeZone`"
+                            },
+                            "startTime": {
+                              "nullable": true,
+                              "description": "HH:mm; null for all-day events",
+                              "type": "string"
+                            },
+                            "endDate": {
+                              "type": "string",
+                              "description": "Inclusive for all-day events"
+                            },
+                            "endTime": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "recurrence": {
+                              "nullable": true,
+                              "type": "object",
+                              "properties": {
+                                "frequency": {
+                                  "type": "string",
+                                  "enum": [
+                                    "daily",
+                                    "weekly",
+                                    "monthly",
+                                    "yearly"
+                                  ]
+                                },
+                                "interval": {
+                                  "default": 1,
+                                  "description": "Repeat every N days/weeks/months/years",
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 365
+                                },
+                                "weekdays": {
+                                  "default": [],
+                                  "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                                  "maxItems": 7,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 7
+                                  }
+                                },
+                                "monthDays": {
+                                  "default": [],
+                                  "description": "Monthly rules: days of the month; -1 means the last day",
+                                  "maxItems": 31,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 31
+                                      },
+                                      {
+                                        "type": "number",
+                                        "enum": [
+                                          -1
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "frequency",
+                                "interval",
+                                "weekdays",
+                                "monthDays"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Recurrence rule evaluated on calendar dates"
+                            },
+                            "recurrenceEndDate": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "excludedDates": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "Occurrences removed from the series"
+                            },
+                            "reminderMinutes": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            },
+                            "taskId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "habitId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "goalId": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "title",
+                            "description",
+                            "location",
+                            "categoryId",
+                            "color",
+                            "kind",
+                            "allDay",
+                            "timeZone",
+                            "startDate",
+                            "startTime",
+                            "endDate",
+                            "endTime",
+                            "recurrence",
+                            "recurrenceEndDate",
+                            "excludedDates",
+                            "reminderMinutes",
+                            "taskId",
+                            "habitId",
+                            "goalId"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Calendar event"
+                        },
+                        "conflicts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Unique within a response: `<kind>:<sourceId>:<date>`"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "task",
+                                  "habit"
+                                ]
+                              },
+                              "sourceId": {
+                                "type": "string",
+                                "description": "Id of the event, task or habit"
+                              },
+                              "occurrenceDate": {
+                                "nullable": true,
+                                "description": "For events: the occurrence within its series, as a date in the event’s zone",
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "color": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "categoryId": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "eventKind": {
+                                "nullable": true,
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "block"
+                                ]
+                              },
+                              "recurring": {
+                                "type": "boolean"
+                              },
+                              "location": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "nullable": true,
+                                "description": "Task status or habit day state; null for events",
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "todo",
+                                      "in_progress",
+                                      "done",
+                                      "cancelled"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "completed",
+                                      "partial",
+                                      "pending",
+                                      "missed",
+                                      "skipped",
+                                      "postponed",
+                                      "not_due"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "allDay": {
+                                "type": "boolean"
+                              },
+                              "date": {
+                                "type": "string",
+                                "description": "Start date in the viewer’s time zone"
+                              },
+                              "startTime": {
+                                "nullable": true,
+                                "description": "Start time in the viewer’s time zone",
+                                "type": "string"
+                              },
+                              "endDate": {
+                                "type": "string"
+                              },
+                              "endTime": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "startsAt": {
+                                "nullable": true,
+                                "description": "Start instant (UTC); null for all-day items",
+                                "type": "string"
+                              },
+                              "endsAt": {
+                                "nullable": true,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "kind",
+                              "sourceId",
+                              "occurrenceDate",
+                              "title",
+                              "color",
+                              "categoryId",
+                              "eventKind",
+                              "recurring",
+                              "location",
+                              "status",
+                              "allDay",
+                              "date",
+                              "startTime",
+                              "endDate",
+                              "endTime",
+                              "startsAt",
+                              "endsAt"
+                            ],
+                            "additionalProperties": false,
+                            "description": "One entry of the unified calendar, already positioned in the viewer’s time zone. Clients lay items out from `date`, `startTime`, `endDate` and `endTime`."
+                          },
+                          "description": "Other timed items that overlap this event in the coming weeks. A warning only."
+                        }
+                      },
+                      "required": [
+                        "event",
+                        "conflicts"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `VERSION_CONFLICT`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "location": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "categoryId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "color": {
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$",
+                    "description": "Color as #RRGGBB"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "event",
+                      "block"
+                    ]
+                  },
+                  "allDay": {
+                    "type": "boolean"
+                  },
+                  "timeZone": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "IANA time zone name, e.g. Europe/Istanbul"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "startTime": {
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                    "description": "Time of day, HH:mm (24-hour)"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "endTime": {
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                    "description": "Time of day, HH:mm (24-hour)"
+                  },
+                  "recurrence": {
+                    "nullable": true,
+                    "type": "object",
+                    "properties": {
+                      "frequency": {
+                        "type": "string",
+                        "enum": [
+                          "daily",
+                          "weekly",
+                          "monthly",
+                          "yearly"
+                        ]
+                      },
+                      "interval": {
+                        "default": 1,
+                        "description": "Repeat every N days/weeks/months/years",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 365
+                      },
+                      "weekdays": {
+                        "default": [],
+                        "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                        "maxItems": 7,
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 7
+                        }
+                      },
+                      "monthDays": {
+                        "default": [],
+                        "description": "Monthly rules: days of the month; -1 means the last day",
+                        "maxItems": 31,
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 31
+                            },
+                            {
+                              "type": "number",
+                              "enum": [
+                                -1
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "frequency"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Recurrence rule evaluated on calendar dates"
+                  },
+                  "recurrenceEndDate": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "reminderMinutes": {
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 40320
+                    }
+                  },
+                  "taskId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "habitId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "goalId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "baseVersion": {
+                    "description": "Version of the resource this change was based on. When it is stale the server merges non-overlapping fields or answers 409 VERSION_CONFLICT. Omit to apply to the latest version.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCalendarEventsEventId",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Delete an event (the whole series for a repeating event)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar/events/{eventId}/move": {
+      "post": {
+        "operationId": "postCalendarEventsEventIdMove",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Reschedule an event by day and time",
+        "description": "Places the event on `date` (and `startTime`) of the user’s calendar, keeping its length. For a repeating event `occurrenceDate` is required: that occurrence leaves the series and becomes an event of its own, which is returned.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "location": {
+                              "type": "string"
+                            },
+                            "categoryId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "color": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "event",
+                                "block"
+                              ]
+                            },
+                            "allDay": {
+                              "type": "boolean"
+                            },
+                            "timeZone": {
+                              "type": "string",
+                              "description": "IANA zone the wall-clock times of the event are written in"
+                            },
+                            "startDate": {
+                              "type": "string",
+                              "description": "Date of the first (or only) occurrence, in `timeZone`"
+                            },
+                            "startTime": {
+                              "nullable": true,
+                              "description": "HH:mm; null for all-day events",
+                              "type": "string"
+                            },
+                            "endDate": {
+                              "type": "string",
+                              "description": "Inclusive for all-day events"
+                            },
+                            "endTime": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "recurrence": {
+                              "nullable": true,
+                              "type": "object",
+                              "properties": {
+                                "frequency": {
+                                  "type": "string",
+                                  "enum": [
+                                    "daily",
+                                    "weekly",
+                                    "monthly",
+                                    "yearly"
+                                  ]
+                                },
+                                "interval": {
+                                  "default": 1,
+                                  "description": "Repeat every N days/weeks/months/years",
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 365
+                                },
+                                "weekdays": {
+                                  "default": [],
+                                  "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                                  "maxItems": 7,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 7
+                                  }
+                                },
+                                "monthDays": {
+                                  "default": [],
+                                  "description": "Monthly rules: days of the month; -1 means the last day",
+                                  "maxItems": 31,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 31
+                                      },
+                                      {
+                                        "type": "number",
+                                        "enum": [
+                                          -1
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "frequency",
+                                "interval",
+                                "weekdays",
+                                "monthDays"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Recurrence rule evaluated on calendar dates"
+                            },
+                            "recurrenceEndDate": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "excludedDates": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "Occurrences removed from the series"
+                            },
+                            "reminderMinutes": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            },
+                            "taskId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "habitId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "goalId": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "title",
+                            "description",
+                            "location",
+                            "categoryId",
+                            "color",
+                            "kind",
+                            "allDay",
+                            "timeZone",
+                            "startDate",
+                            "startTime",
+                            "endDate",
+                            "endTime",
+                            "recurrence",
+                            "recurrenceEndDate",
+                            "excludedDates",
+                            "reminderMinutes",
+                            "taskId",
+                            "habitId",
+                            "goalId"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Calendar event"
+                        },
+                        "conflicts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Unique within a response: `<kind>:<sourceId>:<date>`"
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "task",
+                                  "habit"
+                                ]
+                              },
+                              "sourceId": {
+                                "type": "string",
+                                "description": "Id of the event, task or habit"
+                              },
+                              "occurrenceDate": {
+                                "nullable": true,
+                                "description": "For events: the occurrence within its series, as a date in the event’s zone",
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "color": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "categoryId": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "eventKind": {
+                                "nullable": true,
+                                "type": "string",
+                                "enum": [
+                                  "event",
+                                  "block"
+                                ]
+                              },
+                              "recurring": {
+                                "type": "boolean"
+                              },
+                              "location": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "nullable": true,
+                                "description": "Task status or habit day state; null for events",
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "todo",
+                                      "in_progress",
+                                      "done",
+                                      "cancelled"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "completed",
+                                      "partial",
+                                      "pending",
+                                      "missed",
+                                      "skipped",
+                                      "postponed",
+                                      "not_due"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "allDay": {
+                                "type": "boolean"
+                              },
+                              "date": {
+                                "type": "string",
+                                "description": "Start date in the viewer’s time zone"
+                              },
+                              "startTime": {
+                                "nullable": true,
+                                "description": "Start time in the viewer’s time zone",
+                                "type": "string"
+                              },
+                              "endDate": {
+                                "type": "string"
+                              },
+                              "endTime": {
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "startsAt": {
+                                "nullable": true,
+                                "description": "Start instant (UTC); null for all-day items",
+                                "type": "string"
+                              },
+                              "endsAt": {
+                                "nullable": true,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "kind",
+                              "sourceId",
+                              "occurrenceDate",
+                              "title",
+                              "color",
+                              "categoryId",
+                              "eventKind",
+                              "recurring",
+                              "location",
+                              "status",
+                              "allDay",
+                              "date",
+                              "startTime",
+                              "endDate",
+                              "endTime",
+                              "startsAt",
+                              "endsAt"
+                            ],
+                            "additionalProperties": false,
+                            "description": "One entry of the unified calendar, already positioned in the viewer’s time zone. Clients lay items out from `date`, `startTime`, `endDate` and `endTime`."
+                          },
+                          "description": "Other timed items that overlap this event in the coming weeks. A warning only."
+                        }
+                      },
+                      "required": [
+                        "event",
+                        "conflicts"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "New start date in the user’s time zone"
+                  },
+                  "startTime": {
+                    "description": "New start time in the user’s time zone; omitted keeps the time",
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                  },
+                  "occurrenceDate": {
+                    "description": "Which occurrence of a repeating event is moved",
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  }
+                },
+                "required": [
+                  "date"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar/events/{eventId}/occurrences/{date}": {
+      "delete": {
+        "operationId": "deleteCalendarEventsEventIdOccurrencesDate",
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Remove one occurrence of a repeating event",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "location": {
+                          "type": "string"
+                        },
+                        "categoryId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "color": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "event",
+                            "block"
+                          ]
+                        },
+                        "allDay": {
+                          "type": "boolean"
+                        },
+                        "timeZone": {
+                          "type": "string",
+                          "description": "IANA zone the wall-clock times of the event are written in"
+                        },
+                        "startDate": {
+                          "type": "string",
+                          "description": "Date of the first (or only) occurrence, in `timeZone`"
+                        },
+                        "startTime": {
+                          "nullable": true,
+                          "description": "HH:mm; null for all-day events",
+                          "type": "string"
+                        },
+                        "endDate": {
+                          "type": "string",
+                          "description": "Inclusive for all-day events"
+                        },
+                        "endTime": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "recurrence": {
+                          "nullable": true,
+                          "type": "object",
+                          "properties": {
+                            "frequency": {
+                              "type": "string",
+                              "enum": [
+                                "daily",
+                                "weekly",
+                                "monthly",
+                                "yearly"
+                              ]
+                            },
+                            "interval": {
+                              "default": 1,
+                              "description": "Repeat every N days/weeks/months/years",
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 365
+                            },
+                            "weekdays": {
+                              "default": [],
+                              "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+                              "maxItems": 7,
+                              "type": "array",
+                              "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 7
+                              }
+                            },
+                            "monthDays": {
+                              "default": [],
+                              "description": "Monthly rules: days of the month; -1 means the last day",
+                              "maxItems": 31,
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 31
+                                  },
+                                  {
+                                    "type": "number",
+                                    "enum": [
+                                      -1
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "frequency",
+                            "interval",
+                            "weekdays",
+                            "monthDays"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Recurrence rule evaluated on calendar dates"
+                        },
+                        "recurrenceEndDate": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "excludedDates": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Occurrences removed from the series"
+                        },
+                        "reminderMinutes": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          }
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "title",
+                        "description",
+                        "location",
+                        "categoryId",
+                        "color",
+                        "kind",
+                        "allDay",
+                        "timeZone",
+                        "startDate",
+                        "startTime",
+                        "endDate",
+                        "endTime",
+                        "recurrence",
+                        "recurrenceEndDate",
+                        "excludedDates",
+                        "reminderMinutes",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Calendar event"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `INVALID_STATE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable — `LIMIT_EXCEEDED`",
             "content": {
               "application/json": {
                 "schema": {

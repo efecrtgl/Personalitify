@@ -55,6 +55,9 @@ async function main() {
       await disconnectDatabase();
       process.exit(0);
     });
+    // Idle keep-alive connections would otherwise hold the port until they time out, which
+    // makes a restarting development server collide with its own predecessor.
+    server.closeIdleConnections();
     setTimeout(() => process.exit(1), 10_000).unref();
   };
   process.on('SIGINT', () => shutdown('SIGINT'));

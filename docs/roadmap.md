@@ -10,7 +10,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 1     | Monorepo and development infrastructure          | Done    | [phase-01](./releases/phase-01.md) |
 | 2     | Backend core and security                        | Done    | [phase-02](./releases/phase-02.md) |
 | 3     | Frontend foundation and design system            | Done    | [phase-03](./releases/phase-03.md) |
-| 4     | Habits and routines                              | Planned |                                    |
+| 4     | Habits and routines                              | Done    | [phase-04](./releases/phase-04.md) |
 | 5     | Goals and tasks                                  | Planned |                                    |
 | 6     | Calendar and planning                            | Planned |                                    |
 | 7     | Personal dashboard                               | Planned |                                    |

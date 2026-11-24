@@ -20,8 +20,8 @@ src/
 └─ pages/       One directory per area of the product.
 ```
 
-Dependencies point downward only: pages use layout, hooks and ui; `ui/` imports nothing from
-the rest of the application.
+Dependencies point downward only: pages use layout, hooks and ui; `ui/` depends on nothing
+but the small presentation helpers in `lib/` (class names, the icon map).
 
 ## Talking to the backend
 

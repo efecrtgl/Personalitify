@@ -73,6 +73,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   achievements and for timers that ran out (which the server now ends on time by itself);
   notification preferences and quiet hours honoured; a bell with an unread count in the
   web client.
+- Phase 12: event infrastructure and realtime — the event log readable over REST
+  (`GET /events`), pushed to every device of the user over Socket.IO with token
+  authentication, replay of missed events by sequence number, and connections that end
+  with their token or their session; a gap-aware reader in the API client that delivers
+  every event once and in order; the web client now updates live and announces new
+  notifications.
 
 ### Fixed
 

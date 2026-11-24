@@ -18,7 +18,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 9     | Focus, journal and mood                          | Done    | [phase-09](./releases/phase-09.md) |
 | 10    | Achievements and gamification                    | Done    | [phase-10](./releases/phase-10.md) |
 | 11    | Notifications and background jobs                | Done    | [phase-11](./releases/phase-11.md) |
-| 12    | Event infrastructure and real-time communication | Planned |                                    |
+| 12    | Event infrastructure and real-time communication | Done    | [phase-12](./releases/phase-12.md) |
 | 13    | Synchronization engine                           | Planned |                                    |
 | 14    | Application updates and remote configuration     | Planned |                                    |
 | 15    | API SDK and Rust compatibility                   | Planned |                                    |

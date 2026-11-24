@@ -59,6 +59,6 @@ suggestion; any kind can be started at any time.
 ## Other clients
 
 The same contract serves the planned desktop client: it needs no timer state of its own
-beyond the last `GET /focus` answer and the clock difference. From Phase 12 the session's
-changes also arrive as `focusSession.*` events, so an open client can follow a timer that
-was started, paused or finished on another device without polling.
+beyond the last `GET /focus` answer and the clock difference. The session's changes also
+arrive as `focusSession.*` events over the realtime connection, so an open client follows a
+timer that was started, paused or finished on another device without polling.

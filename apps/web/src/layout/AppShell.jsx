@@ -11,6 +11,7 @@ import { Menu } from '../ui/overlays.jsx';
 import { Brand } from './Brand.jsx';
 import { EmailVerificationBanner } from './EmailVerificationBanner.jsx';
 import { primaryNavigation, secondaryNavigation } from './navigation.js';
+import { NotificationsMenu } from './NotificationsMenu.jsx';
 import { ThemeMenu } from './PreferenceMenus.jsx';
 
 function NavItem({ item, onNavigate }) {
@@ -167,6 +168,7 @@ function Topbar({ onOpenMenu }) {
       <p className="min-w-0 flex-1 truncate text-body font-medium text-ink-2 first-letter:uppercase">
         <time dateTime={now.toISOString()}>{format.weekdayDate(now)}</time>
       </p>
+      <NotificationsMenu />
       <ThemeMenu />
       <UserMenu />
     </header>

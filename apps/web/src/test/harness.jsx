@@ -153,6 +153,7 @@ export const signedInRoutes = (me = account()) => ({
   'POST /auth/refresh': () => ok(tokens()),
   'GET /users/me': () => ok(me),
   'GET /dashboard': () => ok(emptyDashboard()),
+  'GET /notifications': () => ok([], { page: 1, limit: 20, total: 0, totalPages: 1, unread: 0 }),
   'GET /categories': () => ok([]),
   'GET /goals': () => ok([]),
 });

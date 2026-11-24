@@ -135,6 +135,7 @@ function useDashboardRefresh(queryClient) {
           queryClient.invalidateQueries({ queryKey: queryKeys.analytics.all });
           queryClient.invalidateQueries({ queryKey: queryKeys.focus.state });
           queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
+          queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
         }
       }),
     [queryClient],

@@ -11,6 +11,7 @@ import enGoals from '../locales/en/goals.json' with { type: 'json' };
 import enHabits from '../locales/en/habits.json' with { type: 'json' };
 import enJournal from '../locales/en/journal.json' with { type: 'json' };
 import enMood from '../locales/en/mood.json' with { type: 'json' };
+import enNotifications from '../locales/en/notifications.json' with { type: 'json' };
 import enSettings from '../locales/en/settings.json' with { type: 'json' };
 import enTasks from '../locales/en/tasks.json' with { type: 'json' };
 import trAchievements from '../locales/tr/achievements.json' with { type: 'json' };
@@ -26,6 +27,7 @@ import trGoals from '../locales/tr/goals.json' with { type: 'json' };
 import trHabits from '../locales/tr/habits.json' with { type: 'json' };
 import trJournal from '../locales/tr/journal.json' with { type: 'json' };
 import trMood from '../locales/tr/mood.json' with { type: 'json' };
+import trNotifications from '../locales/tr/notifications.json' with { type: 'json' };
 import trSettings from '../locales/tr/settings.json' with { type: 'json' };
 import trTasks from '../locales/tr/tasks.json' with { type: 'json' };
 
@@ -56,6 +58,7 @@ export const resources = Object.freeze({
     habits: trHabits,
     journal: trJournal,
     mood: trMood,
+    notifications: trNotifications,
     settings: trSettings,
     tasks: trTasks,
   },
@@ -73,6 +76,7 @@ export const resources = Object.freeze({
     habits: enHabits,
     journal: enJournal,
     mood: enMood,
+    notifications: enNotifications,
     settings: enSettings,
     tasks: enTasks,
   },

@@ -1,0 +1,44 @@
+{
+  "title": "Bildirimler",
+  "open": "Bildirimler",
+  "openUnread_one": "Bildirimler, {{count}} okunmamış",
+  "openUnread_other": "Bildirimler, {{count}} okunmamış",
+  "badgeMore": "9+",
+  "markAllRead": "Tümünü okundu işaretle",
+  "empty": "Henüz bildirim yok",
+  "emptyDescription": "Hatırlatmalar ve açılan başarılar burada görünür.",
+  "settings": "Bildirim ayarları",
+  "unread": "Okunmamış",
+  "delete": "Bildirimi sil",
+  "loadError": "Bildirimler yüklenemedi.",
+  "kinds": {
+    "habit_reminder": "{{name}} için zaman geldi ({{time}}).",
+    "task_due": "“{{title}}” görevinin saati geldi ({{time}}).",
+    "tasks_today": {
+      "both": "Bugün için {{due}} görev var; {{overdue}} görev gecikmiş.",
+      "due_one": "Bugün için {{count}} görev var.",
+      "due_other": "Bugün için {{count}} görev var.",
+      "overdue_one": "{{count}} görev gecikmiş.",
+      "overdue_other": "{{count}} görev gecikmiş."
+    },
+    "goal_deadline": {
+      "today": "“{{title}}” hedefinin tarihi bugün.",
+      "ahead_one": "“{{title}}” hedefine {{count}} gün kaldı.",
+      "ahead_other": "“{{title}}” hedefine {{count}} gün kaldı."
+    },
+    "event_reminder": {
+      "now": "“{{title}}” şimdi başlıyor.",
+      "minutes_one": "“{{title}}” {{count}} dakika sonra başlıyor.",
+      "minutes_other": "“{{title}}” {{count}} dakika sonra başlıyor.",
+      "hours_one": "“{{title}}” {{count}} saat sonra başlıyor.",
+      "hours_other": "“{{title}}” {{count}} saat sonra başlıyor.",
+      "days_one": "“{{title}}” {{count}} gün sonra başlıyor.",
+      "days_other": "“{{title}}” {{count}} gün sonra başlıyor."
+    },
+    "achievement_unlocked": "Yeni başarı: {{name}}.",
+    "focus_completed": {
+      "focus": "{{minutes}} dakikalık odak oturumu tamamlandı.",
+      "break": "Mola bitti."
+    }
+  }
+}

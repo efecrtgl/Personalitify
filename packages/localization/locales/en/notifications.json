@@ -1,0 +1,44 @@
+{
+  "title": "Notifications",
+  "open": "Notifications",
+  "openUnread_one": "Notifications, {{count}} unread",
+  "openUnread_other": "Notifications, {{count}} unread",
+  "badgeMore": "9+",
+  "markAllRead": "Mark all as read",
+  "empty": "No notifications yet",
+  "emptyDescription": "Reminders and unlocked achievements appear here.",
+  "settings": "Notification settings",
+  "unread": "Unread",
+  "delete": "Delete notification",
+  "loadError": "Notifications could not be loaded.",
+  "kinds": {
+    "habit_reminder": "It is time for {{name}} ({{time}}).",
+    "task_due": "The task “{{title}}” is due now ({{time}}).",
+    "tasks_today": {
+      "both": "{{due}} tasks are due today; {{overdue}} are overdue.",
+      "due_one": "{{count}} task is due today.",
+      "due_other": "{{count}} tasks are due today.",
+      "overdue_one": "{{count}} task is overdue.",
+      "overdue_other": "{{count}} tasks are overdue."
+    },
+    "goal_deadline": {
+      "today": "The target date of “{{title}}” is today.",
+      "ahead_one": "{{count}} day left for “{{title}}”.",
+      "ahead_other": "{{count}} days left for “{{title}}”."
+    },
+    "event_reminder": {
+      "now": "“{{title}}” is starting now.",
+      "minutes_one": "“{{title}}” starts in {{count}} minute.",
+      "minutes_other": "“{{title}}” starts in {{count}} minutes.",
+      "hours_one": "“{{title}}” starts in {{count}} hour.",
+      "hours_other": "“{{title}}” starts in {{count}} hours.",
+      "days_one": "“{{title}}” starts in {{count}} day.",
+      "days_other": "“{{title}}” starts in {{count}} days."
+    },
+    "achievement_unlocked": "New achievement: {{name}}.",
+    "focus_completed": {
+      "focus": "Your {{minutes}}-minute focus session is complete.",
+      "break": "The break is over."
+    }
+  }
+}

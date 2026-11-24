@@ -10,6 +10,7 @@ import {
   securityHeaders,
 } from './middleware/security.js';
 import { analyticsRouter } from './modules/analytics/analytics.routes.js';
+import { achievementsRouter } from './modules/achievements/achievements.routes.js';
 import { accountRouter } from './modules/account/account.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { calendarRouter } from './modules/calendar/calendar.routes.js';
@@ -45,6 +46,7 @@ const moduleRouters = [
   focusRouter,
   journalRouter,
   moodRouter,
+  achievementsRouter,
   devicesRouter,
   accountRouter,
 ];

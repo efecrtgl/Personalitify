@@ -21,6 +21,10 @@
       "description": "Statistics of a calendar period next to the period before it. Every figure is counted from the user’s own records at request time, in their time zone; nothing is estimated, and there is no composite score."
     },
     {
+      "name": "Achievements",
+      "description": "Experience points, levels and achievements. XP is granted by the server from the user’s own records by fixed rules — once per record, and taken back when the record is undone. Achievements are unlocked when their figure is reached and are never taken back. Clients cannot grant either."
+    },
+    {
       "name": "Account",
       "description": "Data export, security log and account deletion."
     },
@@ -846,6 +850,281 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/achievements": {
+      "get": {
+        "operationId": "getAchievements",
+        "tags": [
+          "Achievements"
+        ],
+        "summary": "Get XP, level and achievements",
+        "description": "Rules (XP): a completed habit day 10 · a finished task 5, high priority 10 · a milestone 15 · a completed goal 50 · 2 per five minutes of a completed focus session, at most 24 per session · writing in the journal 5 once a day · recording the mood 2 once a day.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "today": {
+                          "type": "string"
+                        },
+                        "xp": {
+                          "type": "object",
+                          "properties": {
+                            "total": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "today": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "XP that belongs to today"
+                            },
+                            "week": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "XP of the last seven days, today included"
+                            }
+                          },
+                          "required": [
+                            "total",
+                            "today",
+                            "week"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "level": {
+                          "type": "object",
+                          "properties": {
+                            "level": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "levelXp": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Total XP at which this level started"
+                            },
+                            "nextLevelXp": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Total XP at which the next level starts"
+                            },
+                            "intoLevel": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "needed": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "XP still missing for the next level"
+                            },
+                            "progress": {
+                              "type": "number",
+                              "description": "Share of the way to the next level, 0 to 1"
+                            }
+                          },
+                          "required": [
+                            "level",
+                            "levelXp",
+                            "nextLevelXp",
+                            "intoLevel",
+                            "needed",
+                            "progress"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Level n starts at 50·n·(n−1) XP: 0, 100, 300, 600, 1000, …"
+                        },
+                        "achievements": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string",
+                                "enum": [
+                                  "habit_first",
+                                  "habit_100",
+                                  "habit_500",
+                                  "streak_7",
+                                  "streak_30",
+                                  "streak_100",
+                                  "task_first",
+                                  "task_50",
+                                  "task_250",
+                                  "milestone_10",
+                                  "goal_first",
+                                  "goal_5",
+                                  "focus_first",
+                                  "focus_10h",
+                                  "focus_50h",
+                                  "journal_first",
+                                  "journal_30",
+                                  "mood_7",
+                                  "mood_30",
+                                  "level_5",
+                                  "level_10"
+                                ]
+                              },
+                              "group": {
+                                "type": "string",
+                                "enum": [
+                                  "habits",
+                                  "tasks",
+                                  "goals",
+                                  "focus",
+                                  "journal",
+                                  "mood",
+                                  "level"
+                                ]
+                              },
+                              "metric": {
+                                "type": "string",
+                                "enum": [
+                                  "habitCompletions",
+                                  "bestStreak",
+                                  "tasksCompleted",
+                                  "goalsCompleted",
+                                  "milestonesCompleted",
+                                  "focusSessions",
+                                  "focusSeconds",
+                                  "journalEntries",
+                                  "moodEntries",
+                                  "level"
+                                ]
+                              },
+                              "target": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "current": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "The metric so far, never more than the target"
+                              },
+                              "unlocked": {
+                                "type": "boolean"
+                              },
+                              "unlockedAt": {
+                                "nullable": true,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "group",
+                              "metric",
+                              "target",
+                              "current",
+                              "unlocked",
+                              "unlockedAt"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "recent": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "rule": {
+                                "type": "string",
+                                "enum": [
+                                  "habit_completed",
+                                  "task_completed",
+                                  "task_completed_high",
+                                  "milestone_completed",
+                                  "goal_completed",
+                                  "focus_block",
+                                  "journal_written",
+                                  "mood_recorded"
+                                ]
+                              },
+                              "amount": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "entityType": {
+                                "type": "string"
+                              },
+                              "entityId": {
+                                "type": "string"
+                              },
+                              "date": {
+                                "type": "string",
+                                "description": "The user’s calendar date the XP belongs to"
+                              },
+                              "grantedAt": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "rule",
+                              "amount",
+                              "entityType",
+                              "entityId",
+                              "date",
+                              "grantedAt"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "The latest XP earned, newest first"
+                        }
+                      },
+                      "required": [
+                        "today",
+                        "xp",
+                        "level",
+                        "achievements",
+                        "recent"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
                 }
               }
             }

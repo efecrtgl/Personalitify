@@ -15,6 +15,7 @@ import { HabitDetailPage } from './pages/habits/HabitDetailPage.jsx';
 import { HabitsManagePage } from './pages/habits/HabitsManagePage.jsx';
 import { HabitsPage } from './pages/habits/HabitsPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
+import { AchievementsPage } from './pages/achievements/AchievementsPage.jsx';
 import { FocusPage } from './pages/focus/FocusPage.jsx';
 import { JournalEditorPage } from './pages/journal/JournalEditorPage.jsx';
 import { JournalPage } from './pages/journal/JournalPage.jsx';
@@ -102,6 +103,7 @@ export function AppRoutes() {
           <Route path="journal" element={<JournalPage />} />
           <Route path="journal/:entryId" element={<JournalEditorPage />} />
           <Route path="mood" element={<MoodPage />} />
+          <Route path="achievements" element={<AchievementsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
@@ -132,6 +134,7 @@ function useDashboardRefresh(queryClient) {
           queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
           queryClient.invalidateQueries({ queryKey: queryKeys.analytics.all });
           queryClient.invalidateQueries({ queryKey: queryKeys.focus.state });
+          queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
         }
       }),
     [queryClient],

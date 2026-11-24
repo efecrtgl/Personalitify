@@ -33,7 +33,8 @@
     "analytics": "Analytics",
     "focus": "Focus",
     "journal": "Journal",
-    "mood": "Mood"
+    "mood": "Mood",
+    "achievements": "Achievements"
   },
   "theme": {
     "label": "Theme",

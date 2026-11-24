@@ -1,3 +1,4 @@
+import enAchievements from '../locales/en/achievements.json' with { type: 'json' };
 import enAnalytics from '../locales/en/analytics.json' with { type: 'json' };
 import enAuth from '../locales/en/auth.json' with { type: 'json' };
 import enCalendar from '../locales/en/calendar.json' with { type: 'json' };
@@ -12,6 +13,7 @@ import enJournal from '../locales/en/journal.json' with { type: 'json' };
 import enMood from '../locales/en/mood.json' with { type: 'json' };
 import enSettings from '../locales/en/settings.json' with { type: 'json' };
 import enTasks from '../locales/en/tasks.json' with { type: 'json' };
+import trAchievements from '../locales/tr/achievements.json' with { type: 'json' };
 import trAnalytics from '../locales/tr/analytics.json' with { type: 'json' };
 import trAuth from '../locales/tr/auth.json' with { type: 'json' };
 import trCalendar from '../locales/tr/calendar.json' with { type: 'json' };
@@ -41,6 +43,7 @@ export const LANGUAGE_LOCALES = Object.freeze({ tr: 'tr-TR', en: 'en-US' });
 /** Catalogs in the shape i18next expects: language -> namespace -> messages. */
 export const resources = Object.freeze({
   tr: {
+    achievements: trAchievements,
     analytics: trAnalytics,
     auth: trAuth,
     calendar: trCalendar,
@@ -57,6 +60,7 @@ export const resources = Object.freeze({
     tasks: trTasks,
   },
   en: {
+    achievements: enAchievements,
     analytics: enAnalytics,
     auth: enAuth,
     calendar: enCalendar,

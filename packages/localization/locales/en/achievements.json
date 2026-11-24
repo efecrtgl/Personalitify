@@ -1,0 +1,102 @@
+{
+  "title": "Achievements",
+  "description": "Experience points, levels and achievements earned from what you record. The rules are fixed and written out below.",
+  "level": {
+    "title": "Level {{level}}",
+    "progressLabel": "Progress of level {{level}}",
+    "progress": "{{current}} / {{target}} XP",
+    "needed": "{{count}} XP to the next level",
+    "total": "Total",
+    "today": "Today",
+    "week": "Last 7 days",
+    "xp": "{{value}} XP",
+    "explain": "Each level needs 100 XP more than the one before: level 2 starts at 100, level 3 at 300, level 4 at 600 XP."
+  },
+  "summary": "{{count}} of {{total}} achievements unlocked",
+  "group": {
+    "habits": "Habits",
+    "tasks": "Tasks",
+    "goals": "Goals",
+    "focus": "Focus",
+    "journal": "Journal",
+    "mood": "Mood",
+    "level": "Level"
+  },
+  "state": {
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "unlockedOn": "Unlocked on {{date}}",
+    "progressLabel": "Progress of {{name}}",
+    "value": "{{current}} / {{target}}",
+    "hours": "{{current}} / {{target}} hours"
+  },
+  "items": {
+    "habit_first": { "name": "First step", "description": "Complete a habit for the first time." },
+    "habit_100": {
+      "name": "A hundred days",
+      "description": "Complete your habits 100 times in total."
+    },
+    "habit_500": {
+      "name": "Five hundred days",
+      "description": "Complete your habits 500 times in total."
+    },
+    "streak_7": {
+      "name": "One-week streak",
+      "description": "Keep a habit going for 7 days in a row."
+    },
+    "streak_30": {
+      "name": "One-month streak",
+      "description": "Keep a habit going for 30 days in a row."
+    },
+    "streak_100": {
+      "name": "Hundred-day streak",
+      "description": "Keep a habit going for 100 days in a row."
+    },
+    "task_first": { "name": "First task", "description": "Finish a task." },
+    "task_50": { "name": "Fifty tasks", "description": "Finish 50 tasks." },
+    "task_250": { "name": "Two hundred and fifty tasks", "description": "Finish 250 tasks." },
+    "milestone_10": {
+      "name": "Ten milestones",
+      "description": "Reach 10 milestones in your goals."
+    },
+    "goal_first": { "name": "First goal", "description": "Complete a goal." },
+    "goal_5": { "name": "Five goals", "description": "Complete 5 goals." },
+    "focus_first": { "name": "First focus", "description": "Complete a focus session." },
+    "focus_10h": { "name": "Ten hours of focus", "description": "Focus for 10 hours in total." },
+    "focus_50h": { "name": "Fifty hours of focus", "description": "Focus for 50 hours in total." },
+    "journal_first": { "name": "First entry", "description": "Write your first journal entry." },
+    "journal_30": {
+      "name": "Thirty entries",
+      "description": "Collect 30 entries in your journal."
+    },
+    "mood_7": { "name": "A week of awareness", "description": "Record your mood on 7 days." },
+    "mood_30": { "name": "A month of awareness", "description": "Record your mood on 30 days." },
+    "level_5": { "name": "Level five", "description": "Reach level 5." },
+    "level_10": { "name": "Level ten", "description": "Reach level 10." }
+  },
+  "rules": {
+    "title": "How is XP earned?",
+    "description": "Points are worked out on the server from your records: once per record, and taken back if the record is undone.",
+    "amount": "+{{value}} XP",
+    "habit_completed": "Completing a habit for the day",
+    "task_completed": "Finishing a task",
+    "task_completed_high": "Finishing a high-priority task",
+    "milestone_completed": "Reaching a milestone",
+    "goal_completed": "Completing a goal",
+    "focus_block": "Every 5 minutes of a completed focus session (at most {{cap}} XP per session)",
+    "journal_written": "Writing in the journal (once a day)",
+    "mood_recorded": "Recording your mood (once per day)"
+  },
+  "recent": {
+    "title": "Recently earned",
+    "empty": "No XP earned yet. Start by completing a habit or finishing a task.",
+    "habit_completed": "Habit completed",
+    "task_completed": "Task finished",
+    "task_completed_high": "High-priority task finished",
+    "milestone_completed": "Milestone reached",
+    "goal_completed": "Goal completed",
+    "focus_block": "Focus session",
+    "journal_written": "Journal entry",
+    "mood_recorded": "Mood entry"
+  }
+}

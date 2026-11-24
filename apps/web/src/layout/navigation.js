@@ -9,6 +9,7 @@ import {
   Smile,
   Target,
   Timer,
+  Trophy,
 } from 'lucide-react';
 
 /**
@@ -25,6 +26,7 @@ export const primaryNavigation = [
   { to: '/focus', labelKey: 'common:nav.focus', icon: Timer },
   { to: '/journal', labelKey: 'common:nav.journal', icon: NotebookPen },
   { to: '/mood', labelKey: 'common:nav.mood', icon: Smile },
+  { to: '/achievements', labelKey: 'common:nav.achievements', icon: Trophy },
 ];
 
 export const secondaryNavigation = [

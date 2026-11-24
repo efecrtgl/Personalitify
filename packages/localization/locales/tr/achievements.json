@@ -1,0 +1,99 @@
+{
+  "title": "Başarılar",
+  "description": "Kaydettiklerinizden kazanılan deneyim puanları, seviyeler ve başarılar. Kurallar sabittir ve aşağıda yazılıdır.",
+  "level": {
+    "title": "Seviye {{level}}",
+    "progressLabel": "Seviye {{level}} ilerlemesi",
+    "progress": "{{current}} / {{target}} XP",
+    "needed": "Sonraki seviyeye {{count}} XP",
+    "total": "Toplam",
+    "today": "Bugün",
+    "week": "Son 7 gün",
+    "xp": "{{value}} XP",
+    "explain": "Her seviye bir öncekinden 100 XP fazlasını gerektirir: 2. seviye 100, 3. seviye 300, 4. seviye 600 XP'de başlar."
+  },
+  "summary": "{{total}} başarıdan {{count}} tanesi açıldı",
+  "group": {
+    "habits": "Alışkanlıklar",
+    "tasks": "Görevler",
+    "goals": "Hedefler",
+    "focus": "Odak",
+    "journal": "Günlük",
+    "mood": "Ruh hali",
+    "level": "Seviye"
+  },
+  "state": {
+    "unlocked": "Açıldı",
+    "locked": "Kilitli",
+    "unlockedOn": "{{date}} tarihinde açıldı",
+    "progressLabel": "{{name}} ilerlemesi",
+    "value": "{{current}} / {{target}}",
+    "hours": "{{current}} / {{target}} saat"
+  },
+  "items": {
+    "habit_first": { "name": "İlk adım", "description": "Bir alışkanlığı ilk kez tamamlayın." },
+    "habit_100": {
+      "name": "Yüz gün",
+      "description": "Alışkanlıklarınızı toplam 100 kez tamamlayın."
+    },
+    "habit_500": {
+      "name": "Beş yüz gün",
+      "description": "Alışkanlıklarınızı toplam 500 kez tamamlayın."
+    },
+    "streak_7": {
+      "name": "Bir haftalık seri",
+      "description": "Bir alışkanlığı 7 gün aralıksız sürdürün."
+    },
+    "streak_30": {
+      "name": "Bir aylık seri",
+      "description": "Bir alışkanlığı 30 gün aralıksız sürdürün."
+    },
+    "streak_100": {
+      "name": "Yüz günlük seri",
+      "description": "Bir alışkanlığı 100 gün aralıksız sürdürün."
+    },
+    "task_first": { "name": "İlk görev", "description": "Bir görevi bitirin." },
+    "task_50": { "name": "Elli görev", "description": "50 görev bitirin." },
+    "task_250": { "name": "İki yüz elli görev", "description": "250 görev bitirin." },
+    "milestone_10": {
+      "name": "On kilometre taşı",
+      "description": "Hedeflerinizde 10 kilometre taşına ulaşın."
+    },
+    "goal_first": { "name": "İlk hedef", "description": "Bir hedefi tamamlayın." },
+    "goal_5": { "name": "Beş hedef", "description": "5 hedefi tamamlayın." },
+    "focus_first": { "name": "İlk odak", "description": "Bir odak oturumunu tamamlayın." },
+    "focus_10h": { "name": "On saat odak", "description": "Toplam 10 saat odaklanın." },
+    "focus_50h": { "name": "Elli saat odak", "description": "Toplam 50 saat odaklanın." },
+    "journal_first": { "name": "İlk yazı", "description": "Günlüğe ilk yazınızı yazın." },
+    "journal_30": { "name": "Otuz yazı", "description": "Günlükte 30 yazı biriktirin." },
+    "mood_7": { "name": "Bir hafta farkındalık", "description": "7 gün ruh halinizi kaydedin." },
+    "mood_30": { "name": "Bir ay farkındalık", "description": "30 gün ruh halinizi kaydedin." },
+    "level_5": { "name": "Beşinci seviye", "description": "5. seviyeye ulaşın." },
+    "level_10": { "name": "Onuncu seviye", "description": "10. seviyeye ulaşın." }
+  },
+  "rules": {
+    "title": "XP nasıl kazanılır?",
+    "description": "Puanlar, kayıtlarınızdan sunucuda hesaplanır: her kayıt için bir kez verilir ve kayıt geri alınırsa geri alınır.",
+    "amount": "+{{value}} XP",
+    "habit_completed": "Bir alışkanlığı o gün için tamamlamak",
+    "task_completed": "Bir görevi bitirmek",
+    "task_completed_high": "Yüksek öncelikli bir görevi bitirmek",
+    "milestone_completed": "Bir kilometre taşına ulaşmak",
+    "goal_completed": "Bir hedefi tamamlamak",
+    "focus_block": "Tamamlanan odak oturumunun her 5 dakikası (oturum başına en fazla {{cap}} XP)",
+    "journal_written": "Günlüğe yazmak (günde bir kez)",
+    "mood_recorded": "Ruh halini kaydetmek (gün başına bir kez)"
+  },
+  "recent": {
+    "title": "Son kazanılanlar",
+    "empty": "Henüz XP kazanılmadı. Bir alışkanlığı tamamlayarak ya da bir görevi bitirerek başlayın.",
+    "habit_completed": "Alışkanlık tamamlandı",
+    "task_completed": "Görev bitirildi",
+    "task_completed_high": "Yüksek öncelikli görev bitirildi",
+    "milestone_completed": "Kilometre taşına ulaşıldı",
+    "goal_completed": "Hedef tamamlandı",
+    "focus_block": "Odak oturumu",
+    "journal_written": "Günlük yazısı",
+    "mood_recorded": "Ruh hali kaydı"
+  }
+}

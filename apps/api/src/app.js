@@ -9,6 +9,7 @@ import {
   requireJsonBody,
   securityHeaders,
 } from './middleware/security.js';
+import { analyticsRouter } from './modules/analytics/analytics.routes.js';
 import { accountRouter } from './modules/account/account.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { calendarRouter } from './modules/calendar/calendar.routes.js';
@@ -37,6 +38,7 @@ const moduleRouters = [
   tasksRouter,
   calendarRouter,
   dashboardRouter,
+  analyticsRouter,
   devicesRouter,
   accountRouter,
 ];

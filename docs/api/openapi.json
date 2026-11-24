@@ -17,6 +17,10 @@
   ],
   "tags": [
     {
+      "name": "Analytics",
+      "description": "Statistics of a calendar period next to the period before it. Every figure is counted from the user’s own records at request time, in their time zone; nothing is estimated, and there is no composite score."
+    },
+    {
       "name": "Account",
       "description": "Data export, security log and account deletion."
     },
@@ -66,6 +70,787 @@
     }
   ],
   "paths": {
+    "/analytics/overview": {
+      "get": {
+        "operationId": "getAnalyticsOverview",
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Statistics of a week, month, quarter or year",
+        "description": "Returns the whole calendar period that contains `date` (default: today, in the user’s time zone), with habit, task and goal figures, a step-by-step series for charts, and the same key figures for the previous period.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": "month",
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "quarter",
+                "year"
+              ]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "string",
+                          "enum": [
+                            "week",
+                            "month",
+                            "quarter",
+                            "year"
+                          ]
+                        },
+                        "bucket": {
+                          "type": "string",
+                          "enum": [
+                            "day",
+                            "week",
+                            "month"
+                          ],
+                          "description": "The step of `series`"
+                        },
+                        "range": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false,
+                          "description": "The whole calendar period, first to last day"
+                        },
+                        "previousRange": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false,
+                          "description": "The period of the same kind right before it"
+                        },
+                        "today": {
+                          "type": "string"
+                        },
+                        "timeZone": {
+                          "type": "string"
+                        },
+                        "weekStart": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "complete": {
+                          "type": "boolean",
+                          "description": "False while the period is still running; counts are then not final"
+                        },
+                        "series": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "from": {
+                                "type": "string"
+                              },
+                              "to": {
+                                "type": "string"
+                              },
+                              "habits": {
+                                "type": "object",
+                                "properties": {
+                                  "due": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "completed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "rate": {
+                                    "nullable": true,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "due",
+                                  "completed",
+                                  "rate"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "tasks": {
+                                "type": "object",
+                                "properties": {
+                                  "completed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "completed"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "from",
+                              "to",
+                              "habits",
+                              "tasks"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "The period step by step: days of a week or month, weeks of a quarter, months of a year"
+                        },
+                        "habits": {
+                          "type": "object",
+                          "properties": {
+                            "due": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Due days of fixed-schedule habits that could be judged: completed or missed. Skipped and postponed days, today while it is open, and future days are left out"
+                            },
+                            "completed": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "missed": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "rate": {
+                              "nullable": true,
+                              "description": "completed / due; null when nothing was due",
+                              "type": "number"
+                            },
+                            "previous": {
+                              "type": "object",
+                              "properties": {
+                                "due": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "completed": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "rate": {
+                                  "nullable": true,
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "due",
+                                "completed",
+                                "rate"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "byWeekday": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "weekday": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991,
+                                    "description": "1 = Monday … 7 = Sunday"
+                                  },
+                                  "due": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "completed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "rate": {
+                                    "nullable": true,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "weekday",
+                                  "due",
+                                  "completed",
+                                  "rate"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "habitId": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  },
+                                  "icon": {
+                                    "type": "string",
+                                    "enum": [
+                                      "activity",
+                                      "apple",
+                                      "bed",
+                                      "bike",
+                                      "book",
+                                      "brain",
+                                      "briefcase",
+                                      "brush",
+                                      "calendar",
+                                      "camera",
+                                      "coffee",
+                                      "code",
+                                      "droplet",
+                                      "dumbbell",
+                                      "flame",
+                                      "flower",
+                                      "footprints",
+                                      "gamepad",
+                                      "globe",
+                                      "graduation",
+                                      "heart",
+                                      "home",
+                                      "languages",
+                                      "leaf",
+                                      "moon",
+                                      "music",
+                                      "pencil",
+                                      "pill",
+                                      "piggy-bank",
+                                      "salad",
+                                      "smile",
+                                      "sparkles",
+                                      "star",
+                                      "sun",
+                                      "target",
+                                      "timer",
+                                      "users",
+                                      "wallet"
+                                    ]
+                                  },
+                                  "archived": {
+                                    "type": "boolean"
+                                  },
+                                  "unit": {
+                                    "type": "string",
+                                    "enum": [
+                                      "days",
+                                      "weeks",
+                                      "months"
+                                    ],
+                                    "description": "What due, completed and missed count: days, or periods of a flexible habit"
+                                  },
+                                  "due": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "completed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "missed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "skipped": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "rate": {
+                                    "nullable": true,
+                                    "type": "number"
+                                  },
+                                  "previousRate": {
+                                    "nullable": true,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "habitId",
+                                  "name",
+                                  "color",
+                                  "icon",
+                                  "archived",
+                                  "unit",
+                                  "due",
+                                  "completed",
+                                  "missed",
+                                  "skipped",
+                                  "rate",
+                                  "previousRate"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "due",
+                            "completed",
+                            "missed",
+                            "rate",
+                            "previous",
+                            "byWeekday",
+                            "items"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Totals cover fixed-schedule habits; `items` lists every habit in its own unit"
+                        },
+                        "tasks": {
+                          "type": "object",
+                          "properties": {
+                            "completed": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Tasks finished on a day of the period"
+                            },
+                            "due": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Tasks whose due date lies in the period, cancelled ones left out"
+                            },
+                            "dueCompleted": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Of those, the ones that are done"
+                            },
+                            "onTime": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Finished tasks with a due date, finished on or before it"
+                            },
+                            "late": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Finished tasks with a due date, finished after it"
+                            },
+                            "withoutDueDate": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "onTimeRate": {
+                              "nullable": true,
+                              "description": "onTime / (onTime + late)",
+                              "type": "number"
+                            },
+                            "overdueOpen": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Open tasks past their due date right now"
+                            },
+                            "previous": {
+                              "type": "object",
+                              "properties": {
+                                "completed": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "completed"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "byPriority": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "priority": {
+                                    "type": "string",
+                                    "enum": [
+                                      "none",
+                                      "low",
+                                      "medium",
+                                      "high"
+                                    ]
+                                  },
+                                  "completed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "priority",
+                                  "completed"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "byCategory": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "categoryId": {
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "nullable": true,
+                                    "description": "null: without a category",
+                                    "type": "string"
+                                  },
+                                  "color": {
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "completed": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "categoryId",
+                                  "name",
+                                  "color",
+                                  "completed"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "completed",
+                            "due",
+                            "dueCompleted",
+                            "onTime",
+                            "late",
+                            "withoutDueDate",
+                            "onTimeRate",
+                            "overdueOpen",
+                            "previous",
+                            "byPriority",
+                            "byCategory"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "goals": {
+                          "type": "object",
+                          "properties": {
+                            "active": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "completed": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Goals completed during the period"
+                            },
+                            "milestonesCompleted": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Milestones completed during the period"
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "goalId": {
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "type": "string"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  },
+                                  "icon": {
+                                    "type": "string",
+                                    "enum": [
+                                      "activity",
+                                      "apple",
+                                      "bed",
+                                      "bike",
+                                      "book",
+                                      "brain",
+                                      "briefcase",
+                                      "brush",
+                                      "calendar",
+                                      "camera",
+                                      "coffee",
+                                      "code",
+                                      "droplet",
+                                      "dumbbell",
+                                      "flame",
+                                      "flower",
+                                      "footprints",
+                                      "gamepad",
+                                      "globe",
+                                      "graduation",
+                                      "heart",
+                                      "home",
+                                      "languages",
+                                      "leaf",
+                                      "moon",
+                                      "music",
+                                      "pencil",
+                                      "pill",
+                                      "piggy-bank",
+                                      "salad",
+                                      "smile",
+                                      "sparkles",
+                                      "star",
+                                      "sun",
+                                      "target",
+                                      "timer",
+                                      "users",
+                                      "wallet"
+                                    ]
+                                  },
+                                  "startDate": {
+                                    "type": "string"
+                                  },
+                                  "targetDate": {
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "percent": {
+                                    "type": "number"
+                                  },
+                                  "daysLeft": {
+                                    "nullable": true,
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "expected": {
+                                    "nullable": true,
+                                    "description": "Share of the time from start to target date that has passed, in percent",
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "pace": {
+                                    "nullable": true,
+                                    "description": "percent against expected, with ten points of tolerance; null without a target date",
+                                    "type": "string",
+                                    "enum": [
+                                      "ahead",
+                                      "on_track",
+                                      "behind"
+                                    ]
+                                  },
+                                  "milestonesCompleted": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "tasksCompleted": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991,
+                                    "description": "Linked tasks finished during the period"
+                                  }
+                                },
+                                "required": [
+                                  "goalId",
+                                  "title",
+                                  "color",
+                                  "icon",
+                                  "startDate",
+                                  "targetDate",
+                                  "percent",
+                                  "daysLeft",
+                                  "expected",
+                                  "pace",
+                                  "milestonesCompleted",
+                                  "tasksCompleted"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "active",
+                            "completed",
+                            "milestonesCompleted",
+                            "items"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "highlights": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "habit_rate_up",
+                                  "habit_rate_down",
+                                  "top_habit",
+                                  "struggling_habit",
+                                  "best_weekday",
+                                  "weakest_weekday",
+                                  "tasks_on_time",
+                                  "tasks_completed_up",
+                                  "tasks_completed_down",
+                                  "most_productive_day",
+                                  "goals_completed",
+                                  "milestones_completed"
+                                ]
+                              },
+                              "tone": {
+                                "type": "string",
+                                "enum": [
+                                  "positive",
+                                  "neutral",
+                                  "attention"
+                                ]
+                              },
+                              "params": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "tone",
+                              "params"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "Observations made by fixed, documented rules from the figures in `params`"
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "bucket",
+                        "range",
+                        "previousRange",
+                        "today",
+                        "timeZone",
+                        "weekStart",
+                        "complete",
+                        "series",
+                        "habits",
+                        "tasks",
+                        "goals",
+                        "highlights"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/account/export": {
       "get": {
         "operationId": "getAccountExport",

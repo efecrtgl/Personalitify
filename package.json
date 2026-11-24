@@ -1,0 +1,45 @@
+{
+  "name": "personalitify",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personalitify — a centralized personal productivity, habit tracking and life planning ecosystem.",
+  "author": "EfeCrtgl",
+  "license": "Apache-2.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/efecrtgl/Personalitify.git"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "predev": "node scripts/ensure-env.js",
+    "dev": "concurrently --names api,web --prefix-colors blue,magenta --kill-others-on-fail \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "node scripts/ensure-env.js && npm run dev --workspace @personalitify/api",
+    "dev:web": "npm run dev --workspace @personalitify/web",
+    "build": "npm run build --workspaces --if-present",
+    "start": "npm run start --workspace @personalitify/api",
+    "test": "npm run test --workspaces --if-present",
+    "test:api": "npm run test --workspace @personalitify/api",
+    "test:web": "npm run test --workspace @personalitify/web",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^10.0.7",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "vitest": "^5.1.1"
+  }
+}

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createModule } from '../../core/routing.js';
 import { idSchema } from '../../core/validation.js';
-import { authRateLimit } from '../../middleware/rate-limit.js';
+import { authRateLimit, refreshRateLimit } from '../../middleware/rate-limit.js';
 import { userSchema } from '../users/users.schemas.js';
 import {
   authResultSchema,
@@ -97,7 +97,7 @@ auth.post(
     body: refreshBody,
     response: tokensSchema,
     errors: ['INVALID_REFRESH_TOKEN', 'REFRESH_TOKEN_REUSED', 'RATE_LIMITED'],
-    middleware: [authRateLimit],
+    middleware: [refreshRateLimit],
   },
   async ({ body, req, res }) => {
     const fromCookie = body.refreshToken === undefined;

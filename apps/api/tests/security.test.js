@@ -13,7 +13,9 @@ import { useTestDatabase } from './helpers/database.js';
 
 describe('security', () => {
   useTestDatabase();
-  afterEach(() => configureRateLimits({ enabled: false, authMax: 10, generalMax: 300 }));
+  afterEach(() =>
+    configureRateLimits({ enabled: false, authMax: 10, refreshMax: 60, generalMax: 300 }),
+  );
 
   it('sends hardened response headers and hides the framework', async () => {
     const response = await anonymous().get('/health').expect(200);
@@ -122,6 +124,19 @@ describe('security', () => {
 
       // Other endpoints are unaffected by the credential limit.
       await anonymous().get('/health').expect(200);
+    });
+
+    it('does not count session restores against the credential limit', async () => {
+      // A browser restores its session on every page load; reloading a few times must not
+      // lock the user out of signing in.
+      configureRateLimits({ enabled: true, authMax: 2, refreshMax: 5 });
+      for (let index = 0; index < 5; index += 1) {
+        await anonymous().post('/auth/refresh', {}).expect(401);
+      }
+      await anonymous().post('/auth/refresh', {}).expect(429);
+      await anonymous()
+        .post('/auth/login', { email: 'nobody@example.test', password: 'x', device: deviceInput() })
+        .expect(401);
     });
   });
 });

@@ -12,6 +12,9 @@ const limits = {
   general: { windowMs: 60_000, max: 300 },
   // Credential endpoints: slow down password guessing and token brute force.
   auth: { windowMs: 60_000, max: 10 },
+  // Session restore runs on every page load and in every tab. Refresh tokens are 384 random
+  // bits, so guessing is not a concern; the limit only caps abuse.
+  refresh: { windowMs: 60_000, max: 60 },
 };
 
 const stores = [];
@@ -38,11 +41,13 @@ function createLimiter(name) {
 
 export const generalRateLimit = createLimiter('general');
 export const authRateLimit = createLimiter('auth');
+export const refreshRateLimit = createLimiter('refresh');
 
 /** Test hook: adjust limits and start counting from zero. */
-export function configureRateLimits({ enabled, generalMax, authMax } = {}) {
+export function configureRateLimits({ enabled, generalMax, authMax, refreshMax } = {}) {
   if (enabled !== undefined) limits.enabled = enabled;
   if (generalMax !== undefined) limits.general.max = generalMax;
   if (authMax !== undefined) limits.auth.max = authMax;
+  if (refreshMax !== undefined) limits.refresh.max = refreshMax;
   for (const store of stores) store.resetAll();
 }

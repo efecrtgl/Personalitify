@@ -2,7 +2,14 @@ import { ENTITY_TYPES } from '@personalitify/shared-contracts';
 import { assignPatch, createEntityService } from '../../core/entity/entity-service.js';
 import { detachOnDelete } from '../../core/entity/references.js';
 import { fieldError, notFound } from '../../core/errors.js';
-import { addDays, diffDays, maxDate, todayInZone } from '../../core/time.js';
+import {
+  addDays,
+  diffDays,
+  localDateInZone,
+  maxDate,
+  minDate,
+  todayInZone,
+} from '../../core/time.js';
 import { assertCategory } from '../categories/categories.service.js';
 import { getUserPreferences } from '../settings/settings.service.js';
 import {
@@ -209,32 +216,48 @@ export async function getDay(auth, date) {
 }
 
 /**
- * For every day of a range: how many fixed-schedule habits were due and how many of those
- * were completed. Skipped and postponed days count on neither side. Archived habits are
- * included, because they were part of those days.
+ * The habits that existed at some point up to `to`, each with its entries from `from` to
+ * `to` indexed for day-by-day evaluation. Archived habits are included, because they were
+ * part of those days, but an archived habit ends the day before it was archived: nothing is
+ * expected of it afterwards, so those days are not counted as missed.
+ *
+ * The habits are plain objects, safe to hand to the pure scheduling rules.
  */
-export async function getHabitTotalsByDay(auth, from, to, calendar) {
-  const { items: habits } = await habitService.find(auth, {
-    'schedule.mode': 'fixed',
-    startDate: { $lte: to },
-  });
+export async function loadHabitIndexes(auth, from, to, calendar, filter = {}) {
+  const { items } = await habitService.find(
+    auth,
+    { ...filter, startDate: { $lte: to } },
+    { sort: { sortOrder: 1, createdAt: 1 } },
+  );
   const entries = await entriesOf(
     auth.userId,
-    habits.map((habit) => String(habit._id)),
+    items.map((habit) => String(habit._id)),
     from,
     to,
   );
   const grouped = groupByHabit(entries);
-  const indexes = habits.map((habit) => [
-    habit,
-    indexEntries(grouped.get(String(habit._id)) ?? []),
-  ]);
+  return items.map((document) => {
+    const habit = document.toObject();
+    if (habit.archivedAt) {
+      const lastDay = addDays(localDateInZone(habit.archivedAt, calendar.timeZone), -1);
+      habit.endDate = habit.endDate ? minDate(habit.endDate, lastDay) : lastDay;
+    }
+    return { habit, index: indexEntries(grouped.get(String(habit._id)) ?? []) };
+  });
+}
+
+/**
+ * For every day of a range: how many fixed-schedule habits were due and how many of those
+ * were completed. Skipped and postponed days count on neither side.
+ */
+export async function getHabitTotalsByDay(auth, from, to, calendar) {
+  const indexes = await loadHabitIndexes(auth, from, to, calendar, { 'schedule.mode': 'fixed' });
 
   const totals = [];
   for (let date = from; date <= to; date = addDays(date, 1)) {
     let due = 0;
     let completed = 0;
-    for (const [habit, index] of indexes) {
+    for (const { habit, index } of indexes) {
       const day = dayState(habit, date, index, calendar.today);
       if (!day.due || day.state === 'skipped' || day.state === 'postponed') continue;
       due += 1;

@@ -1,4 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { MotionConfig } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router';
@@ -6,9 +7,8 @@ import { useErrorMessage } from './hooks/useAccount.js';
 import { AppShell } from './layout/AppShell.jsx';
 import { AuthLayout } from './layout/AuthLayout.jsx';
 import { BrandMark } from './layout/Brand.jsx';
-import { queryClient as defaultQueryClient } from './lib/api.js';
+import { queryClient as defaultQueryClient, queryKeys } from './lib/api.js';
 import './lib/i18n.js';
-import { HomePage } from './pages/HomePage.jsx';
 import { GoalDetailPage } from './pages/goals/GoalDetailPage.jsx';
 import { GoalsPage } from './pages/goals/GoalsPage.jsx';
 import { HabitDetailPage } from './pages/habits/HabitDetailPage.jsx';
@@ -16,6 +16,7 @@ import { HabitsManagePage } from './pages/habits/HabitsManagePage.jsx';
 import { HabitsPage } from './pages/habits/HabitsPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
 import { CalendarPage } from './pages/calendar/CalendarPage.jsx';
+import { DashboardPage } from './pages/dashboard/DashboardPage.jsx';
 import { LoginPage } from './pages/auth/LoginPage.jsx';
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/auth/PasswordPages.jsx';
 import { RegisterPage } from './pages/auth/RegisterPage.jsx';
@@ -78,7 +79,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<RequireAuth />}>
         <Route element={<AppShell />}>
-          <Route index element={<HomePage />} />
+          <Route index element={<DashboardPage />} />
           <Route path="habits" element={<HabitsPage />} />
           <Route path="habits/all" element={<HabitsManagePage />} />
           <Route path="habits/:habitId" element={<HabitDetailPage />} />
@@ -109,8 +110,25 @@ export function AppRoutes() {
   );
 }
 
-/** Application providers. `router` and `queryClient` can be replaced in tests. */
+/**
+ * The dashboard summarizes every module, so any successful change anywhere makes it stale.
+ * Watching the mutation cache keeps that knowledge in one place instead of in every module.
+ */
+function useDashboardRefresh(queryClient) {
+  useEffect(
+    () =>
+      queryClient.getMutationCache().subscribe((event) => {
+        if (event.type === 'updated' && event.mutation.state.status === 'success') {
+          queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
+        }
+      }),
+    [queryClient],
+  );
+}
+
+/** Application providers. `queryClient` can be replaced in tests. */
 export function AppProviders({ children, queryClient = defaultQueryClient }) {
+  useDashboardRefresh(queryClient);
   return (
     <QueryClientProvider client={queryClient}>
       <MotionConfig reducedMotion="user">

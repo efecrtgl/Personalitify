@@ -1,3 +1,4 @@
+import { DASHBOARD_WIDGETS } from '@personalitify/shared-contracts';
 import { QueryClient } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -58,6 +59,9 @@ export function account(overrides = {}) {
         quietHours: { enabled: false, start: '22:00', end: '07:00' },
       },
       privacy: { hideSensitivePreviews: false },
+      dashboard: {
+        widgets: DASHBOARD_WIDGETS.map((id) => ({ id, visible: true })),
+      },
       ...overrides.settings,
     },
   };
@@ -110,10 +114,46 @@ export const anonymousRoutes = () => ({
   'POST /auth/refresh': () => fail(401, 'INVALID_REFRESH_TOKEN'),
 });
 
+/** An account's dashboard with nothing on it yet. */
+export function emptyDashboard(overrides = {}) {
+  const today = '2026-11-24';
+  return {
+    today,
+    timeZone: 'Europe/Istanbul',
+    habits: { summary: { due: 0, completed: 0, skipped: 0, postponed: 0, rate: null }, items: [] },
+    tasks: {
+      summary: { total: 0, done: 0, overdue: 0, open: 0 },
+      overdue: [],
+      due: [],
+      completed: [],
+    },
+    upcoming: [],
+    goals: [],
+    week: {
+      days: Array.from({ length: 7 }, (_, index) => ({
+        date: `2026-11-${18 + index}`,
+        due: 0,
+        completed: 0,
+        tasksCompleted: 0,
+      })),
+      habits: { due: 0, completed: 0, rate: null, previousRate: null },
+      tasksCompleted: 0,
+      previousTasksCompleted: 0,
+    },
+    streaks: [],
+    activity: [],
+    insights: [],
+    ...overrides,
+  };
+}
+
 /** Routes of a browser that still has a valid refresh cookie. */
 export const signedInRoutes = (me = account()) => ({
   'POST /auth/refresh': () => ok(tokens()),
   'GET /users/me': () => ok(me),
+  'GET /dashboard': () => ok(emptyDashboard()),
+  'GET /categories': () => ok([]),
+  'GET /goals': () => ok([]),
 });
 
 /** Renders the real application routes at `path`. */

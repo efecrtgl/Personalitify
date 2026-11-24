@@ -1,0 +1,122 @@
+{
+  "greeting": {
+    "morning": "Günaydın, {{name}}",
+    "afternoon": "İyi günler, {{name}}",
+    "evening": "İyi akşamlar, {{name}}",
+    "night": "İyi geceler, {{name}}"
+  },
+  "percent": "%{{value}}",
+  "seeAll": "Tümünü gör",
+  "widgets": {
+    "progress": "Bugün",
+    "quickActions": "Hızlı işlemler",
+    "habits": "Bugünün alışkanlıkları",
+    "tasks": "Bugünün görevleri",
+    "events": "Yaklaşanlar",
+    "goals": "Etkin hedefler",
+    "week": "Son 7 gün",
+    "streaks": "Seriler",
+    "insights": "İçgörüler",
+    "activity": "Son etkinlikler"
+  },
+  "progress": {
+    "ringLabel": "Bugün {{due}} alışkanlıktan {{completed}} tanesi tamamlandı",
+    "none": "–",
+    "habits": "Alışkanlıklar",
+    "tasks": "Görevler",
+    "fraction": "{{done}} / {{total}}",
+    "overdue_one": "{{count}} gecikmiş",
+    "overdue_other": "{{count}} gecikmiş"
+  },
+  "quickActions": {
+    "task": "Yeni görev",
+    "habit": "Yeni alışkanlık",
+    "event": "Yeni etkinlik",
+    "goal": "Yeni hedef"
+  },
+  "habits": {
+    "empty": "Bugün zamanı gelen alışkanlık yok"
+  },
+  "tasks": {
+    "empty": "Bugün için açık görev yok"
+  },
+  "events": {
+    "empty": "Önümüzdeki 7 gün için planlanan bir şey yok"
+  },
+  "goals": {
+    "empty": "Etkin hedef yok"
+  },
+  "streaks": {
+    "empty": "Henüz devam eden bir seri yok"
+  },
+  "week": {
+    "habitRate": "zamanı gelen alışkanlıklar tamamlandı",
+    "up": "Önceki haftaya göre {{value}} puan fazla",
+    "down": "Önceki haftaya göre {{value}} puan az",
+    "tasks_one": "{{count}} görev tamamlandı",
+    "tasks_other": "{{count}} görev tamamlandı",
+    "tableCaption": "Son yedi günün her birinde tamamlanan alışkanlıklar ve bitirilen görevler",
+    "day": "Gün",
+    "habitsColumn": "Zamanı gelenler içinde tamamlanan alışkanlıklar",
+    "tasksColumn": "Tamamlanan görevler",
+    "explanation": "Çubuklar, o gün zamanı gelen alışkanlıklardan tamamlananların oranını gösterir. Atlanan ve ertelenen alışkanlıklar sayılmaz."
+  },
+  "insights": {
+    "empty": "Personalitify'ı kullandıkça içgörüler burada görünür",
+    "how": "Bu nasıl belirleniyor",
+    "all_habits_done": {
+      "text": "Bugün zamanı gelen tüm alışkanlıklar tamamlandı.",
+      "rule": "Bugün zamanı gelen alışkanlıkların tümü tamamlanmış. Atlananlar ve ertelenenler sayılmaz."
+    },
+    "overdue_tasks": {
+      "text": "{{count}} açık görevin son tarihi geçti.",
+      "rule": "Son tarihi bugünden önce olan açık görevler."
+    },
+    "goal_deadline": {
+      "text": "\"{{title}}\" hedefinin tarihine {{days}} gün kaldı; ilerleme %{{percent}}.",
+      "rule": "Hedef tarihi en yakın olan etkin hedef; tarih önümüzdeki 7 gün içindeyse gösterilir."
+    },
+    "habit_rate_up": {
+      "text": "Bu hafta zamanı gelen alışkanlıklarınızın %{{current}} kadarını tamamladınız; önceki hafta %{{previous}} idi.",
+      "rule": "Son 7 günde zamanı gelen alışkanlıklardan tamamlananların oranı, önceki 7 günle karşılaştırılır. Fark en az 5 puansa gösterilir."
+    },
+    "habit_rate_down": {
+      "text": "Bu hafta zamanı gelen alışkanlıklarınızın %{{current}} kadarını tamamladınız; önceki hafta %{{previous}} idi.",
+      "rule": "Son 7 günde zamanı gelen alışkanlıklardan tamamlananların oranı, önceki 7 günle karşılaştırılır. Fark en az 5 puansa gösterilir."
+    },
+    "streak_goal_near": {
+      "text": "{{name}}: {{goal}} günlük seri hedefinize {{remaining}} kaldı.",
+      "rule": "Güncel serisi, belirlediğiniz seri hedefine 3 veya daha az kalan alışkanlık."
+    },
+    "long_streak": {
+      "text": "{{name}} alışkanlığını {{count}} gündür aralıksız sürdürüyorsunuz.",
+      "rule": "7 gün veya daha uzun olduğunda, en uzun güncel seriniz."
+    },
+    "busy_day": {
+      "text": "{{date}} günü için saatli {{count}} kayıt var.",
+      "rule": "Önümüzdeki 7 gün içinde en çok saatli etkinlik ve görev bloğu olan gün; 3 veya daha fazlaysa gösterilir."
+    }
+  },
+  "activity": {
+    "empty": "Yaptıklarınız burada listelenecek",
+    "habit_completed": "{{title}} tamamlandı",
+    "habit_created": "{{title}} alışkanlığına başlandı",
+    "task_completed": "{{title}} bitirildi",
+    "task_created": "{{title}} görevi eklendi",
+    "goal_completed": "{{title}} hedefine ulaşıldı",
+    "goal_created": "{{title}} hedefi belirlendi",
+    "event_created": "{{title}} planlandı"
+  },
+  "customize": {
+    "open": "Özelleştir",
+    "title": "Panoyu özelleştir",
+    "description": "Neyi hangi sırayla göreceğinizi seçin. Düzen hesabınıza kaydedilir.",
+    "restore": "Varsayılana dön",
+    "moveUp": "{{name}} bileşenini yukarı taşı",
+    "moveDown": "{{name}} bileşenini aşağı taşı"
+  },
+  "allHidden": {
+    "title": "Tüm bileşenler gizli",
+    "description": "Panonuzda görmek istediğiniz bileşenleri seçin."
+  }
+}

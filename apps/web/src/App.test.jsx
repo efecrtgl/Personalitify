@@ -164,7 +164,9 @@ describe('a returning user', () => {
     renderApp('/');
     await screen.findByRole('heading', { level: 1, name: /Ada$/ });
 
-    await user.click(screen.getByRole('link', { name: /Güvenlik/ }));
+    // Open the security settings, whose requests are answered with "session revoked".
+    await user.click(screen.getByRole('link', { name: 'Ayarlar' }));
+    await user.click(await screen.findByRole('link', { name: 'Güvenlik' }));
 
     expect(await screen.findByRole('heading', { name: 'Tekrar hoş geldiniz' })).toBeInTheDocument();
     expect(screen.getByText(/Oturumunuz kapatıldı/)).toBeInTheDocument();

@@ -26,7 +26,7 @@ const VIEWS = ['month', 'week', 'day'];
 const NOTHING_SELECTED = { items: [], conflicts: [] };
 
 /** Saving, moving and deleting calendar entries, with a warning when times overlap. */
-function useCalendarActions() {
+export function useCalendarActions() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const errorMessage = useErrorMessage();

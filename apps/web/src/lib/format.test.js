@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { greetingKey } from '../pages/HomePage.jsx';
+import { greetingKey } from '../pages/dashboard/DashboardPage.jsx';
 import { createFormatters } from './format.js';
 
 // 24 November 2026, 21:30 UTC — already the 25th in Istanbul (UTC+3).

@@ -53,6 +53,7 @@ export const queryKeys = {
   devices: ['devices'],
   securityLog: (page) => ['account', 'security-log', page],
   categories: ['categories'],
+  dashboard: ['dashboard'],
   calendar: {
     all: ['calendar'],
     range: (from, to, include) => ['calendar', 'range', from, to, include],

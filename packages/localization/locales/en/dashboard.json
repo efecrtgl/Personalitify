@@ -1,0 +1,122 @@
+{
+  "greeting": {
+    "morning": "Good morning, {{name}}",
+    "afternoon": "Good afternoon, {{name}}",
+    "evening": "Good evening, {{name}}",
+    "night": "Good night, {{name}}"
+  },
+  "percent": "{{value}}%",
+  "seeAll": "See all",
+  "widgets": {
+    "progress": "Today",
+    "quickActions": "Quick actions",
+    "habits": "Today's habits",
+    "tasks": "Today's tasks",
+    "events": "Coming up",
+    "goals": "Active goals",
+    "week": "Last 7 days",
+    "streaks": "Streaks",
+    "insights": "Insights",
+    "activity": "Recent activity"
+  },
+  "progress": {
+    "ringLabel": "{{completed}} of {{due}} habits done today",
+    "none": "–",
+    "habits": "Habits",
+    "tasks": "Tasks",
+    "fraction": "{{done}} / {{total}}",
+    "overdue_one": "{{count}} overdue",
+    "overdue_other": "{{count}} overdue"
+  },
+  "quickActions": {
+    "task": "New task",
+    "habit": "New habit",
+    "event": "New event",
+    "goal": "New goal"
+  },
+  "habits": {
+    "empty": "No habits are due today"
+  },
+  "tasks": {
+    "empty": "No open tasks for today"
+  },
+  "events": {
+    "empty": "Nothing planned for the next 7 days"
+  },
+  "goals": {
+    "empty": "No active goals"
+  },
+  "streaks": {
+    "empty": "No streaks running yet"
+  },
+  "week": {
+    "habitRate": "of due habits completed",
+    "up": "{{value}} points more than the week before",
+    "down": "{{value}} points less than the week before",
+    "tasks_one": "{{count}} task completed",
+    "tasks_other": "{{count}} tasks completed",
+    "tableCaption": "Habits completed and tasks finished on each of the last seven days",
+    "day": "Day",
+    "habitsColumn": "Habits completed out of due",
+    "tasksColumn": "Tasks completed",
+    "explanation": "Bars show the share of habits due that day that were completed. Skipped and postponed habits are not counted."
+  },
+  "insights": {
+    "empty": "Insights appear as you use Personalitify",
+    "how": "How this is determined",
+    "all_habits_done": {
+      "text": "Every habit due today is done.",
+      "rule": "All habits due today are completed. Skipped and postponed ones are not counted."
+    },
+    "overdue_tasks": {
+      "text": "{{count}} open tasks are past their due date.",
+      "rule": "Open tasks whose due date is before today."
+    },
+    "goal_deadline": {
+      "text": "\"{{title}}\" is due in {{days}} days and is at {{percent}}%.",
+      "rule": "The active goal whose target date is closest, when it is within the next 7 days."
+    },
+    "habit_rate_up": {
+      "text": "You completed {{current}}% of your due habits this week, up from {{previous}}%.",
+      "rule": "Completed out of due habits in the last 7 days compared with the 7 days before. Shown when the difference is at least 5 points."
+    },
+    "habit_rate_down": {
+      "text": "You completed {{current}}% of your due habits this week, compared with {{previous}}% the week before.",
+      "rule": "Completed out of due habits in the last 7 days compared with the 7 days before. Shown when the difference is at least 5 points."
+    },
+    "streak_goal_near": {
+      "text": "{{name}}: {{remaining}} more to reach your streak goal of {{goal}}.",
+      "rule": "A habit whose current streak is within 3 of the streak goal you set."
+    },
+    "long_streak": {
+      "text": "{{name}} has been kept {{count}} days in a row.",
+      "rule": "Your longest current streak, once it is 7 days or longer."
+    },
+    "busy_day": {
+      "text": "{{date}} has {{count}} timed entries.",
+      "rule": "The day in the next 7 days with the most timed events and task blocks, when there are 3 or more."
+    }
+  },
+  "activity": {
+    "empty": "What you do will be listed here",
+    "habit_completed": "Completed {{title}}",
+    "habit_created": "Started the habit {{title}}",
+    "task_completed": "Finished {{title}}",
+    "task_created": "Added the task {{title}}",
+    "goal_completed": "Achieved the goal {{title}}",
+    "goal_created": "Set the goal {{title}}",
+    "event_created": "Planned {{title}}"
+  },
+  "customize": {
+    "open": "Customize",
+    "title": "Customize dashboard",
+    "description": "Choose what you see and in which order. The layout is saved to your account.",
+    "restore": "Restore default",
+    "moveUp": "Move {{name}} up",
+    "moveDown": "Move {{name}} down"
+  },
+  "allHidden": {
+    "title": "Every widget is hidden",
+    "description": "Choose the widgets you want to see on your dashboard."
+  }
+}

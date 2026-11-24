@@ -94,6 +94,42 @@ export function createApiClient(options) {
       clearEntry: (habitId, date) => http.delete(`/habits/${habitId}/entries/${date}`),
     },
 
+    goals: {
+      list: (query) => http.get('/goals', { query }),
+      /** A goal with its sub-goals and linked habits. */
+      get: (goalId) => http.get(`/goals/${goalId}`),
+      create: (input) => http.post('/goals', input),
+      update: (goalId, patch) => http.patch(`/goals/${goalId}`, patch),
+      remove: (goalId) => http.delete(`/goals/${goalId}`),
+      history: (goalId) => http.get(`/goals/${goalId}/history`),
+      addMilestone: (goalId, input) => http.post(`/goals/${goalId}/milestones`, input),
+      updateMilestone: (goalId, milestoneId, patch) =>
+        http.patch(`/goals/${goalId}/milestones/${milestoneId}`, patch),
+      removeMilestone: (goalId, milestoneId) =>
+        http.delete(`/goals/${goalId}/milestones/${milestoneId}`),
+      addReview: (goalId, input) => http.post(`/goals/${goalId}/reviews`, input),
+      removeReview: (goalId, reviewId) => http.delete(`/goals/${goalId}/reviews/${reviewId}`),
+    },
+
+    tasks: {
+      /** Paginated; `meta.today` is today in the user's time zone. */
+      list: (query) => http.list('/tasks', query),
+      /** Overdue, due and completed tasks of one day; omit `date` for today. */
+      day: (date) => http.get('/tasks/day', { query: { date } }),
+      get: (taskId) => http.get(`/tasks/${taskId}`),
+      create: (input) => http.post('/tasks', input),
+      update: (taskId, patch) => http.patch(`/tasks/${taskId}`, patch),
+      remove: (taskId) => http.delete(`/tasks/${taskId}`),
+      /** Returns `{ task, next }`; `next` is the new occurrence of a repeating task. */
+      complete: (taskId) => http.post(`/tasks/${taskId}/complete`),
+      reopen: (taskId) => http.post(`/tasks/${taskId}/reopen`),
+      postpone: (taskId, to) => http.post(`/tasks/${taskId}/postpone`, { to }),
+      addSubtask: (taskId, title) => http.post(`/tasks/${taskId}/subtasks`, { title }),
+      updateSubtask: (taskId, subtaskId, patch) =>
+        http.patch(`/tasks/${taskId}/subtasks/${subtaskId}`, patch),
+      removeSubtask: (taskId, subtaskId) => http.delete(`/tasks/${taskId}/subtasks/${subtaskId}`),
+    },
+
     devices: {
       list: () => http.get('/devices'),
       current: () => http.get('/devices/current'),

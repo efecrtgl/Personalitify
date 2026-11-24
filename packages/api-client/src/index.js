@@ -94,6 +94,22 @@ export function createApiClient(options) {
       clearEntry: (habitId, date) => http.delete(`/habits/${habitId}/entries/${date}`),
     },
 
+    focus: {
+      /** The active session, timer lengths, today's focus time and the server clock. */
+      state: () => http.get('/focus'),
+      stats: ({ from, to }) => http.get('/focus/stats', { query: { from, to } }),
+      sessions: (query) => http.list('/focus/sessions', query),
+      /** Starts the timer now; fails with INVALID_STATE while another session is active. */
+      start: (input) => http.post('/focus/sessions', input),
+      get: (sessionId) => http.get(`/focus/sessions/${sessionId}`),
+      update: (sessionId, patch) => http.patch(`/focus/sessions/${sessionId}`, patch),
+      pause: (sessionId) => http.post(`/focus/sessions/${sessionId}/pause`),
+      resume: (sessionId) => http.post(`/focus/sessions/${sessionId}/resume`),
+      complete: (sessionId) => http.post(`/focus/sessions/${sessionId}/complete`),
+      cancel: (sessionId) => http.post(`/focus/sessions/${sessionId}/cancel`),
+      remove: (sessionId) => http.delete(`/focus/sessions/${sessionId}`),
+    },
+
     goals: {
       list: (query) => http.get('/goals', { query }),
       /** A goal with its sub-goals and linked habits. */
@@ -157,6 +173,26 @@ export function createApiClient(options) {
     dashboard: {
       /** Everything the personal dashboard shows, in one request. */
       get: () => http.get('/dashboard'),
+    },
+
+    journal: {
+      /** Entries without bodies; `q` searches title, text and tags. */
+      list: (query) => http.list('/journal', query),
+      tags: () => http.get('/journal/tags'),
+      create: (input) => http.post('/journal', input),
+      get: (entryId) => http.get(`/journal/${entryId}`),
+      update: (entryId, patch) => http.patch(`/journal/${entryId}`, patch),
+      remove: (entryId) => http.delete(`/journal/${entryId}`),
+      revisions: (entryId) => http.get(`/journal/${entryId}/revisions`),
+      restoreRevision: (entryId, revisionId) =>
+        http.post(`/journal/${entryId}/revisions/${revisionId}/restore`),
+    },
+
+    mood: {
+      /** Entries of a range with their statistics. */
+      range: ({ from, to }) => http.get('/mood', { query: { from, to } }),
+      set: (date, input) => http.put(`/mood/${date}`, input),
+      clear: (date) => http.delete(`/mood/${date}`),
     },
 
     devices: {

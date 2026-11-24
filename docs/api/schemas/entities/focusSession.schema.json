@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/focusSession.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["focus", "short_break", "long_break"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["running", "paused", "completed", "cancelled"]
+    },
+    "plannedMinutes": {
+      "type": "number"
+    },
+    "startedAt": {
+      "type": "string"
+    },
+    "pausedAt": {
+      "type": ["string", "null"]
+    },
+    "pausedSeconds": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Time spent paused so far, without a pause still open"
+    },
+    "endsAt": {
+      "description": "When a running session reaches its planned length; null unless running",
+      "type": ["string", "null"]
+    },
+    "endedAt": {
+      "type": ["string", "null"]
+    },
+    "elapsedSeconds": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Time spent without pauses: final once ended, as of the last pause while active"
+    },
+    "date": {
+      "type": "string",
+      "description": "The user’s calendar date when the session started"
+    },
+    "note": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": ["string", "null"]
+    },
+    "habitId": {
+      "type": ["string", "null"]
+    },
+    "goalId": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "kind",
+    "status",
+    "plannedMinutes",
+    "startedAt",
+    "pausedAt",
+    "pausedSeconds",
+    "endsAt",
+    "endedAt",
+    "elapsedSeconds",
+    "date",
+    "note",
+    "taskId",
+    "habitId",
+    "goalId"
+  ],
+  "additionalProperties": false,
+  "description": "Timer session"
+}

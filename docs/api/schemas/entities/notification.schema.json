@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/notification.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "habit_reminder",
+        "task_due",
+        "tasks_today",
+        "goal_deadline",
+        "event_reminder",
+        "achievement_unlocked",
+        "focus_completed"
+      ]
+    },
+    "params": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"]
+      },
+      "description": "The values behind the notification; clients phrase it from `kind` and these"
+    },
+    "entityType": {
+      "description": "What the notification is about",
+      "type": ["string", "null"]
+    },
+    "entityId": {
+      "type": ["string", "null"]
+    },
+    "silent": {
+      "type": "boolean",
+      "description": "Made during the user’s quiet hours: listed, but clients must not alert for it"
+    },
+    "read": {
+      "type": "boolean"
+    },
+    "readAt": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "kind",
+    "params",
+    "entityType",
+    "entityId",
+    "silent",
+    "read",
+    "readAt"
+  ],
+  "additionalProperties": false,
+  "description": "Notification"
+}

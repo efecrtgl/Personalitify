@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/goal.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "categoryId": {
+      "type": ["string", "null"]
+    },
+    "color": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "activity",
+        "apple",
+        "bed",
+        "bike",
+        "book",
+        "brain",
+        "briefcase",
+        "brush",
+        "calendar",
+        "camera",
+        "coffee",
+        "code",
+        "droplet",
+        "dumbbell",
+        "flame",
+        "flower",
+        "footprints",
+        "gamepad",
+        "globe",
+        "graduation",
+        "heart",
+        "home",
+        "languages",
+        "leaf",
+        "moon",
+        "music",
+        "pencil",
+        "pill",
+        "piggy-bank",
+        "salad",
+        "smile",
+        "sparkles",
+        "star",
+        "sun",
+        "target",
+        "timer",
+        "users",
+        "wallet"
+      ]
+    },
+    "horizon": {
+      "type": "string",
+      "enum": ["short", "long"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "targetDate": {
+      "type": ["string", "null"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "completed", "abandoned"]
+    },
+    "completedAt": {
+      "type": ["string", "null"]
+    },
+    "progress": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["manual", "milestones", "tasks", "metric"]
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage, used by the `manual` mode"
+        },
+        "current": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000,
+          "description": "Current amount, used by the `metric` mode"
+        },
+        "target": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1000000000000,
+          "description": "Target amount, used by the `metric` mode"
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": ["mode", "value", "current", "target", "unit"],
+      "additionalProperties": false,
+      "description": "How progress is determined: `manual` (a percentage), `milestones` (share of completed milestones), `tasks` (share of completed linked tasks) or `metric` (current / target)."
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "targetDate": {
+            "type": ["string", "null"]
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "completedAt": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": ["id", "title", "targetDate", "done", "completedAt"],
+        "additionalProperties": false
+      }
+    },
+    "reviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "rating": {
+            "type": ["number", "null"]
+          },
+          "percent": {
+            "type": "number",
+            "description": "Progress of the goal when the review was written"
+          }
+        },
+        "required": ["id", "date", "note", "rating", "percent"],
+        "additionalProperties": false
+      }
+    },
+    "parentGoalId": {
+      "type": ["string", "null"]
+    },
+    "habitIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sortOrder": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "title",
+    "description",
+    "categoryId",
+    "color",
+    "icon",
+    "horizon",
+    "startDate",
+    "targetDate",
+    "status",
+    "completedAt",
+    "progress",
+    "milestones",
+    "reviews",
+    "parentGoalId",
+    "habitIds",
+    "sortOrder"
+  ],
+  "additionalProperties": false,
+  "description": "Goal"
+}

@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/calendarEvent.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "categoryId": {
+      "type": ["string", "null"]
+    },
+    "color": {
+      "type": ["string", "null"]
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["event", "block"]
+    },
+    "allDay": {
+      "type": "boolean"
+    },
+    "timeZone": {
+      "type": "string",
+      "description": "IANA zone the wall-clock times of the event are written in"
+    },
+    "startDate": {
+      "type": "string",
+      "description": "Date of the first (or only) occurrence, in `timeZone`"
+    },
+    "startTime": {
+      "description": "HH:mm; null for all-day events",
+      "type": ["string", "null"]
+    },
+    "endDate": {
+      "type": "string",
+      "description": "Inclusive for all-day events"
+    },
+    "endTime": {
+      "type": ["string", "null"]
+    },
+    "recurrence": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "frequency": {
+              "type": "string",
+              "enum": ["daily", "weekly", "monthly", "yearly"]
+            },
+            "interval": {
+              "default": 1,
+              "description": "Repeat every N days/weeks/months/years",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365
+            },
+            "weekdays": {
+              "default": [],
+              "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+              "maxItems": 7,
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "monthDays": {
+              "default": [],
+              "description": "Monthly rules: days of the month; -1 means the last day",
+              "maxItems": 31,
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  },
+                  {
+                    "type": "number",
+                    "const": -1
+                  }
+                ]
+              }
+            }
+          },
+          "required": ["frequency", "interval", "weekdays", "monthDays"],
+          "additionalProperties": false,
+          "description": "Recurrence rule evaluated on calendar dates"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recurrenceEndDate": {
+      "type": ["string", "null"]
+    },
+    "excludedDates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Occurrences removed from the series"
+    },
+    "reminderMinutes": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "taskId": {
+      "type": ["string", "null"]
+    },
+    "habitId": {
+      "type": ["string", "null"]
+    },
+    "goalId": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "title",
+    "description",
+    "location",
+    "categoryId",
+    "color",
+    "kind",
+    "allDay",
+    "timeZone",
+    "startDate",
+    "startTime",
+    "endDate",
+    "endTime",
+    "recurrence",
+    "recurrenceEndDate",
+    "excludedDates",
+    "reminderMinutes",
+    "taskId",
+    "habitId",
+    "goalId"
+  ],
+  "additionalProperties": false,
+  "description": "Calendar event"
+}

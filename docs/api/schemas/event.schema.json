@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/event.schema.json",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string"
+    },
+    "event": {
+      "type": "string",
+      "description": "`<entityType>.<created|updated|deleted>`"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Position in the user’s event log; dense, starting at 1"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "entityType": {
+      "type": "string"
+    },
+    "entityId": {
+      "type": "string"
+    },
+    "entityVersion": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "originDeviceId": {
+      "description": "The device whose request caused the event; null for the server itself",
+      "type": ["string", "null"]
+    },
+    "opId": {
+      "type": ["string", "null"]
+    },
+    "changedFields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {},
+      "description": "The entity after the change; for a deletion its id, version and deletedAt"
+    }
+  },
+  "required": [
+    "eventId",
+    "event",
+    "schemaVersion",
+    "seq",
+    "userId",
+    "entityType",
+    "entityId",
+    "entityVersion",
+    "timestamp",
+    "originDeviceId",
+    "opId",
+    "changedFields",
+    "data"
+  ],
+  "additionalProperties": false,
+  "description": "Domain event"
+}

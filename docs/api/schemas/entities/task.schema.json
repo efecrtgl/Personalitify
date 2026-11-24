@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/task.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "categoryId": {
+      "type": ["string", "null"]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["none", "low", "medium", "high"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["todo", "in_progress", "done", "cancelled"]
+    },
+    "startDate": {
+      "type": ["string", "null"]
+    },
+    "dueDate": {
+      "description": "Calendar date in the user’s time zone",
+      "type": ["string", "null"]
+    },
+    "dueTime": {
+      "description": "Optional time of day, HH:mm",
+      "type": ["string", "null"]
+    },
+    "scheduledDate": {
+      "description": "Day of the planned time block",
+      "type": ["string", "null"]
+    },
+    "scheduledTime": {
+      "type": ["string", "null"]
+    },
+    "durationMinutes": {
+      "type": ["number", "null"]
+    },
+    "completedAt": {
+      "type": ["string", "null"]
+    },
+    "completedOn": {
+      "description": "The user’s calendar date when the task was completed",
+      "type": ["string", "null"]
+    },
+    "originalDueDate": {
+      "description": "The first due date, kept when the task is moved",
+      "type": ["string", "null"]
+    },
+    "postponedCount": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "subtasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "title", "done"],
+        "additionalProperties": false
+      }
+    },
+    "recurrence": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "frequency": {
+              "type": "string",
+              "enum": ["daily", "weekly", "monthly", "yearly"]
+            },
+            "interval": {
+              "default": 1,
+              "description": "Repeat every N days/weeks/months/years",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365
+            },
+            "weekdays": {
+              "default": [],
+              "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+              "maxItems": 7,
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "monthDays": {
+              "default": [],
+              "description": "Monthly rules: days of the month; -1 means the last day",
+              "maxItems": 31,
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  },
+                  {
+                    "type": "number",
+                    "const": -1
+                  }
+                ]
+              }
+            }
+          },
+          "required": ["frequency", "interval", "weekdays", "monthDays"],
+          "additionalProperties": false,
+          "description": "Recurrence rule evaluated on calendar dates"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Null for a task that does not repeat"
+    },
+    "recurrenceEndDate": {
+      "type": ["string", "null"]
+    },
+    "seriesId": {
+      "description": "Shared by all occurrences of a repeating task",
+      "type": ["string", "null"]
+    },
+    "goalId": {
+      "type": ["string", "null"]
+    },
+    "habitId": {
+      "type": ["string", "null"]
+    },
+    "sortOrder": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "title",
+    "description",
+    "categoryId",
+    "priority",
+    "status",
+    "startDate",
+    "dueDate",
+    "dueTime",
+    "scheduledDate",
+    "scheduledTime",
+    "durationMinutes",
+    "completedAt",
+    "completedOn",
+    "originalDueDate",
+    "postponedCount",
+    "subtasks",
+    "recurrence",
+    "recurrenceEndDate",
+    "seriesId",
+    "goalId",
+    "habitId",
+    "sortOrder"
+  ],
+  "additionalProperties": false,
+  "description": "Task"
+}

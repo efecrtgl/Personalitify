@@ -1,0 +1,29 @@
+{
+  "title": "Personalitify API schemas",
+  "apiVersion": "0.1.0",
+  "description": "JSON Schema (draft 2020-12) for the data a client stores and exchanges. `entities` maps an entity type to its schema; an entity has that shape in REST answers, snapshots, changes and events.",
+  "entities": {
+    "profile": "entities/profile.schema.json",
+    "settings": "entities/settings.schema.json",
+    "category": "entities/category.schema.json",
+    "habit": "entities/habit.schema.json",
+    "habitEntry": "entities/habitEntry.schema.json",
+    "goal": "entities/goal.schema.json",
+    "task": "entities/task.schema.json",
+    "calendarEvent": "entities/calendarEvent.schema.json",
+    "focusSession": "entities/focusSession.schema.json",
+    "journalEntry": "entities/journalEntry.schema.json",
+    "moodEntry": "entities/moodEntry.schema.json",
+    "achievement": "entities/achievement.schema.json",
+    "notification": "entities/notification.schema.json"
+  },
+  "supporting": {
+    "error": "error.schema.json",
+    "event": "event.schema.json",
+    "event-tombstone": "event-tombstone.schema.json",
+    "sync-change": "sync-change.schema.json",
+    "tokens": "tokens.schema.json",
+    "user": "user.schema.json",
+    "device": "device.schema.json"
+  }
+}

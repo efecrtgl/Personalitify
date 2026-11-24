@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/moodEntry.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "1 = very bad … 5 = very good"
+    },
+    "emotions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "happy",
+          "calm",
+          "grateful",
+          "energetic",
+          "proud",
+          "hopeful",
+          "focused",
+          "tired",
+          "bored",
+          "stressed",
+          "anxious",
+          "sad",
+          "angry",
+          "lonely"
+        ]
+      }
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "required": ["id", "version", "createdAt", "updatedAt", "date", "score", "emotions", "note"],
+  "additionalProperties": false,
+  "description": "Mood entry"
+}

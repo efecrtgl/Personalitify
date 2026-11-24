@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/device.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "installationId": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "clientType": {
+      "type": "string",
+      "enum": ["web", "desktop", "mobile", "integration"]
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["web", "windows", "macos", "linux", "android", "ios"]
+    },
+    "appId": {
+      "type": "string"
+    },
+    "appVersion": {
+      "type": ["string", "null"]
+    },
+    "osVersion": {
+      "type": ["string", "null"]
+    },
+    "lastSeenAt": {
+      "type": "string"
+    },
+    "syncCursor": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Highest event sequence number the device has acknowledged"
+    },
+    "lastSyncAt": {
+      "type": ["string", "null"]
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "current": {
+      "type": "boolean",
+      "description": "True for the device making the request"
+    }
+  },
+  "required": [
+    "id",
+    "installationId",
+    "name",
+    "clientType",
+    "platform",
+    "appId",
+    "appVersion",
+    "osVersion",
+    "lastSeenAt",
+    "syncCursor",
+    "lastSyncAt",
+    "createdAt",
+    "current"
+  ],
+  "additionalProperties": false,
+  "description": "Device"
+}

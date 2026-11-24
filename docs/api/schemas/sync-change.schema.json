@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/sync-change.schema.json",
+  "type": "object",
+  "properties": {
+    "seq": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "entityType": {
+      "type": "string",
+      "enum": [
+        "profile",
+        "settings",
+        "category",
+        "habit",
+        "habitEntry",
+        "goal",
+        "task",
+        "calendarEvent",
+        "focusSession",
+        "journalEntry",
+        "moodEntry",
+        "achievement",
+        "notification"
+      ]
+    },
+    "entityId": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "deleted": {
+      "type": "boolean"
+    },
+    "changedAt": {
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The entity in the shape of its type; null when `deleted`"
+    }
+  },
+  "required": ["seq", "entityType", "entityId", "version", "deleted", "changedAt", "data"],
+  "additionalProperties": false,
+  "description": "One entry of GET /sync/changes"
+}

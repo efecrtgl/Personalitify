@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/error.schema.json",
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "INTERNAL_ERROR",
+            "ROUTE_NOT_FOUND",
+            "VALIDATION_FAILED",
+            "MALFORMED_JSON",
+            "PAYLOAD_TOO_LARGE",
+            "RATE_LIMITED",
+            "SERVICE_UNAVAILABLE",
+            "UNAUTHENTICATED",
+            "TOKEN_EXPIRED",
+            "SESSION_REVOKED",
+            "INVALID_CREDENTIALS",
+            "INVALID_REFRESH_TOKEN",
+            "REFRESH_TOKEN_REUSED",
+            "INVALID_TOKEN",
+            "FORBIDDEN",
+            "EMAIL_ALREADY_REGISTERED",
+            "EMAIL_ALREADY_VERIFIED",
+            "NOT_FOUND",
+            "CONFLICT",
+            "VERSION_CONFLICT",
+            "ID_ALREADY_EXISTS",
+            "LIMIT_EXCEEDED",
+            "INVALID_STATE",
+            "CURSOR_EXPIRED",
+            "UNKNOWN_ENTITY_TYPE",
+            "REGISTRATION_CLOSED"
+          ],
+          "description": "Stable; clients branch on this"
+        },
+        "message": {
+          "type": "string",
+          "description": "For people, in the language of the request"
+        },
+        "details": {
+          "description": "For VALIDATION_FAILED a list of { path, code, message }; for VERSION_CONFLICT { entityType, entityId, currentVersion, conflictingFields, current }"
+        },
+        "requestId": {
+          "type": "string",
+          "description": "Also in the X-Request-Id header; quote it in reports"
+        }
+      },
+      "required": ["code", "message", "requestId"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["error"],
+  "additionalProperties": false,
+  "description": "Body of every failed request"
+}

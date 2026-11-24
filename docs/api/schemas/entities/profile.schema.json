@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/profile.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "avatarColor": {
+      "type": "string"
+    }
+  },
+  "required": ["id", "version", "createdAt", "updatedAt", "displayName", "bio", "avatarColor"],
+  "additionalProperties": false,
+  "description": "Profile"
+}

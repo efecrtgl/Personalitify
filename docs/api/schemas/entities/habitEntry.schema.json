@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/habitEntry.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "habitId": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "skipped", "postponed"]
+    },
+    "value": {
+      "type": "number"
+    },
+    "target": {
+      "type": "number",
+      "description": "The habit’s target when the entry was written"
+    },
+    "completed": {
+      "type": "boolean"
+    },
+    "note": {
+      "type": "string"
+    },
+    "postponedTo": {
+      "type": ["string", "null"]
+    },
+    "completedAt": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "habitId",
+    "date",
+    "status",
+    "value",
+    "target",
+    "completed",
+    "note",
+    "postponedTo",
+    "completedAt"
+  ],
+  "additionalProperties": false,
+  "description": "What was recorded for a habit on one day"
+}

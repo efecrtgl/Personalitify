@@ -6,7 +6,17 @@ import {
 } from '@personalitify/shared-contracts';
 import { z } from 'zod';
 import { createModule } from '../../core/routing.js';
+import { syncedResourceFields } from '../users/users.schemas.js';
 import { getProgress } from './achievements.service.js';
+
+/** An unlocked achievement as it is synchronized to devices. */
+export const achievementSchema = z
+  .strictObject({
+    ...syncedResourceFields,
+    key: z.enum(ACHIEVEMENT_KEYS),
+    unlockedAt: z.string(),
+  })
+  .describe('Unlocked achievement');
 
 const progressSchema = z.strictObject({
   today: z.string(),

@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/habit.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "categoryId": {
+      "type": ["string", "null"]
+    },
+    "color": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "activity",
+        "apple",
+        "bed",
+        "bike",
+        "book",
+        "brain",
+        "briefcase",
+        "brush",
+        "calendar",
+        "camera",
+        "coffee",
+        "code",
+        "droplet",
+        "dumbbell",
+        "flame",
+        "flower",
+        "footprints",
+        "gamepad",
+        "globe",
+        "graduation",
+        "heart",
+        "home",
+        "languages",
+        "leaf",
+        "moon",
+        "music",
+        "pencil",
+        "pill",
+        "piggy-bank",
+        "salad",
+        "smile",
+        "sparkles",
+        "star",
+        "sun",
+        "target",
+        "timer",
+        "users",
+        "wallet"
+      ]
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["fixed", "flexible"]
+        },
+        "recurrence": {
+          "type": "object",
+          "properties": {
+            "frequency": {
+              "type": "string",
+              "enum": ["daily", "weekly", "monthly", "yearly"]
+            },
+            "interval": {
+              "default": 1,
+              "description": "Repeat every N days/weeks/months/years",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365
+            },
+            "weekdays": {
+              "default": [],
+              "description": "Weekly rules: ISO weekdays, Monday = 1 … Sunday = 7",
+              "maxItems": 7,
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "monthDays": {
+              "default": [],
+              "description": "Monthly rules: days of the month; -1 means the last day",
+              "maxItems": 31,
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  },
+                  {
+                    "type": "number",
+                    "const": -1
+                  }
+                ]
+              }
+            }
+          },
+          "required": ["frequency", "interval", "weekdays", "monthDays"],
+          "additionalProperties": false,
+          "description": "Recurrence rule evaluated on calendar dates"
+        },
+        "period": {
+          "type": "string",
+          "enum": ["week", "month"]
+        },
+        "timesPerPeriod": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 31
+        }
+      },
+      "required": ["mode", "recurrence", "period", "timesPerPeriod"],
+      "additionalProperties": false,
+      "description": "When the habit is expected. `fixed`: on the dates of `recurrence`. `flexible`: `timesPerPeriod` times per `period` (week or month), on any days."
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["check", "count", "duration"]
+        },
+        "value": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": ["kind", "value", "unit"],
+      "additionalProperties": false,
+      "description": "What completes the habit for a day. `check`: done once. `count`: `value` repetitions. `duration`: `value` minutes."
+    },
+    "startDate": {
+      "type": "string",
+      "description": "First day, YYYY-MM-DD in the user’s time zone"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "reminders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": ["time", "enabled"],
+        "additionalProperties": false
+      }
+    },
+    "streakGoal": {
+      "type": ["number", "null"]
+    },
+    "archived": {
+      "type": "boolean"
+    },
+    "archivedAt": {
+      "type": ["string", "null"]
+    },
+    "sortOrder": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "name",
+    "description",
+    "categoryId",
+    "color",
+    "icon",
+    "schedule",
+    "target",
+    "startDate",
+    "endDate",
+    "reminders",
+    "streakGoal",
+    "archived",
+    "archivedAt",
+    "sortOrder"
+  ],
+  "additionalProperties": false,
+  "description": "Habit"
+}

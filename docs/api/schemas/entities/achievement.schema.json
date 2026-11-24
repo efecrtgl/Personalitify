@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/achievement.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "key": {
+      "type": "string",
+      "enum": [
+        "habit_first",
+        "habit_100",
+        "habit_500",
+        "streak_7",
+        "streak_30",
+        "streak_100",
+        "task_first",
+        "task_50",
+        "task_250",
+        "milestone_10",
+        "goal_first",
+        "goal_5",
+        "focus_first",
+        "focus_10h",
+        "focus_50h",
+        "journal_first",
+        "journal_30",
+        "mood_7",
+        "mood_30",
+        "level_5",
+        "level_10"
+      ]
+    },
+    "unlockedAt": {
+      "type": "string"
+    }
+  },
+  "required": ["id", "version", "createdAt", "updatedAt", "key", "unlockedAt"],
+  "additionalProperties": false,
+  "description": "Unlocked achievement"
+}

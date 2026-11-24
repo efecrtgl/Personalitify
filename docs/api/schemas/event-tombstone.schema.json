@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/event-tombstone.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "deletedAt": {
+      "type": "string"
+    }
+  },
+  "required": ["id", "version", "deletedAt"],
+  "additionalProperties": false,
+  "description": "The `data` of a `<entity>.deleted` event"
+}

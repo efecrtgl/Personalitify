@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/tokens.schema.json",
+  "type": "object",
+  "properties": {
+    "accessToken": {
+      "type": "string",
+      "description": "JWT sent as `Authorization: Bearer <token>`"
+    },
+    "tokenType": {
+      "type": "string",
+      "const": "Bearer"
+    },
+    "expiresIn": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Lifetime of the access token in seconds"
+    },
+    "accessTokenExpiresAt": {
+      "type": "string"
+    },
+    "refreshToken": {
+      "description": "Null for browser clients, which receive it as an HttpOnly cookie",
+      "type": ["string", "null"]
+    },
+    "refreshTokenExpiresAt": {
+      "type": "string"
+    },
+    "sessionId": {
+      "type": "string"
+    },
+    "deviceId": {
+      "type": "string",
+      "description": "Server-side device id of this installation"
+    }
+  },
+  "required": [
+    "accessToken",
+    "tokenType",
+    "expiresIn",
+    "accessTokenExpiresAt",
+    "refreshToken",
+    "refreshTokenExpiresAt",
+    "sessionId",
+    "deviceId"
+  ],
+  "additionalProperties": false,
+  "description": "Token set"
+}

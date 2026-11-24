@@ -32,6 +32,8 @@ export function createApiClient(options) {
 
     health: {
       get: () => http.get('/health', { auth: false }),
+      /** Whether the API can serve requests right now (its database is reachable). */
+      ready: () => http.get('/health/ready', { auth: false }),
     },
 
     auth: {

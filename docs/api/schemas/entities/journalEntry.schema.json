@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/journalEntry.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["journal", "note"]
+    },
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "description": "The day the entry is about, in the user’s time zone"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pinned": {
+      "type": "boolean"
+    },
+    "body": {
+      "type": "string",
+      "description": "Markdown"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "kind",
+    "title",
+    "date",
+    "tags",
+    "pinned",
+    "body"
+  ],
+  "additionalProperties": false,
+  "description": "Journal entry"
+}

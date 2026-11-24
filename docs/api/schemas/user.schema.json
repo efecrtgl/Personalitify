@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/user.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "emailVerified": {
+      "type": "boolean"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["user", "admin"]
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "lastLoginAt": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": ["id", "email", "emailVerified", "role", "createdAt", "lastLoginAt"],
+  "additionalProperties": false,
+  "description": "Account identity"
+}

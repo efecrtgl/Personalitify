@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/efecrtgl/Personalitify/blob/main/docs/api/schemas/entities/category.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "UUID"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Entity version, incremented on every change"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "activity",
+        "apple",
+        "bed",
+        "bike",
+        "book",
+        "brain",
+        "briefcase",
+        "brush",
+        "calendar",
+        "camera",
+        "coffee",
+        "code",
+        "droplet",
+        "dumbbell",
+        "flame",
+        "flower",
+        "footprints",
+        "gamepad",
+        "globe",
+        "graduation",
+        "heart",
+        "home",
+        "languages",
+        "leaf",
+        "moon",
+        "music",
+        "pencil",
+        "pill",
+        "piggy-bank",
+        "salad",
+        "smile",
+        "sparkles",
+        "star",
+        "sun",
+        "target",
+        "timer",
+        "users",
+        "wallet"
+      ]
+    },
+    "sortOrder": {
+      "type": "number"
+    }
+  },
+  "required": ["id", "version", "createdAt", "updatedAt", "name", "color", "icon", "sortOrder"],
+  "additionalProperties": false,
+  "description": "Category"
+}

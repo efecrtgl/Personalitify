@@ -117,6 +117,21 @@ the shape of the content), empty (what it is and what to do next) and error (wit
 - `prefers-reduced-motion` disables transitions and animations globally.
 - Icon-only buttons require a label.
 
+### Charts
+
+Charts live in `apps/web/src/charts`. `BarSeries` draws one measure over the steps of a
+period and is the only chart form used so far: one series, one axis, bars anchored at zero.
+Rules every chart follows:
+
+- a sentence under the chart says what a bar means;
+- exact values appear on hover or touch;
+- the picture is hidden from assistive technology and the same numbers follow as a table
+  (wrapped in a visually hidden element — a bare hidden `<table>` still takes its content's
+  width and makes narrow screens scroll sideways);
+- text uses ink tokens, never the series color; a missing value is drawn as no bar and
+  named in words, not as zero;
+- bars do not animate in: the animation restarts whenever the container is resized.
+
 ## Internationalization
 
 All text comes from `packages/localization` through i18next; components contain no literal

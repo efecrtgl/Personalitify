@@ -53,9 +53,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   streaks, recent activity and rule-based insights that state how they were determined;
   widgets that can be rearranged, hidden and restored, with the layout stored in the
   account.
+- Phase 8: analytics — statistics of a week, month, quarter or year next to the period
+  before: habit completion rates over time and by weekday, every habit in its own unit, task
+  punctuality and breakdowns, goal pace against time, and a written period report whose
+  every line names its rule. Charts come with explanations, exact values on hover and a
+  table for screen readers; the series can be exported as CSV and the page printed.
 
 ### Fixed
 
+- Days after a habit was archived are no longer counted as missed in the dashboard's weekly
+  figures.
+- Tables provided for screen readers could make a page scroll sideways on narrow screens.
 - Session restore no longer shares the strict rate limit of the credential endpoints, which
   locked users out after a few page reloads.
 - An event subscriber that wrote another entity of the same user deadlocked on the per-user

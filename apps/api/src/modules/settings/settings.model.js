@@ -1,5 +1,6 @@
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from '@personalitify/localization';
 import {
+  DASHBOARD_WIDGETS,
   DATE_FORMATS,
   DEFAULT_TIME_ZONE,
   THEMES,
@@ -41,6 +42,21 @@ const settingsSchema = new mongoose.Schema(
       // Hide journal and mood text in previews, summaries and notifications.
       hideSensitivePreviews: { type: Boolean, default: false },
     },
+    dashboard: {
+      // The user's order and visibility of dashboard widgets. Bounded by the known widgets.
+      widgets: {
+        type: [
+          new mongoose.Schema(
+            {
+              id: { type: String, enum: DASHBOARD_WIDGETS, required: true },
+              visible: { type: Boolean, default: true },
+            },
+            { _id: false },
+          ),
+        ],
+        default: [],
+      },
+    },
   },
   { collection: 'userSettings' },
 );
@@ -49,6 +65,19 @@ settingsSchema.plugin(syncedEntity);
 settingsSchema.index({ userId: 1 }, { unique: true });
 
 export const Settings = mongoose.model('Settings', settingsSchema);
+
+/**
+ * The stored layout completed with every known widget: widgets the user has not arranged
+ * yet (a new account, or a widget added to the product later) follow in the default order.
+ */
+export function dashboardLayout(stored = []) {
+  const known = stored.filter((widget) => DASHBOARD_WIDGETS.includes(widget.id));
+  const listed = new Set(known.map((widget) => widget.id));
+  return [
+    ...known.map((widget) => ({ id: widget.id, visible: widget.visible })),
+    ...DASHBOARD_WIDGETS.filter((id) => !listed.has(id)).map((id) => ({ id, visible: true })),
+  ];
+}
 
 export function serializeSettings(settings) {
   const { notifications, privacy } = settings;
@@ -76,5 +105,6 @@ export function serializeSettings(settings) {
     privacy: {
       hideSensitivePreviews: privacy.hideSensitivePreviews,
     },
+    dashboard: { widgets: dashboardLayout(settings.dashboard?.widgets) },
   };
 }

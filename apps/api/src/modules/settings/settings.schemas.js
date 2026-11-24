@@ -1,5 +1,11 @@
 import { SUPPORTED_LANGUAGES } from '@personalitify/localization';
-import { DATE_FORMATS, THEMES, TIME_FORMATS, WEEK_STARTS } from '@personalitify/shared-contracts';
+import {
+  DASHBOARD_WIDGETS,
+  DATE_FORMATS,
+  THEMES,
+  TIME_FORMATS,
+  WEEK_STARTS,
+} from '@personalitify/shared-contracts';
 import { z } from 'zod';
 import { baseVersionSchema, timeOfDaySchema, timeZoneSchema } from '../../core/validation.js';
 import { syncedResourceFields } from '../users/users.schemas.js';
@@ -30,6 +36,18 @@ const privacySchema = z.strictObject({
     .describe('Hide journal and mood text in previews, summaries and notifications'),
 });
 
+const dashboardSchema = z
+  .strictObject({
+    widgets: z
+      .array(z.strictObject({ id: z.enum(DASHBOARD_WIDGETS), visible: z.boolean() }))
+      .max(DASHBOARD_WIDGETS.length)
+      .refine((widgets) => new Set(widgets.map((widget) => widget.id)).size === widgets.length, {
+        message: 'v:duplicate_value',
+      })
+      .describe('Dashboard widgets in display order, each with its visibility'),
+  })
+  .describe('Layout of the personal dashboard');
+
 export const settingsSchema = z
   .strictObject({
     ...syncedResourceFields,
@@ -41,6 +59,7 @@ export const settingsSchema = z
     weekStart: weekStartSchema,
     notifications: notificationPreferencesSchema,
     privacy: privacySchema,
+    dashboard: dashboardSchema,
   })
   .describe('User settings');
 
@@ -57,5 +76,6 @@ export const updateSettingsBody = z.strictObject({
     .extend({ quietHours: quietHoursSchema.partial().optional() })
     .optional(),
   privacy: privacySchema.partial().optional(),
+  dashboard: dashboardSchema.optional().describe('Replaces the whole layout'),
   baseVersion: baseVersionSchema,
 });

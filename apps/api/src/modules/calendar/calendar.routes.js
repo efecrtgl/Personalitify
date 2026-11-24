@@ -52,7 +52,7 @@ export const calendarEventSchema = z
   })
   .describe('Calendar event');
 
-const calendarItemSchema = z
+export const calendarItemSchema = z
   .strictObject({
     id: z.string().describe('Unique within a response: `<kind>:<sourceId>:<date>`'),
     kind: z.enum(CALENDAR_ITEM_KINDS),

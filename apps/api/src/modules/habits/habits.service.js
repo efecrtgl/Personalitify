@@ -208,6 +208,43 @@ export async function getDay(auth, date) {
   };
 }
 
+/**
+ * For every day of a range: how many fixed-schedule habits were due and how many of those
+ * were completed. Skipped and postponed days count on neither side. Archived habits are
+ * included, because they were part of those days.
+ */
+export async function getHabitTotalsByDay(auth, from, to, calendar) {
+  const { items: habits } = await habitService.find(auth, {
+    'schedule.mode': 'fixed',
+    startDate: { $lte: to },
+  });
+  const entries = await entriesOf(
+    auth.userId,
+    habits.map((habit) => String(habit._id)),
+    from,
+    to,
+  );
+  const grouped = groupByHabit(entries);
+  const indexes = habits.map((habit) => [
+    habit,
+    indexEntries(grouped.get(String(habit._id)) ?? []),
+  ]);
+
+  const totals = [];
+  for (let date = from; date <= to; date = addDays(date, 1)) {
+    let due = 0;
+    let completed = 0;
+    for (const [habit, index] of indexes) {
+      const day = dayState(habit, date, index, calendar.today);
+      if (!day.due || day.state === 'skipped' || day.state === 'postponed') continue;
+      due += 1;
+      if (day.state === 'completed') completed += 1;
+    }
+    totals.push({ date, due, completed });
+  }
+  return totals;
+}
+
 function assertRange(from, to) {
   if (to < from) throw fieldError('to', 'end_before_start');
   if (diffDays(from, to) > MAX_RANGE_DAYS) {

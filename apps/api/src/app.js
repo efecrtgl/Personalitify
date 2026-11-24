@@ -13,6 +13,7 @@ import { accountRouter } from './modules/account/account.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { calendarRouter } from './modules/calendar/calendar.routes.js';
 import { categoriesRouter } from './modules/categories/categories.routes.js';
+import { dashboardRouter } from './modules/dashboard/dashboard.routes.js';
 import { devicesRouter } from './modules/devices/devices.routes.js';
 import { createDocsRouter } from './modules/docs/docs.routes.js';
 import { goalsRouter } from './modules/goals/goals.routes.js';
@@ -35,6 +36,7 @@ const moduleRouters = [
   goalsRouter,
   tasksRouter,
   calendarRouter,
+  dashboardRouter,
   devicesRouter,
   accountRouter,
 ];

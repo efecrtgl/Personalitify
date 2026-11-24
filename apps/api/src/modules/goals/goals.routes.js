@@ -79,7 +79,7 @@ export const goalSchema = z
   })
   .describe('Goal');
 
-const goalViewSchema = goalSchema
+export const goalViewSchema = goalSchema
   .extend({
     computed: z
       .strictObject({

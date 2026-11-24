@@ -27,9 +27,12 @@ async function main() {
     await import('./modules/events/outbox-relay.js');
 
   const { startJobs, stopJobs } = await import('./core/jobs.js');
+  const { attachRealtime, closeRealtime } = await import('./modules/realtime/realtime.server.js');
   await import('./modules/notifications/notifications.jobs.js');
 
   const server = createServer(createApp());
+  // Pushes the event log to connected clients over the same port.
+  attachRealtime(server);
   // Delivers domain events that a crash or a failed relay left in an entity's outbox.
   startOutboxSweeper();
   // Reminders, timers that run out, and housekeeping.
@@ -57,6 +60,8 @@ async function main() {
     logger.info({ signal }, 'Shutting down');
     stopOutboxSweeper();
     stopJobs();
+    // Closing the realtime server also closes the HTTP server it is attached to.
+    closeRealtime().catch(() => {});
     server.close(async () => {
       await disconnectDatabase();
       process.exit(0);

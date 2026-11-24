@@ -20,6 +20,19 @@ const PURGE_AFTER_MS = 30 * DAY_MS;
  */
 const REUSE_GRACE_MS = 10_000;
 
+const revocationListeners = [];
+/**
+ * Calls `listener({ userId, sessionId?, deviceId?, exceptSessionId? })` whenever sessions
+ * are revoked, so that connections opened with them can be closed at once. Without a
+ * `sessionId` or `deviceId` all sessions of the user are meant, except `exceptSessionId`.
+ */
+export function onSessionsRevoked(listener) {
+  revocationListeners.push(listener);
+}
+function announceRevocation(scope) {
+  for (const listener of revocationListeners) listener(scope);
+}
+
 function lifetimes(now = Date.now()) {
   const expiresAt = new Date(now + getConfig().auth.refreshTtlDays * DAY_MS);
   return { expiresAt, purgeAt: new Date(expiresAt.getTime() + PURGE_AFTER_MS) };
@@ -31,6 +44,8 @@ export async function createSession({ userId, deviceId, client }) {
     { userId, deviceId, revokedAt: null },
     { $set: { revokedAt: new Date(), revokedReason: 'replaced' } },
   );
+  // Signing in again on a device ends what the earlier sign-in left open there.
+  announceRevocation({ userId, deviceId });
 
   const refreshToken = generateToken();
   const session = await Session.create({
@@ -101,6 +116,7 @@ async function revokeSessionDocument(session, reason) {
       },
     },
   );
+  announceRevocation({ userId: session.userId, sessionId: String(session._id) });
 }
 
 /** Loads a session that is still usable, or null. */
@@ -130,6 +146,7 @@ export async function revokeAllSessions(userId, { exceptSessionId, reason = 'log
       purgeAt: new Date(now.getTime() + PURGE_AFTER_MS),
     },
   });
+  announceRevocation({ userId, exceptSessionId });
   return result.modifiedCount;
 }
 
@@ -145,6 +162,7 @@ export async function revokeDeviceSessions(userId, deviceId, reason = 'device_re
       },
     },
   );
+  announceRevocation({ userId, deviceId });
 }
 
 export async function listSessions(userId, currentSessionId) {

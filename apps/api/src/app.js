@@ -18,6 +18,7 @@ import { categoriesRouter } from './modules/categories/categories.routes.js';
 import { dashboardRouter } from './modules/dashboard/dashboard.routes.js';
 import { devicesRouter } from './modules/devices/devices.routes.js';
 import { createDocsRouter } from './modules/docs/docs.routes.js';
+import { eventsRouter } from './modules/events/events.routes.js';
 import { focusRouter } from './modules/focus/focus.routes.js';
 import { goalsRouter } from './modules/goals/goals.routes.js';
 import { habitsRouter } from './modules/habits/habits.routes.js';
@@ -49,6 +50,7 @@ const moduleRouters = [
   moodRouter,
   achievementsRouter,
   notificationsRouter,
+  eventsRouter,
   devicesRouter,
   accountRouter,
 ];

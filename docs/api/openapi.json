@@ -57,6 +57,10 @@
       "description": "Client installations registered to the account. A device is registered automatically when it signs in; its id is returned as `tokens.deviceId`."
     },
     {
+      "name": "Events",
+      "description": "The user’s ordered log of changes. Every create, update and delete of a synchronized entity is one event with the next sequence number. The same events are pushed over the realtime connection; this endpoint is how a client reads what it missed."
+    },
+    {
       "name": "Focus",
       "description": "A timer for focus sessions and breaks. All instants are set by the server: clients ask it to start, pause, resume and finish, and draw the countdown from `endsAt` and `serverTime`. A user has one active session at a time, on whichever device it was started. A session that reaches its planned length is completed by the server."
     },
@@ -18592,6 +18596,182 @@
           },
           "404": {
             "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "operationId": "getEvents",
+        "tags": [
+          "Events"
+        ],
+        "summary": "Read events after a sequence number",
+        "description": "Events are returned in order without gaps. `meta.headSeq` is the user’s latest sequence number; while `meta.hasMore` is true, ask again from the last event received.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Return events with a higher seq",
+            "schema": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventId": {
+                            "type": "string"
+                          },
+                          "event": {
+                            "type": "string",
+                            "description": "`<entityType>.<created|updated|deleted>`"
+                          },
+                          "schemaVersion": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "seq": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Position in the user’s event log; dense, starting at 1"
+                          },
+                          "userId": {
+                            "type": "string"
+                          },
+                          "entityType": {
+                            "type": "string"
+                          },
+                          "entityId": {
+                            "type": "string"
+                          },
+                          "entityVersion": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "timestamp": {
+                            "type": "string"
+                          },
+                          "originDeviceId": {
+                            "nullable": true,
+                            "description": "The device whose request caused the event; null for the server itself",
+                            "type": "string"
+                          },
+                          "opId": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "changedFields": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "data": {
+                            "type": "object",
+                            "additionalProperties": {},
+                            "description": "The entity after the change; for a deletion its id, version and deletedAt"
+                          }
+                        },
+                        "required": [
+                          "eventId",
+                          "event",
+                          "schemaVersion",
+                          "seq",
+                          "userId",
+                          "entityType",
+                          "entityId",
+                          "entityVersion",
+                          "timestamp",
+                          "originDeviceId",
+                          "opId",
+                          "changedFields",
+                          "data"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Domain event"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "headSeq": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "headSeq",
+                        "hasMore"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
             "content": {
               "application/json": {
                 "schema": {

@@ -51,6 +51,8 @@ export async function verifyAccessToken(token) {
       sessionId: payload.sid,
       deviceId: payload.did,
       role: payload.role ?? 'user',
+      // When the token stops being valid; long-lived connections end with it.
+      expiresAt: new Date(payload.exp * 1000),
     };
   } catch (error) {
     if (error instanceof joseErrors.JWTExpired) {

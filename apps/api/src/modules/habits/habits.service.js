@@ -1,9 +1,9 @@
 import { ENTITY_TYPES } from '@personalitify/shared-contracts';
 import { assignPatch, createEntityService } from '../../core/entity/entity-service.js';
+import { detachOnDelete } from '../../core/entity/references.js';
 import { fieldError, notFound } from '../../core/errors.js';
 import { addDays, diffDays, maxDate, todayInZone } from '../../core/time.js';
 import { assertCategory } from '../categories/categories.service.js';
-import { subscribe } from '../events/event-bus.js';
 import { getUserPreferences } from '../settings/settings.service.js';
 import {
   STREAK_HORIZON_DAYS,
@@ -110,22 +110,7 @@ export async function deleteHabit(auth, id) {
   }
 }
 
-// Detach habits from a category that was deleted. Idempotent: a repeated event finds nothing.
-subscribe(
-  'habits.detach-deleted-category',
-  async (event) => {
-    const context = { userId: event.userId, deviceId: event.originDeviceId };
-    const habits = await Habit.find({
-      userId: event.userId,
-      categoryId: event.entityId,
-      deletedAt: null,
-    }).select('_id');
-    for (const habit of habits) {
-      await habitService.update(context, habit._id, { categoryId: null });
-    }
-  },
-  { types: ['category.deleted'] },
-);
+detachOnDelete({ service: habitService, field: 'categoryId', targetType: ENTITY_TYPES.CATEGORY });
 
 // --- Entries ---------------------------------------------------------------------------
 

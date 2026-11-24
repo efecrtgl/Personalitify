@@ -52,6 +52,7 @@
     "outside_habit_dates": "Bu tarih, kaydın etkin olduğu tarihlerin dışında.",
     "date_in_future": "Bu tarih gelecekte.",
     "must_be_later": "Daha ileri bir tarih seçin.",
+    "too_deep": "Alt hedefler en fazla {{maximum}} düzey iç içe olabilir.",
     "invalid": "Bu değer geçerli değil."
   }
 }

@@ -52,6 +52,7 @@
     "outside_habit_dates": "This date is outside the dates the item is active.",
     "date_in_future": "This date is in the future.",
     "must_be_later": "Choose a later date.",
+    "too_deep": "Sub-goals can be nested at most {{maximum}} levels deep.",
     "invalid": "This value is not valid."
   }
 }

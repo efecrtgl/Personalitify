@@ -191,6 +191,71 @@ Design notes:
 - Streaks and completion rates are not stored. They are derived from the entries and the
   schedule on request, so they can never disagree with the data.
 
+### `goals` (synchronized)
+
+| Field                                                 | Notes                                                                                          |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `title`, `description`, `color`, `icon`, `categoryId` |                                                                                                |
+| `horizon`                                             | `short` \| `long`                                                                              |
+| `startDate`, `targetDate`                             | Calendar dates in the user's time zone                                                         |
+| `status`                                              | `active` \| `paused` \| `completed` \| `abandoned`; `completedAt` follows it                   |
+| `progress`                                            | `mode` (`manual` \| `milestones` \| `tasks` \| `metric`), `value`, `current`, `target`, `unit` |
+| `milestones`                                          | Embedded, at most 50: `{ id, title, targetDate, done, completedAt }`                           |
+| `reviews`                                             | Embedded, at most 100: `{ id, date, note, rating, percent }`                                   |
+| `parentGoalId`                                        | Sub-goals, nested at most three levels; cycles are rejected                                    |
+| `habitIds`                                            | Linked habits, at most 20                                                                      |
+
+At most 300 per user.
+Indexes: `{ userId: 1, deletedAt: 1, status: 1, sortOrder: 1 }` · `{ userId: 1, parentGoalId: 1 }`
+· `{ userId: 1, categoryId: 1 }` · `{ userId: 1, habitIds: 1 }`.
+
+Milestones and reviews are embedded because they are small, bounded and always read with
+their goal. A goal's percentage is not stored: it is derived from the progress mode on
+every read (for the `tasks` mode with one aggregation over the goal's tasks).
+
+### `tasks` (synchronized)
+
+| Field                                                      | Notes                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------- |
+| `title`, `description`, `categoryId`, `priority`, `status` |                                                       |
+| `startDate`, `dueDate`, `dueTime`                          | Calendar dates and a time of day                      |
+| `scheduledDate`, `scheduledTime`, `durationMinutes`        | A planned time block for the calendar                 |
+| `completedAt`, `completedOn`                               | Instant, and the user's calendar date at that instant |
+| `originalDueDate`, `postponedCount`                        | The first due date and how often the task was moved   |
+| `subtasks`                                                 | Embedded, at most 50: `{ id, title, done }`           |
+| `recurring`, `recurrence`, `recurrenceEndDate`             | Repeating tasks                                       |
+| `seriesId`, `seriesStartDate`                              | Shared by all occurrences of a repeating task         |
+| `goalId`, `habitId`                                        | Optional links                                        |
+
+At most 5000 per user.
+Indexes: `{ userId: 1, deletedAt: 1, status: 1, dueDate: 1 }` ·
+`{ userId: 1, deletedAt: 1, scheduledDate: 1 }` · `{ userId: 1, deletedAt: 1, completedOn: 1 }` ·
+`{ userId: 1, goalId: 1 }` · `{ userId: 1, habitId: 1 }` · `{ userId: 1, categoryId: 1 }` ·
+`{ userId: 1, seriesId: 1, dueDate: 1 }` unique among live occurrences of a series.
+
+Design notes:
+
+- **A repeating task is a series of separate tasks.** Completing an occurrence creates the
+  next one, so every occurrence keeps its own completion time, notes and checklist. The
+  unique index on series and due date makes that creation idempotent: completing, reopening
+  and completing again, or two devices completing at once, never yields two copies.
+- **`completedOn` is stored** because "what did I finish today" must be answered in the
+  user's calendar, and the time zone at the moment of completion is the one that counts.
+- **Dates are never silently lost.** The first due date survives postponing and editing in
+  `originalDueDate`; overdue tasks are a query, not a state that expires.
+
+### References between entities
+
+There are no database-level cascades. `core/entity/references.js` registers, per reference,
+a subscriber that reacts to `<entity>.deleted` and clears the reference through the entity
+service:
+
+| Deleted    | Detached from                                |
+| ---------- | -------------------------------------------- |
+| `category` | habits, goals, tasks (`categoryId`)          |
+| `goal`     | sub-goals (`parentGoalId`), tasks (`goalId`) |
+| `habit`    | goals (`habitIds`), tasks (`habitId`)        |
+
 ## Account export and deletion
 
 `core/user-data.js` keeps a registry of every collection that holds personal data. Export

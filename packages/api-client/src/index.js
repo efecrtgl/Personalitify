@@ -130,6 +130,24 @@ export function createApiClient(options) {
       removeSubtask: (taskId, subtaskId) => http.delete(`/tasks/${taskId}/subtasks/${subtaskId}`),
     },
 
+    calendar: {
+      /**
+       * The unified calendar between two dates: events, tasks and habits as display-ready
+       * items in the user's time zone, plus the pairs of items that overlap.
+       */
+      get: ({ from, to, include }) =>
+        http.get('/calendar', { query: { from, to, include: include?.join(',') } }),
+      getEvent: (eventId) => http.get(`/calendar/events/${eventId}`),
+      /** Returns `{ event, conflicts }`. */
+      createEvent: (input) => http.post('/calendar/events', input),
+      updateEvent: (eventId, patch) => http.patch(`/calendar/events/${eventId}`, patch),
+      removeEvent: (eventId) => http.delete(`/calendar/events/${eventId}`),
+      /** Reschedules by day and time; a repeating event needs `occurrenceDate`. */
+      moveEvent: (eventId, input) => http.post(`/calendar/events/${eventId}/move`, input),
+      removeOccurrence: (eventId, date) =>
+        http.delete(`/calendar/events/${eventId}/occurrences/${date}`),
+    },
+
     devices: {
       list: () => http.get('/devices'),
       current: () => http.get('/devices/current'),

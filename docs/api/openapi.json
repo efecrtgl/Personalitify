@@ -53,12 +53,24 @@
       "description": "Client installations registered to the account. A device is registered automatically when it signs in; its id is returned as `tokens.deviceId`."
     },
     {
+      "name": "Focus",
+      "description": "A timer for focus sessions and breaks. All instants are set by the server: clients ask it to start, pause, resume and finish, and draw the countdown from `endsAt` and `serverTime`. A user has one active session at a time, on whichever device it was started. A session that reaches its planned length is completed by the server."
+    },
+    {
       "name": "Habits",
       "description": "Habits, their schedules and what was recorded for them day by day. Every date is a calendar day in the user’s configured time zone; the server decides what \"today\" is and reports it in the responses."
     },
     {
       "name": "Health",
       "description": "Liveness and readiness probes. No authentication."
+    },
+    {
+      "name": "Journal",
+      "description": "Journal entries and notes written in Markdown, with tags, search and a history of earlier contents. Entries are private to the account; lists return previews instead of bodies, and no preview at all when the user hides sensitive previews."
+    },
+    {
+      "name": "Mood",
+      "description": "How each day felt: one entry per calendar day in the user’s time zone. Notes are private to the account."
     },
     {
       "name": "Settings",
@@ -1475,6 +1487,40 @@
                               ],
                               "additionalProperties": false
                             },
+                            "focus": {
+                              "type": "object",
+                              "properties": {
+                                "focusMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "shortBreakMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "longBreakMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "longBreakEvery": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 12,
+                                  "description": "A long break follows every this many focus sessions"
+                                }
+                              },
+                              "required": [
+                                "focusMinutes",
+                                "shortBreakMinutes",
+                                "longBreakMinutes",
+                                "longBreakEvery"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Timer lengths in minutes"
+                            },
                             "dashboard": {
                               "type": "object",
                               "properties": {
@@ -1532,6 +1578,7 @@
                             "weekStart",
                             "notifications",
                             "privacy",
+                            "focus",
                             "dashboard"
                           ],
                           "additionalProperties": false,
@@ -1993,6 +2040,40 @@
                               ],
                               "additionalProperties": false
                             },
+                            "focus": {
+                              "type": "object",
+                              "properties": {
+                                "focusMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "shortBreakMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "longBreakMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "longBreakEvery": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 12,
+                                  "description": "A long break follows every this many focus sessions"
+                                }
+                              },
+                              "required": [
+                                "focusMinutes",
+                                "shortBreakMinutes",
+                                "longBreakMinutes",
+                                "longBreakEvery"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Timer lengths in minutes"
+                            },
                             "dashboard": {
                               "type": "object",
                               "properties": {
@@ -2050,6 +2131,7 @@
                             "weekStart",
                             "notifications",
                             "privacy",
+                            "focus",
                             "dashboard"
                           ],
                           "additionalProperties": false,
@@ -18238,6 +18320,2155 @@
         }
       }
     },
+    "/focus": {
+      "get": {
+        "operationId": "getFocus",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Get the timer state",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "serverTime": {
+                          "type": "string",
+                          "description": "The server’s clock when the answer was made; countdowns are drawn against it"
+                        },
+                        "today": {
+                          "type": "string"
+                        },
+                        "session": {
+                          "nullable": true,
+                          "description": "The running or paused session, if any",
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "focus",
+                                "short_break",
+                                "long_break"
+                              ]
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "running",
+                                "paused",
+                                "completed",
+                                "cancelled"
+                              ]
+                            },
+                            "plannedMinutes": {
+                              "type": "number"
+                            },
+                            "startedAt": {
+                              "type": "string"
+                            },
+                            "pausedAt": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "pausedSeconds": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Time spent paused so far, without a pause still open"
+                            },
+                            "endsAt": {
+                              "nullable": true,
+                              "description": "When a running session reaches its planned length; null unless running",
+                              "type": "string"
+                            },
+                            "endedAt": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "elapsedSeconds": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                            },
+                            "date": {
+                              "type": "string",
+                              "description": "The user’s calendar date when the session started"
+                            },
+                            "note": {
+                              "type": "string"
+                            },
+                            "taskId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "habitId": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "goalId": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "kind",
+                            "status",
+                            "plannedMinutes",
+                            "startedAt",
+                            "pausedAt",
+                            "pausedSeconds",
+                            "endsAt",
+                            "endedAt",
+                            "elapsedSeconds",
+                            "date",
+                            "note",
+                            "taskId",
+                            "habitId",
+                            "goalId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "focusMinutes": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "shortBreakMinutes": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "longBreakMinutes": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "longBreakEvery": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "focusMinutes",
+                            "shortBreakMinutes",
+                            "longBreakMinutes",
+                            "longBreakEvery"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "suggestedKind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ],
+                          "description": "What would sensibly be started next"
+                        },
+                        "todayFocus": {
+                          "type": "object",
+                          "properties": {
+                            "sessions": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "seconds": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "sessions",
+                            "seconds"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "week": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "sessions": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "Completed focus sessions; breaks are not counted"
+                              },
+                              "seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "Focus time without pauses"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "sessions",
+                              "seconds"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "The last seven days, today last"
+                        }
+                      },
+                      "required": [
+                        "serverTime",
+                        "today",
+                        "session",
+                        "settings",
+                        "suggestedKind",
+                        "todayFocus",
+                        "week"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/stats": {
+      "get": {
+        "operationId": "getFocusStats",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Focus time day by day",
+        "description": "At most 400 days per request.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "from": {
+                          "type": "string"
+                        },
+                        "to": {
+                          "type": "string"
+                        },
+                        "days": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "sessions": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "Completed focus sessions; breaks are not counted"
+                              },
+                              "seconds": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "Focus time without pauses"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "sessions",
+                              "seconds"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "sessions": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "seconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "from",
+                        "to",
+                        "days",
+                        "sessions",
+                        "seconds"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/sessions": {
+      "get": {
+        "operationId": "getFocusSessions",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "List past sessions",
+        "description": "Ended sessions, newest first.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "focus",
+                "short_break",
+                "long_break"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number, starting at 1",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Items per page",
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "UUID"
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Entity version, incremented on every change"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "focus",
+                              "short_break",
+                              "long_break"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "running",
+                              "paused",
+                              "completed",
+                              "cancelled"
+                            ]
+                          },
+                          "plannedMinutes": {
+                            "type": "number"
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "pausedAt": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "pausedSeconds": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Time spent paused so far, without a pause still open"
+                          },
+                          "endsAt": {
+                            "nullable": true,
+                            "description": "When a running session reaches its planned length; null unless running",
+                            "type": "string"
+                          },
+                          "endedAt": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "elapsedSeconds": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                          },
+                          "date": {
+                            "type": "string",
+                            "description": "The user’s calendar date when the session started"
+                          },
+                          "note": {
+                            "type": "string"
+                          },
+                          "taskId": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "habitId": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "goalId": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "createdAt",
+                          "updatedAt",
+                          "kind",
+                          "status",
+                          "plannedMinutes",
+                          "startedAt",
+                          "pausedAt",
+                          "pausedSeconds",
+                          "endsAt",
+                          "endedAt",
+                          "elapsedSeconds",
+                          "date",
+                          "note",
+                          "taskId",
+                          "habitId",
+                          "goalId"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Timer session"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "total",
+                        "totalPages"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postFocusSessions",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Start a session",
+        "description": "Starts the timer now. Without `plannedMinutes` the length comes from the user’s settings for the kind. Answers `INVALID_STATE` with `details.reason = \"session_active\"` while another session is running or paused.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `ID_ALREADY_EXISTS`, `INVALID_STATE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Optional client-generated id",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "kind": {
+                    "default": "focus",
+                    "type": "string",
+                    "enum": [
+                      "focus",
+                      "short_break",
+                      "long_break"
+                    ]
+                  },
+                  "plannedMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 180
+                  },
+                  "note": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "taskId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "habitId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "goalId": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/sessions/{sessionId}": {
+      "get": {
+        "operationId": "getFocusSessionsSessionId",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Get a session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchFocusSessionsSessionId",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Change the note or links of a session",
+        "description": "Times cannot be edited.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `VERSION_CONFLICT`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "taskId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "habitId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "goalId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "UUID identifier"
+                  },
+                  "baseVersion": {
+                    "description": "Version of the resource this change was based on. When it is stale the server merges non-overlapping fields or answers 409 VERSION_CONFLICT. Omit to apply to the latest version.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteFocusSessionsSessionId",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Delete a session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/sessions/{sessionId}/pause": {
+      "post": {
+        "operationId": "postFocusSessionsSessionIdPause",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Pause the running session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `INVALID_STATE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/sessions/{sessionId}/resume": {
+      "post": {
+        "operationId": "postFocusSessionsSessionIdResume",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Resume the paused session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `INVALID_STATE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/sessions/{sessionId}/complete": {
+      "post": {
+        "operationId": "postFocusSessionsSessionIdComplete",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Finish the session now",
+        "description": "The time spent so far is recorded. Completing a session that has already been completed returns it unchanged.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `INVALID_STATE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/focus/sessions/{sessionId}/cancel": {
+      "post": {
+        "operationId": "postFocusSessionsSessionIdCancel",
+        "tags": [
+          "Focus"
+        ],
+        "summary": "Abandon the session",
+        "description": "The session stays in the history but counts towards no statistic.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "focus",
+                            "short_break",
+                            "long_break"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "paused",
+                            "completed",
+                            "cancelled"
+                          ]
+                        },
+                        "plannedMinutes": {
+                          "type": "number"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "pausedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "pausedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent paused so far, without a pause still open"
+                        },
+                        "endsAt": {
+                          "nullable": true,
+                          "description": "When a running session reaches its planned length; null unless running",
+                          "type": "string"
+                        },
+                        "endedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "elapsedSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Time spent without pauses: final once ended, as of the last pause while active"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The user’s calendar date when the session started"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "taskId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "habitId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "goalId": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "status",
+                        "plannedMinutes",
+                        "startedAt",
+                        "pausedAt",
+                        "pausedSeconds",
+                        "endsAt",
+                        "endedAt",
+                        "elapsedSeconds",
+                        "date",
+                        "note",
+                        "taskId",
+                        "habitId",
+                        "goalId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Timer session"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `INVALID_STATE`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/habits": {
       "get": {
         "operationId": "getHabits",
@@ -23052,6 +25283,1688 @@
         }
       }
     },
+    "/journal": {
+      "get": {
+        "operationId": "getJournal",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "List or search entries",
+        "description": "Pinned entries first, then by day, newest first. `q` finds entries that contain every word of the query in their title, text or tags, ignoring case and accents.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "journal",
+                "note"
+              ]
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "pinned",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number, starting at 1",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Items per page",
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "UUID"
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Entity version, incremented on every change"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "journal",
+                              "note"
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "date": {
+                            "type": "string",
+                            "description": "The day the entry is about, in the user’s time zone"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "pinned": {
+                            "type": "boolean"
+                          },
+                          "excerpt": {
+                            "type": "string",
+                            "description": "Start of the text without Markdown; empty when previews are hidden in settings"
+                          },
+                          "truncated": {
+                            "type": "boolean"
+                          },
+                          "wordCount": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "createdAt",
+                          "updatedAt",
+                          "kind",
+                          "title",
+                          "date",
+                          "tags",
+                          "pinned",
+                          "excerpt",
+                          "truncated",
+                          "wordCount"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Journal entry without its body"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "total",
+                        "totalPages"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postJournal",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "Create an entry",
+        "description": "Without `date` the entry belongs to today in the user’s time zone.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "journal",
+                            "note"
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The day the entry is about, in the user’s time zone"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pinned": {
+                          "type": "boolean"
+                        },
+                        "body": {
+                          "type": "string",
+                          "description": "Markdown"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "title",
+                        "date",
+                        "tags",
+                        "pinned",
+                        "body"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Journal entry"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `ID_ALREADY_EXISTS`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable — `LIMIT_EXCEEDED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Optional client-generated id",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "kind": {
+                    "default": "journal",
+                    "type": "string",
+                    "enum": [
+                      "journal",
+                      "note"
+                    ]
+                  },
+                  "title": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 160
+                  },
+                  "body": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 50000
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "tags": {
+                    "default": [],
+                    "maxItems": 12,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 32,
+                      "pattern": "^#*[^\\s,#]+$"
+                    }
+                  },
+                  "pinned": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journal/tags": {
+      "get": {
+        "operationId": "getJournalTags",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "List the tags in use",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tag": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "tag",
+                          "count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journal/{entryId}": {
+      "get": {
+        "operationId": "getJournalEntryId",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "Get an entry",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "journal",
+                            "note"
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The day the entry is about, in the user’s time zone"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pinned": {
+                          "type": "boolean"
+                        },
+                        "body": {
+                          "type": "string",
+                          "description": "Markdown"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "title",
+                        "date",
+                        "tags",
+                        "pinned",
+                        "body"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Journal entry"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchJournalEntryId",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "Update an entry",
+        "description": "Replacing the title or the body keeps the previous content as a revision (the newest 20 are kept).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "journal",
+                            "note"
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The day the entry is about, in the user’s time zone"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pinned": {
+                          "type": "boolean"
+                        },
+                        "body": {
+                          "type": "string",
+                          "description": "Markdown"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "title",
+                        "date",
+                        "tags",
+                        "pinned",
+                        "body"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Journal entry"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `VERSION_CONFLICT`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "journal",
+                      "note"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "maxLength": 160
+                  },
+                  "body": {
+                    "type": "string",
+                    "maxLength": 50000
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "Calendar date, YYYY-MM-DD"
+                  },
+                  "tags": {
+                    "maxItems": 12,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 32,
+                      "pattern": "^#*[^\\s,#]+$"
+                    }
+                  },
+                  "pinned": {
+                    "type": "boolean"
+                  },
+                  "baseVersion": {
+                    "description": "Version of the resource this change was based on. When it is stale the server merges non-overlapping fields or answers 409 VERSION_CONFLICT. Omit to apply to the latest version.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteJournalEntryId",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "Delete an entry",
+        "description": "Its revisions are removed with it.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journal/{entryId}/revisions": {
+      "get": {
+        "operationId": "getJournalEntryIdRevisions",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "List earlier contents of an entry",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "entryId": {
+                            "type": "string"
+                          },
+                          "entryVersion": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Version of the entry that held this content"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "replacedAt": {
+                            "type": "string",
+                            "description": "When this content was replaced by a newer one"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "entryId",
+                          "entryVersion",
+                          "title",
+                          "body",
+                          "replacedAt"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Earlier content of a journal entry"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journal/{entryId}/revisions/{revisionId}/restore": {
+      "post": {
+        "operationId": "postJournalEntryIdRevisionsRevisionIdRestore",
+        "tags": [
+          "Journal"
+        ],
+        "summary": "Restore an earlier content",
+        "description": "The content that is replaced becomes a revision itself.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "revisionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "journal",
+                            "note"
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "The day the entry is about, in the user’s time zone"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "pinned": {
+                          "type": "boolean"
+                        },
+                        "body": {
+                          "type": "string",
+                          "description": "Markdown"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "kind",
+                        "title",
+                        "date",
+                        "tags",
+                        "pinned",
+                        "body"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Journal entry"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mood": {
+      "get": {
+        "operationId": "getMood",
+        "tags": [
+          "Mood"
+        ],
+        "summary": "Mood entries of a range with their statistics",
+        "description": "At most 400 days per request.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "from": {
+                          "type": "string"
+                        },
+                        "to": {
+                          "type": "string"
+                        },
+                        "today": {
+                          "type": "string"
+                        },
+                        "entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "UUID"
+                              },
+                              "version": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "Entity version, incremented on every change"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              },
+                              "date": {
+                                "type": "string"
+                              },
+                              "score": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "description": "1 = very bad … 5 = very good"
+                              },
+                              "emotions": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "happy",
+                                    "calm",
+                                    "grateful",
+                                    "energetic",
+                                    "proud",
+                                    "hopeful",
+                                    "focused",
+                                    "tired",
+                                    "bored",
+                                    "stressed",
+                                    "anxious",
+                                    "sad",
+                                    "angry",
+                                    "lonely"
+                                  ]
+                                }
+                              },
+                              "note": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "version",
+                              "createdAt",
+                              "updatedAt",
+                              "date",
+                              "score",
+                              "emotions",
+                              "note"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Mood entry"
+                          }
+                        },
+                        "summary": {
+                          "type": "object",
+                          "properties": {
+                            "count": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "average": {
+                              "nullable": true,
+                              "description": "Mean score, two decimals; null without entries",
+                              "type": "number"
+                            },
+                            "distribution": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "score": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "score",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "emotions": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "emotion": {
+                                    "type": "string",
+                                    "enum": [
+                                      "happy",
+                                      "calm",
+                                      "grateful",
+                                      "energetic",
+                                      "proud",
+                                      "hopeful",
+                                      "focused",
+                                      "tired",
+                                      "bored",
+                                      "stressed",
+                                      "anxious",
+                                      "sad",
+                                      "angry",
+                                      "lonely"
+                                    ]
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "emotion",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "description": "Feelings that were recorded, most frequent first"
+                            },
+                            "byWeekday": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "weekday": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991,
+                                    "description": "1 = Monday … 7 = Sunday"
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  "average": {
+                                    "nullable": true,
+                                    "description": "Mean score, two decimals; null without entries",
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "weekday",
+                                  "count",
+                                  "average"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "count",
+                            "average",
+                            "distribution",
+                            "emotions",
+                            "byWeekday"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "from",
+                        "to",
+                        "today",
+                        "entries",
+                        "summary"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mood/{date}": {
+      "put": {
+        "operationId": "putMoodDate",
+        "tags": [
+          "Mood"
+        ],
+        "summary": "Record the mood of a day",
+        "description": "Creates the day’s entry or replaces its score. `emotions` and `note` are kept when left out.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "date": {
+                          "type": "string"
+                        },
+                        "score": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "1 = very bad … 5 = very good"
+                        },
+                        "emotions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "happy",
+                              "calm",
+                              "grateful",
+                              "energetic",
+                              "proud",
+                              "hopeful",
+                              "focused",
+                              "tired",
+                              "bored",
+                              "stressed",
+                              "anxious",
+                              "sad",
+                              "angry",
+                              "lonely"
+                            ]
+                          }
+                        },
+                        "note": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "date",
+                        "score",
+                        "emotions",
+                        "note"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Mood entry"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "score": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "emotions": {
+                    "maxItems": 14,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "happy",
+                        "calm",
+                        "grateful",
+                        "energetic",
+                        "proud",
+                        "hopeful",
+                        "focused",
+                        "tired",
+                        "bored",
+                        "stressed",
+                        "anxious",
+                        "sad",
+                        "angry",
+                        "lonely"
+                      ]
+                    }
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 1000
+                  }
+                },
+                "required": [
+                  "score"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteMoodDate",
+        "tags": [
+          "Mood"
+        ],
+        "summary": "Remove the mood of a day",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "description": "Calendar date, YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/settings": {
       "get": {
         "operationId": "getSettings",
@@ -23217,6 +27130,40 @@
                           ],
                           "additionalProperties": false
                         },
+                        "focus": {
+                          "type": "object",
+                          "properties": {
+                            "focusMinutes": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 180
+                            },
+                            "shortBreakMinutes": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 180
+                            },
+                            "longBreakMinutes": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 180
+                            },
+                            "longBreakEvery": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12,
+                              "description": "A long break follows every this many focus sessions"
+                            }
+                          },
+                          "required": [
+                            "focusMinutes",
+                            "shortBreakMinutes",
+                            "longBreakMinutes",
+                            "longBreakEvery"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Timer lengths in minutes"
+                        },
                         "dashboard": {
                           "type": "object",
                           "properties": {
@@ -23274,6 +27221,7 @@
                         "weekStart",
                         "notifications",
                         "privacy",
+                        "focus",
                         "dashboard"
                       ],
                       "additionalProperties": false,
@@ -23464,6 +27412,40 @@
                           ],
                           "additionalProperties": false
                         },
+                        "focus": {
+                          "type": "object",
+                          "properties": {
+                            "focusMinutes": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 180
+                            },
+                            "shortBreakMinutes": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 180
+                            },
+                            "longBreakMinutes": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 180
+                            },
+                            "longBreakEvery": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12,
+                              "description": "A long break follows every this many focus sessions"
+                            }
+                          },
+                          "required": [
+                            "focusMinutes",
+                            "shortBreakMinutes",
+                            "longBreakMinutes",
+                            "longBreakEvery"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Timer lengths in minutes"
+                        },
                         "dashboard": {
                           "type": "object",
                           "properties": {
@@ -23521,6 +27503,7 @@
                         "weekStart",
                         "notifications",
                         "privacy",
+                        "focus",
                         "dashboard"
                       ],
                       "additionalProperties": false,
@@ -23679,6 +27662,33 @@
                       "hideSensitivePreviews": {
                         "type": "boolean",
                         "description": "Hide journal and mood text in previews, summaries and notifications"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "focus": {
+                    "type": "object",
+                    "properties": {
+                      "focusMinutes": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 180
+                      },
+                      "shortBreakMinutes": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 180
+                      },
+                      "longBreakMinutes": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 180
+                      },
+                      "longBreakEvery": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 12,
+                        "description": "A long break follows every this many focus sessions"
                       }
                     },
                     "additionalProperties": false
@@ -23987,6 +27997,40 @@
                               ],
                               "additionalProperties": false
                             },
+                            "focus": {
+                              "type": "object",
+                              "properties": {
+                                "focusMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "shortBreakMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "longBreakMinutes": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 180
+                                },
+                                "longBreakEvery": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 12,
+                                  "description": "A long break follows every this many focus sessions"
+                                }
+                              },
+                              "required": [
+                                "focusMinutes",
+                                "shortBreakMinutes",
+                                "longBreakMinutes",
+                                "longBreakEvery"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Timer lengths in minutes"
+                            },
                             "dashboard": {
                               "type": "object",
                               "properties": {
@@ -24044,6 +28088,7 @@
                             "weekStart",
                             "notifications",
                             "privacy",
+                            "focus",
                             "dashboard"
                           ],
                           "additionalProperties": false,

@@ -10,6 +10,24 @@
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Personalitify</title>
+    <script>
+      // Apply the saved theme and language before the first paint to avoid a flash.
+      (function () {
+        var theme = null;
+        var language = null;
+        try {
+          theme = localStorage.getItem('pfy.theme');
+          language = localStorage.getItem('pfy.language');
+        } catch (error) {
+          /* storage unavailable: defaults apply */
+        }
+        var dark =
+          theme === 'dark' ||
+          (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        if (language === 'en' || language === 'tr') document.documentElement.lang = language;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

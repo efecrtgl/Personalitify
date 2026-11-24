@@ -32,7 +32,7 @@ export default [
   {
     files: ['apps/web/**/*.{js,jsx}'],
     languageOptions: {
-      globals: { ...globals.browser },
+      globals: { ...globals.browser, __APP_VERSION__: 'readonly' },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
     plugins: { 'react-hooks': reactHooks },

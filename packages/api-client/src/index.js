@@ -148,6 +148,11 @@ export function createApiClient(options) {
         http.delete(`/calendar/events/${eventId}/occurrences/${date}`),
     },
 
+    dashboard: {
+      /** Everything the personal dashboard shows, in one request. */
+      get: () => http.get('/dashboard'),
+    },
+
     devices: {
       list: () => http.get('/devices'),
       current: () => http.get('/devices/current'),

@@ -87,8 +87,9 @@ export function NotificationsMenu() {
   const notifications = useQuery({
     queryKey: queryKeys.notifications,
     queryFn: () => api.notifications.list({ limit: 20 }),
-    // Reminders are made on the server; until live updates exist the bell asks once a minute.
-    refetchInterval: 60_000,
+    // New notifications arrive over the live connection; this is the fallback for when
+    // that connection is down.
+    refetchInterval: 5 * 60_000,
   });
   const items = notifications.data?.items ?? [];
   const unread = notifications.data?.meta.unread ?? 0;

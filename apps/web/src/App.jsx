@@ -30,6 +30,7 @@ import { VerifyEmailPage } from './pages/auth/VerifyEmailPage.jsx';
 import { SettingsPage } from './pages/settings/SettingsPage.jsx';
 import { TasksPage } from './pages/tasks/TasksPage.jsx';
 import { AuthProvider, useAuth } from './providers/AuthProvider.jsx';
+import { RealtimeProvider } from './providers/RealtimeProvider.jsx';
 import { ThemeProvider } from './providers/ThemeProvider.jsx';
 import { ErrorState, Spinner } from './ui/feedback.jsx';
 import { ToastProvider } from './ui/toast.jsx';
@@ -142,15 +143,22 @@ function useDashboardRefresh(queryClient) {
   );
 }
 
-/** Application providers. `queryClient` can be replaced in tests. */
-export function AppProviders({ children, queryClient = defaultQueryClient }) {
+/**
+ * Application providers. `queryClient` can be replaced in tests; `realtime` is the function
+ * that opens the live connection (omit for the real one, pass `null` for none).
+ */
+export function AppProviders({ children, queryClient = defaultQueryClient, realtime }) {
   useDashboardRefresh(queryClient);
   return (
     <QueryClientProvider client={queryClient}>
       <MotionConfig reducedMotion="user">
         <ThemeProvider>
           <ToastProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <RealtimeProvider {...(realtime === undefined ? {} : { connect: realtime })}>
+                {children}
+              </RealtimeProvider>
+            </AuthProvider>
           </ToastProvider>
         </ThemeProvider>
       </MotionConfig>

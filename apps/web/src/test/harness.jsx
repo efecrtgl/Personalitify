@@ -158,13 +158,16 @@ export const signedInRoutes = (me = account()) => ({
   'GET /goals': () => ok([]),
 });
 
-/** Renders the real application routes at `path`. */
-export function renderApp(path = '/') {
+/**
+ * Renders the real application routes at `path`. No live connection is opened unless a
+ * test passes its own `realtime` function.
+ */
+export function renderApp(path = '/', { realtime = null } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
   return render(
-    <AppProviders queryClient={queryClient}>
+    <AppProviders queryClient={queryClient} realtime={realtime}>
       <MemoryRouter initialEntries={[path]}>
         <AppRoutes />
       </MemoryRouter>

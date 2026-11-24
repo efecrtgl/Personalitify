@@ -365,6 +365,21 @@ system was first used have been counted).
 An unlocked achievement: `key`, `unlockedAt`. Created by the server only, never removed.
 Indexes: `{ userId: 1, key: 1 }` unique among live documents.
 
+### `notifications` (synchronized, entity type `notification`)
+
+`kind`, `params` (the values behind it), `entityType`, `entityId`, `dedupeKey` (names the
+occasion; internal), `silent` (made during quiet hours), `readAt`. Created by the server
+only. Removed after 60 days.
+Indexes: `{ userId: 1, dedupeKey: 1 }` unique — including deleted ones, so a dismissed
+reminder is not made again · `{ userId: 1, deletedAt: 1, createdAt: -1 }` ·
+`{ userId: 1, deletedAt: 1, readAt: 1 }` · `{ createdAt: 1 }`.
+
+### `jobLocks`
+
+One document per background job, `_id` = job name: `owner`, `lockedUntil`,
+`lastStartedAt`, `lastFinishedAt`, `lastDurationMs`, `lastError`. Not user data. See
+[`notifications-and-jobs.md`](./notifications-and-jobs.md).
+
 ### References between entities
 
 There are no database-level cascades. `core/entity/references.js` registers, per reference,

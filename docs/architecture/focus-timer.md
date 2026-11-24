@@ -26,8 +26,9 @@ A client never sends a time or a duration; the request schemas reject them.
 - A user has **one active session** (running or paused) at a time, enforced by a unique
   index. Starting a second one answers `409 INVALID_STATE` with
   `details.reason = "session_active"` and the `sessionId` of the one that is active.
-- A session whose `endsAt` has passed is **completed by the server** at exactly `endsAt` the
-  next time the timer is read — no client needs to be open when it runs out.
+- A session whose `endsAt` has passed is **completed by the server** at exactly `endsAt` —
+  by a background job within seconds, and in any case the next time the timer is read. No
+  client needs to be open when it runs out.
 - `complete` and `cancel` are idempotent for the state they produce, so a client that
   reports the end a moment after the server already recorded it gets the same session back.
 

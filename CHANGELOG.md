@@ -67,6 +67,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   records by published rules (once per record, taken back when the record is undone),
   levels, 21 achievements that stay once reached, and a screen that shows the level, every
   achievement with its progress, the rules and the latest XP earned.
+- Phase 11: notifications and background jobs — an in-process job runner with database
+  locks; reminders for habits, tasks, goals and calendar events in the user’s time zone,
+  made exactly once and only while something is left to do; notifications for unlocked
+  achievements and for timers that ran out (which the server now ends on time by itself);
+  notification preferences and quiet hours honoured; a bell with an unread count in the
+  web client.
 
 ### Fixed
 

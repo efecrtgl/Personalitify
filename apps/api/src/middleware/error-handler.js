@@ -39,6 +39,35 @@ function localizeDetails(details, language) {
   }));
 }
 
+/**
+ * The status and the public body of an error, in `language`. Unknown errors are described
+ * as INTERNAL_ERROR; `known` tells the caller whether the error should be logged in full.
+ */
+export function describeError(error, language) {
+  const known = normalize(error);
+  if (!known) {
+    return {
+      known: false,
+      status: 500,
+      headers: null,
+      error: {
+        code: ERROR_CODES.INTERNAL_ERROR,
+        message: translate(language, `errors:${ERROR_CODES.INTERNAL_ERROR}`),
+      },
+    };
+  }
+  return {
+    known: true,
+    status: known.status,
+    headers: known.headers ?? null,
+    error: {
+      code: known.code,
+      message: translate(language, known.messageKey, known.params),
+      ...(known.details !== undefined ? { details: localizeDetails(known.details, language) } : {}),
+    },
+  };
+}
+
 export function notFoundHandler(req, res, next) {
   next(new AppError(404, ERROR_CODES.ROUTE_NOT_FOUND));
 }
@@ -51,28 +80,10 @@ export function notFoundHandler(req, res, next) {
 // Express identifies error handlers by their four parameters.
 // eslint-disable-next-line no-unused-vars
 export function errorHandler(error, req, res, next) {
-  const known = normalize(error);
-  const language = req.language;
-
-  if (!known) {
+  const described = describeError(error, req.language);
+  if (!described.known) {
     logger.error({ err: error, requestId: req.id, path: req.originalUrl }, 'Unhandled error');
-    res.status(500).json({
-      error: {
-        code: ERROR_CODES.INTERNAL_ERROR,
-        message: translate(language, `errors:${ERROR_CODES.INTERNAL_ERROR}`),
-        requestId: req.id,
-      },
-    });
-    return;
   }
-
-  if (known.headers) res.set(known.headers);
-  res.status(known.status).json({
-    error: {
-      code: known.code,
-      message: translate(language, known.messageKey, known.params),
-      ...(known.details !== undefined ? { details: localizeDetails(known.details, language) } : {}),
-      requestId: req.id,
-    },
-  });
+  if (described.headers) res.set(described.headers);
+  res.status(described.status).json({ error: { ...described.error, requestId: req.id } });
 }

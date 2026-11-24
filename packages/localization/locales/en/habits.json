@@ -1,0 +1,213 @@
+{
+  "title": "Habits",
+  "description": "Small things, done regularly.",
+  "tabs": {
+    "label": "Habit views",
+    "daily": "Daily",
+    "all": "All habits"
+  },
+  "actions": {
+    "new": "New habit",
+    "markDone": "Mark {{name}} as done",
+    "decrease": "Decrease {{name}}",
+    "increase": "Increase {{name}}",
+    "skip": "Skip this day",
+    "postpone": "Move to the next day",
+    "reset": "Clear this day",
+    "edit": "Edit",
+    "more": "More actions for {{name}}",
+    "archive": "Archive",
+    "unarchive": "Restore",
+    "delete": "Delete"
+  },
+  "day": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "goToToday": "Today",
+    "previous": "Previous day",
+    "next": "Next day",
+    "progress": "{{completed}} of {{due}} done",
+    "percent": "{{value}}%",
+    "progressLabel": "Habits completed today",
+    "anytime": "Any day this period"
+  },
+  "empty": {
+    "dayTitle": "Nothing planned for this day",
+    "dayDescription": "Create a habit and it will appear on the days it is due.",
+    "listTitle": "No habits yet",
+    "listDescription": "Start with one small habit you can keep every day.",
+    "archivedTitle": "No archived habits",
+    "archivedDescription": "Habits you archive keep their history and can be restored at any time."
+  },
+  "states": {
+    "completed": "Completed",
+    "partial": "In progress",
+    "pending": "Not done yet",
+    "missed": "Missed",
+    "skipped": "Skipped",
+    "postponed": "Postponed",
+    "not_due": "Not scheduled"
+  },
+  "period": {
+    "week": "{{completed}} of {{target}} this week",
+    "month": "{{completed}} of {{target}} this month"
+  },
+  "schedule": {
+    "everyDay": "Every day",
+    "everyNDays_one": "Every day",
+    "everyNDays_other": "Every {{count}} days",
+    "weekly": "Every week",
+    "everyNWeeks_one": "Every week",
+    "everyNWeeks_other": "Every {{count}} weeks",
+    "everyNWeeksOn_one": "Every week on {{days}}",
+    "everyNWeeksOn_other": "Every {{count}} weeks on {{days}}",
+    "monthly": "Every month",
+    "monthlyOn": "Monthly on day {{days}}",
+    "everyNMonths_one": "Every month",
+    "everyNMonths_other": "Every {{count}} months",
+    "everyNMonthsOn_one": "Monthly on day {{days}}",
+    "everyNMonthsOn_other": "Every {{count}} months on day {{days}}",
+    "lastDay": "last",
+    "yearly": "Every year",
+    "everyNYears_one": "Every year",
+    "everyNYears_other": "Every {{count}} years",
+    "flexible_week_one": "Once a week",
+    "flexible_week_other": "{{count}} times a week",
+    "flexible_month_one": "Once a month",
+    "flexible_month_other": "{{count}} times a month"
+  },
+  "progress": {
+    "minutes": "{{amount}} min"
+  },
+  "target": {
+    "minutesPerDay_one": "{{count}} minute a day",
+    "minutesPerDay_other": "{{count}} minutes a day",
+    "countPerDay": "{{amount}} {{unit}} a day",
+    "times": "times"
+  },
+  "streak": {
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "weeks_one": "{{count}} week",
+    "weeks_other": "{{count}} weeks",
+    "months_one": "{{count}} month",
+    "months_other": "{{count}} months"
+  },
+  "units": {
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months"
+  },
+  "toast": {
+    "created": "Habit created",
+    "archived": "Habit archived",
+    "restored": "Habit restored",
+    "deleted": "Habit deleted"
+  },
+  "form": {
+    "newTitle": "New habit",
+    "editTitle": "Edit habit",
+    "create": "Create habit",
+    "name": "Name",
+    "namePlaceholder": "Read for 20 minutes",
+    "description": "Description",
+    "color": "Color",
+    "icon": "Icon",
+    "category": "Category",
+    "noCategory": "No category",
+    "scheduleTitle": "Schedule",
+    "modeFixed": "On set days",
+    "modeFlexible": "Flexible",
+    "repeat": "Repeats",
+    "repeats": {
+      "daily": "Every day",
+      "weekdays": "On certain days of the week",
+      "interval": "Every few days",
+      "monthly": "On certain days of the month",
+      "yearly": "Once a year"
+    },
+    "weekdays": "Days of the week",
+    "intervalDays": "Every how many days",
+    "monthDays": "Days of the month",
+    "monthDaysHint": "In shorter months a day that does not exist falls on the last day.",
+    "dayOfMonth": "Day {{day}}",
+    "lastDay": "Last day",
+    "timesPerPeriod": "How many times",
+    "period": "Per",
+    "periods": {
+      "week": "Week",
+      "month": "Month"
+    },
+    "startDate": "Starts",
+    "endDate": "Ends",
+    "targetTitle": "What counts as done",
+    "targetKinds": {
+      "check": "Done once",
+      "count": "A number",
+      "duration": "A duration"
+    },
+    "minutesPerDay": "Minutes a day",
+    "countPerDay": "Times a day",
+    "unit": "Unit",
+    "unitPlaceholder": "glasses",
+    "streakGoal": "Streak goal",
+    "streakGoalHint": "A streak length to aim for.",
+    "remindersTitle": "Reminders",
+    "remindersHint": "Times of day, in your time zone.",
+    "reminderTime": "Reminder {{number}}",
+    "removeReminder": "Remove reminder {{number}}",
+    "addReminder": "Add reminder",
+    "errors": {
+      "chooseDay": "Choose at least one day."
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "description": "Group habits, goals and tasks that belong together.",
+    "add": "New category",
+    "newTitle": "New category",
+    "editTitle": "Edit category",
+    "name": "Name",
+    "emptyTitle": "No categories yet",
+    "emptyDescription": "Categories such as Health or Work help you see where your time goes.",
+    "edit": "Edit {{name}}",
+    "delete": "Delete {{name}}",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteDescription": "Items in this category are kept and simply lose the category.",
+    "deleteConfirm": "Delete category"
+  },
+  "manage": {
+    "filter": "Show",
+    "active": "Active",
+    "archived": "Archived"
+  },
+  "delete": {
+    "title": "Delete {{name}}?",
+    "description": "The habit and everything recorded for it will be removed. To keep the history, archive it instead."
+  },
+  "detail": {
+    "back": "All habits",
+    "notFound": "This habit does not exist",
+    "currentStreak": "Current streak",
+    "bestStreak": "Best streak",
+    "streakExplanation_days": "Scheduled days completed in a row. Skipped and postponed days do not break it.",
+    "streakExplanation_weeks": "Weeks in a row in which the weekly number was reached.",
+    "streakExplanation_months": "Months in a row in which the monthly number was reached.",
+    "streakGoal_one": "Your goal: {{count}} in a row",
+    "streakGoal_other": "Your goal: {{count}} in a row",
+    "rate30": "Last 30 days",
+    "noData": "–",
+    "rateExplanation": "{{completed}} of {{due}} {{unit}} completed. Skipped, postponed and still-open ones are not counted.",
+    "total": "Total completions",
+    "totalExplanation": "Days on which the day's target was reached.",
+    "historyTitle": "History",
+    "historyDescription": "The last {{weeks}} weeks, one square per day.",
+    "historySummary": "History of the last {{weeks}} weeks: {{completed}} days completed, {{missed}} missed.",
+    "legendExcused": "Skipped or still open",
+    "weekdaysTitle": "By weekday",
+    "weekdaysDescription": "Completed out of scheduled, since the habit started.",
+    "weekdaysDescriptionFlexible": "How your completed days are spread over the week.",
+    "notesTitle": "Notes"
+  }
+}

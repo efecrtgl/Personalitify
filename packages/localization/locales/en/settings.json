@@ -16,18 +16,6 @@
     "title": "Profile",
     "description": "How you appear in Personalitify.",
     "avatarColor": "Avatar color",
-    "colors": {
-      "blue": "Blue",
-      "indigo": "Indigo",
-      "purple": "Purple",
-      "pink": "Pink",
-      "red": "Red",
-      "orange": "Orange",
-      "yellow": "Yellow",
-      "green": "Green",
-      "teal": "Teal",
-      "gray": "Gray"
-    },
     "displayName": "Name",
     "bio": "About you",
     "bioHint_one": "{{count}} character left.",

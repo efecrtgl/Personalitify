@@ -1,4 +1,4 @@
-import { CircleAlert, CircleCheck, Info, LoaderCircle, TriangleAlert } from 'lucide-react';
+import { CircleAlert, CircleCheck, Info, LoaderCircle, TriangleAlert, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/cn.js';
 import { Button } from './Button.jsx';
@@ -90,7 +90,8 @@ const TONES = {
 };
 
 /** Inline message that belongs to the surrounding content (as opposed to a toast). */
-export function Banner({ tone = 'info', title, children, action, className }) {
+export function Banner({ tone = 'info', title, children, action, onDismiss, className }) {
+  const { t } = useTranslation();
   const { icon: Icon, className: toneClassName, iconClassName } = TONES[tone];
   return (
     <div
@@ -107,6 +108,17 @@ export function Banner({ tone = 'info', title, children, action, className }) {
         {children && <div className="text-body text-ink-2">{children}</div>}
       </div>
       {action && <div className="shrink-0 pl-8 sm:pl-0">{action}</div>}
+      {onDismiss && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label={t('common:dismiss')}
+          title={t('common:dismiss')}
+          className="-m-1 shrink-0 rounded-control p-1 text-ink-3 hover:text-ink"
+        >
+          <X className="size-4" aria-hidden="true" />
+        </button>
+      )}
     </div>
   );
 }

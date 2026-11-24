@@ -1,10 +1,11 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SUPPORTED_LANGUAGES, resources } from '@personalitify/localization';
+import { NAMESPACES, SUPPORTED_LANGUAGES, resources } from '@personalitify/localization';
 import { describe, expect, it } from 'vitest';
 
 const sourceRoot = dirname(fileURLToPath(import.meta.url));
+const NS = NAMESPACES.join('|');
 
 function sourceFiles(directory) {
   return readdirSync(directory).flatMap((name) => {
@@ -43,7 +44,7 @@ describe('translations used by the web client', () => {
   });
 
   it('has a Turkish and an English message for every literal key in the source', () => {
-    const literal = /['"]((?:common|auth|home|settings|errors):[A-Za-z0-9_.]+)['"]/g;
+    const literal = new RegExp(`['"]((?:${NS}):[A-Za-z0-9_.-]+)['"]`, 'g');
     const missing = [];
     let checked = 0;
     for (const { file, text } of sources) {
@@ -61,7 +62,7 @@ describe('translations used by the web client', () => {
   it('has a message group for every key that is built at run time', () => {
     // Keys such as t(`settings:sections.${id}`) cannot be checked one by one, but the group
     // they select from must exist in both languages.
-    const dynamic = /`((?:common|auth|home|settings|errors):[A-Za-z0-9_.]*)\$\{/g;
+    const dynamic = new RegExp(`\`((?:${NS}):[A-Za-z0-9_.]*)\\$\\{`, 'g');
     const missing = [];
     for (const { file, text } of sources) {
       for (const [, prefix] of text.matchAll(dynamic)) {

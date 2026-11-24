@@ -9,6 +9,9 @@ import { BrandMark } from './layout/Brand.jsx';
 import { queryClient as defaultQueryClient } from './lib/api.js';
 import './lib/i18n.js';
 import { HomePage } from './pages/HomePage.jsx';
+import { HabitDetailPage } from './pages/habits/HabitDetailPage.jsx';
+import { HabitsManagePage } from './pages/habits/HabitsManagePage.jsx';
+import { HabitsPage } from './pages/habits/HabitsPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
 import { LoginPage } from './pages/auth/LoginPage.jsx';
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/auth/PasswordPages.jsx';
@@ -72,6 +75,9 @@ export function AppRoutes() {
       <Route element={<RequireAuth />}>
         <Route element={<AppShell />}>
           <Route index element={<HomePage />} />
+          <Route path="habits" element={<HabitsPage />} />
+          <Route path="habits/all" element={<HabitsManagePage />} />
+          <Route path="habits/:habitId" element={<HabitDetailPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="settings/:section" element={<SettingsPage />} />
           <Route path="*" element={<NotFoundPage />} />

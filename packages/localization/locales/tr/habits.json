@@ -1,0 +1,213 @@
+{
+  "title": "Alışkanlıklar",
+  "description": "Düzenli yapılan küçük şeyler.",
+  "tabs": {
+    "label": "Alışkanlık görünümleri",
+    "daily": "Günlük",
+    "all": "Tüm alışkanlıklar"
+  },
+  "actions": {
+    "new": "Yeni alışkanlık",
+    "markDone": "{{name}} alışkanlığını tamamlandı olarak işaretle",
+    "decrease": "{{name}} değerini azalt",
+    "increase": "{{name}} değerini artır",
+    "skip": "Bu günü atla",
+    "postpone": "Ertesi güne taşı",
+    "reset": "Bu günü temizle",
+    "edit": "Düzenle",
+    "more": "{{name}} için diğer işlemler",
+    "archive": "Arşivle",
+    "unarchive": "Geri yükle",
+    "delete": "Sil"
+  },
+  "day": {
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "tomorrow": "Yarın",
+    "goToToday": "Bugün",
+    "previous": "Önceki gün",
+    "next": "Sonraki gün",
+    "progress": "{{due}} alışkanlıktan {{completed}} tanesi tamamlandı",
+    "percent": "%{{value}}",
+    "progressLabel": "Bugün tamamlanan alışkanlıklar",
+    "anytime": "Bu dönem içinde herhangi bir gün"
+  },
+  "empty": {
+    "dayTitle": "Bu gün için planlanan bir şey yok",
+    "dayDescription": "Bir alışkanlık oluşturun; zamanı geldiği günlerde burada görünür.",
+    "listTitle": "Henüz alışkanlık yok",
+    "listDescription": "Her gün sürdürebileceğiniz küçük bir alışkanlıkla başlayın.",
+    "archivedTitle": "Arşivlenmiş alışkanlık yok",
+    "archivedDescription": "Arşivlediğiniz alışkanlıkların geçmişi korunur ve istediğiniz zaman geri yüklenebilir."
+  },
+  "states": {
+    "completed": "Tamamlandı",
+    "partial": "Devam ediyor",
+    "pending": "Henüz yapılmadı",
+    "missed": "Kaçırıldı",
+    "skipped": "Atlandı",
+    "postponed": "Ertelendi",
+    "not_due": "Planlı değil"
+  },
+  "period": {
+    "week": "Bu hafta {{completed}} / {{target}}",
+    "month": "Bu ay {{completed}} / {{target}}"
+  },
+  "schedule": {
+    "everyDay": "Her gün",
+    "everyNDays_one": "Her gün",
+    "everyNDays_other": "{{count}} günde bir",
+    "weekly": "Her hafta",
+    "everyNWeeks_one": "Her hafta",
+    "everyNWeeks_other": "{{count}} haftada bir",
+    "everyNWeeksOn_one": "Her hafta: {{days}}",
+    "everyNWeeksOn_other": "{{count}} haftada bir: {{days}}",
+    "monthly": "Her ay",
+    "monthlyOn": "Her ayın {{days}}. günü",
+    "everyNMonths_one": "Her ay",
+    "everyNMonths_other": "{{count}} ayda bir",
+    "everyNMonthsOn_one": "Her ayın {{days}}. günü",
+    "everyNMonthsOn_other": "{{count}} ayda bir, ayın {{days}}. günü",
+    "lastDay": "son",
+    "yearly": "Her yıl",
+    "everyNYears_one": "Her yıl",
+    "everyNYears_other": "{{count}} yılda bir",
+    "flexible_week_one": "Haftada bir kez",
+    "flexible_week_other": "Haftada {{count}} kez",
+    "flexible_month_one": "Ayda bir kez",
+    "flexible_month_other": "Ayda {{count}} kez"
+  },
+  "progress": {
+    "minutes": "{{amount}} dk"
+  },
+  "target": {
+    "minutesPerDay_one": "Günde {{count}} dakika",
+    "minutesPerDay_other": "Günde {{count}} dakika",
+    "countPerDay": "Günde {{amount}} {{unit}}",
+    "times": "kez"
+  },
+  "streak": {
+    "days_one": "{{count}} gün",
+    "days_other": "{{count}} gün",
+    "weeks_one": "{{count}} hafta",
+    "weeks_other": "{{count}} hafta",
+    "months_one": "{{count}} ay",
+    "months_other": "{{count}} ay"
+  },
+  "units": {
+    "days": "gün",
+    "weeks": "hafta",
+    "months": "ay"
+  },
+  "toast": {
+    "created": "Alışkanlık oluşturuldu",
+    "archived": "Alışkanlık arşivlendi",
+    "restored": "Alışkanlık geri yüklendi",
+    "deleted": "Alışkanlık silindi"
+  },
+  "form": {
+    "newTitle": "Yeni alışkanlık",
+    "editTitle": "Alışkanlığı düzenle",
+    "create": "Alışkanlık oluştur",
+    "name": "Ad",
+    "namePlaceholder": "20 dakika kitap oku",
+    "description": "Açıklama",
+    "color": "Renk",
+    "icon": "Simge",
+    "category": "Kategori",
+    "noCategory": "Kategori yok",
+    "scheduleTitle": "Program",
+    "modeFixed": "Belirli günlerde",
+    "modeFlexible": "Esnek",
+    "repeat": "Tekrar",
+    "repeats": {
+      "daily": "Her gün",
+      "weekdays": "Haftanın belirli günlerinde",
+      "interval": "Birkaç günde bir",
+      "monthly": "Ayın belirli günlerinde",
+      "yearly": "Yılda bir"
+    },
+    "weekdays": "Haftanın günleri",
+    "intervalDays": "Kaç günde bir",
+    "monthDays": "Ayın günleri",
+    "monthDaysHint": "Kısa aylarda olmayan bir gün, ayın son gününe denk gelir.",
+    "dayOfMonth": "{{day}}. gün",
+    "lastDay": "Son gün",
+    "timesPerPeriod": "Kaç kez",
+    "period": "Dönem",
+    "periods": {
+      "week": "Hafta",
+      "month": "Ay"
+    },
+    "startDate": "Başlangıç",
+    "endDate": "Bitiş",
+    "targetTitle": "Ne zaman tamamlanmış sayılır",
+    "targetKinds": {
+      "check": "Bir kez yapınca",
+      "count": "Belirli bir sayı",
+      "duration": "Belirli bir süre"
+    },
+    "minutesPerDay": "Günde kaç dakika",
+    "countPerDay": "Günde kaç kez",
+    "unit": "Birim",
+    "unitPlaceholder": "bardak",
+    "streakGoal": "Seri hedefi",
+    "streakGoalHint": "Ulaşmak istediğiniz seri uzunluğu.",
+    "remindersTitle": "Hatırlatıcılar",
+    "remindersHint": "Kendi saat diliminizdeki saatler.",
+    "reminderTime": "{{number}}. hatırlatıcı",
+    "removeReminder": "{{number}}. hatırlatıcıyı kaldır",
+    "addReminder": "Hatırlatıcı ekle",
+    "errors": {
+      "chooseDay": "En az bir gün seçin."
+    }
+  },
+  "categories": {
+    "title": "Kategoriler",
+    "description": "Birbiriyle ilgili alışkanlıkları, hedefleri ve görevleri gruplayın.",
+    "add": "Yeni kategori",
+    "newTitle": "Yeni kategori",
+    "editTitle": "Kategoriyi düzenle",
+    "name": "Ad",
+    "emptyTitle": "Henüz kategori yok",
+    "emptyDescription": "Sağlık veya İş gibi kategoriler, zamanınızın nereye gittiğini görmenize yardımcı olur.",
+    "edit": "{{name}} kategorisini düzenle",
+    "delete": "{{name}} kategorisini sil",
+    "deleteTitle": "{{name}} silinsin mi?",
+    "deleteDescription": "Bu kategorideki kayıtlar korunur; yalnızca kategorileri kaldırılır.",
+    "deleteConfirm": "Kategoriyi sil"
+  },
+  "manage": {
+    "filter": "Göster",
+    "active": "Etkin",
+    "archived": "Arşiv"
+  },
+  "delete": {
+    "title": "{{name}} silinsin mi?",
+    "description": "Alışkanlık ve onun için kaydedilen her şey silinir. Geçmişi korumak için silmek yerine arşivleyin."
+  },
+  "detail": {
+    "back": "Tüm alışkanlıklar",
+    "notFound": "Bu alışkanlık mevcut değil",
+    "currentStreak": "Güncel seri",
+    "bestStreak": "En iyi seri",
+    "streakExplanation_days": "Art arda tamamlanan planlı günler. Atlanan ve ertelenen günler seriyi bozmaz.",
+    "streakExplanation_weeks": "Haftalık sayıya art arda ulaşılan haftalar.",
+    "streakExplanation_months": "Aylık sayıya art arda ulaşılan aylar.",
+    "streakGoal_one": "Hedefiniz: art arda {{count}}",
+    "streakGoal_other": "Hedefiniz: art arda {{count}}",
+    "rate30": "Son 30 gün",
+    "noData": "–",
+    "rateExplanation": "{{due}} {{unit}} içinden {{completed}} tanesi tamamlandı. Atlananlar, ertelenenler ve hâlâ açık olanlar sayılmaz.",
+    "total": "Toplam tamamlama",
+    "totalExplanation": "Günlük hedefe ulaşılan gün sayısı.",
+    "historyTitle": "Geçmiş",
+    "historyDescription": "Son {{weeks}} hafta; her kare bir gün.",
+    "historySummary": "Son {{weeks}} haftanın geçmişi: {{completed}} gün tamamlandı, {{missed}} gün kaçırıldı.",
+    "legendExcused": "Atlandı veya hâlâ açık",
+    "weekdaysTitle": "Haftanın günlerine göre",
+    "weekdaysDescription": "Alışkanlık başladığından beri planlanan günler içinde tamamlananlar.",
+    "weekdaysDescriptionFlexible": "Tamamlanan günlerin haftaya dağılımı.",
+    "notesTitle": "Notlar"
+  }
+}

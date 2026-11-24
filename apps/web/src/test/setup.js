@@ -37,6 +37,7 @@ window.scrollTo = () => {};
 
 beforeEach(() => {
   window.localStorage.clear();
+  window.sessionStorage.clear();
   systemDark = false;
   delete document.documentElement.dataset.theme;
 });

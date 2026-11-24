@@ -52,4 +52,13 @@ export const queryKeys = {
   sessions: ['auth', 'sessions'],
   devices: ['devices'],
   securityLog: (page) => ['account', 'security-log', page],
+  categories: ['categories'],
+  habits: {
+    all: ['habits'],
+    list: (archived) => ['habits', 'list', archived],
+    day: (date) => ['habits', 'day', date ?? 'today'],
+    detail: (habitId) => ['habits', 'detail', habitId],
+    stats: (habitId) => ['habits', 'detail', habitId, 'stats'],
+    history: (habitId, from, to) => ['habits', 'detail', habitId, 'history', from, to],
+  },
 };

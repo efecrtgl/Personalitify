@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../providers/AuthProvider.jsx';
+import { parseLocalDate } from './dates.js';
 import { currentLocale } from './i18n.js';
 
 const NUMERIC_ORDERS = {
@@ -64,7 +65,35 @@ export function createFormatters({ locale, timeZone, timeFormat = '24h', dateFor
       .join(NUMERIC_SEPARATORS[dateFormat]);
   }
 
+  // Calendar dates (`YYYY-MM-DD`) carry no time zone: they are drawn as written.
+  const calendar = (options) => {
+    const formatter = new Intl.DateTimeFormat(locale, { ...options, timeZone: 'UTC' });
+    return (date) => formatter.format(parseLocalDate(date));
+  };
+  const calendarLong = calendar({ dateStyle: 'long' });
+  const calendarFull = calendar({ weekday: 'long', day: 'numeric', month: 'long' });
+  const calendarShort = calendar({ day: 'numeric', month: 'short' });
+  const calendarMonth = calendar({ month: 'long', year: 'numeric' });
+  const weekdayLong = calendar({ weekday: 'long' });
+  const weekdayShort = calendar({ weekday: 'short' });
+  const weekdayNarrow = calendar({ weekday: 'narrow' });
+  // 2 January 2023 was a Monday, so adding (weekday - 1) days gives any ISO weekday.
+  const dateOfWeekday = (weekday) => `2023-01-0${weekday + 1}`;
+
   return {
+    /** A calendar date: 24 November 2026 */
+    calendarDate: calendarLong,
+    /** A calendar date: Tuesday, 24 November */
+    calendarWeekdayDate: calendarFull,
+    /** A calendar date: 24 Nov */
+    calendarShortDate: calendarShort,
+    /** The month of a calendar date: November 2026 */
+    calendarMonth,
+    /** Name of an ISO weekday (1 = Monday): `long`, `short` or `narrow`. */
+    weekdayName: (weekday, style = 'long') =>
+      ({ long: weekdayLong, short: weekdayShort, narrow: weekdayNarrow })[style](
+        dateOfWeekday(weekday),
+      ),
     /** 24 November 2026 */
     date: (value) => longDate.format(toDate(value)),
     /** Tuesday, 24 November */

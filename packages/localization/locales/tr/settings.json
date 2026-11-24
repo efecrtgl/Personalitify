@@ -16,18 +16,6 @@
     "title": "Profil",
     "description": "Personalitify'da nasıl göründüğünüz.",
     "avatarColor": "Avatar rengi",
-    "colors": {
-      "blue": "Mavi",
-      "indigo": "Çivit",
-      "purple": "Mor",
-      "pink": "Pembe",
-      "red": "Kırmızı",
-      "orange": "Turuncu",
-      "yellow": "Sarı",
-      "green": "Yeşil",
-      "teal": "Turkuaz",
-      "gray": "Gri"
-    },
     "displayName": "Ad",
     "bio": "Hakkınızda",
     "bioHint_one": "{{count}} karakter kaldı.",

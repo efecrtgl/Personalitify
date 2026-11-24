@@ -78,6 +78,23 @@ async function currentSession(auth) {
   return null;
 }
 
+/**
+ * Completes every running session whose time is up, for all users. Run by a background job
+ * so that a timer ends on time even when no client is looking at it.
+ */
+export async function completeExpiredSessions(now = new Date()) {
+  const running = await FocusSession.find({ active: true, status: 'running', deletedAt: null })
+    .select('userId status startedAt plannedMinutes pausedSeconds')
+    .lean();
+  let completed = 0;
+  for (const session of running) {
+    if (endsAtOf(session) > now) continue;
+    await currentSession({ userId: session.userId });
+    completed += 1;
+  }
+  return completed;
+}
+
 /** Changes the active session with `id`; anything else is not in a state to be changed. */
 async function transition(auth, id, change, { alreadyDone } = {}) {
   await currentSession(auth);

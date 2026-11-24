@@ -21,6 +21,7 @@ export const ENTITY_TYPES = Object.freeze({
   JOURNAL_ENTRY: 'journalEntry',
   MOOD_ENTRY: 'moodEntry',
   ACHIEVEMENT: 'achievement',
+  NOTIFICATION: 'notification',
 });
 
 /** Builds an event name such as `habit.updated`. */

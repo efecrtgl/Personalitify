@@ -26,9 +26,14 @@ async function main() {
   const { startOutboxSweeper, stopOutboxSweeper } =
     await import('./modules/events/outbox-relay.js');
 
+  const { startJobs, stopJobs } = await import('./core/jobs.js');
+  await import('./modules/notifications/notifications.jobs.js');
+
   const server = createServer(createApp());
   // Delivers domain events that a crash or a failed relay left in an entity's outbox.
   startOutboxSweeper();
+  // Reminders, timers that run out, and housekeeping.
+  startJobs();
 
   server.on('error', (error) => {
     if (error.code === 'EADDRINUSE') {
@@ -51,6 +56,7 @@ async function main() {
     shuttingDown = true;
     logger.info({ signal }, 'Shutting down');
     stopOutboxSweeper();
+    stopJobs();
     server.close(async () => {
       await disconnectDatabase();
       process.exit(0);

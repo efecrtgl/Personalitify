@@ -153,8 +153,10 @@ describe('dashboard', () => {
     mockApi({ ...signedInRoutes(), 'GET /dashboard': () => ok(fullDashboard()) });
     renderApp('/');
 
-    expect(await screen.findByRole('heading', { level: 1, name: /Ada$/ })).toBeInTheDocument();
-    expect(await screen.findByText('24 Kasım Salı')).toBeInTheDocument();
+    const greeting = await screen.findByRole('heading', { level: 1, name: /Ada$/ });
+    // The date under the greeting is the account’s today from the server — not the clock in
+    // the top bar, which shows the same text on one day of the year only.
+    expect(await within(greeting.parentElement).findByText('24 Kasım Salı')).toBeInTheDocument();
 
     // Today.
     const today = screen.getByRole('heading', { name: 'Bugün' }).closest('section');

@@ -65,6 +65,16 @@ export function createApiClient(options) {
       updateProfile: (patch) => http.patch('/users/me/profile', patch),
     },
 
+    notifications: {
+      /** Newest first; `meta.unread` is the total number of unread notifications. */
+      list: (query) => http.list('/notifications', query),
+      unreadCount: () => http.get('/notifications/unread-count'),
+      markRead: (notificationId) => http.post(`/notifications/${notificationId}/read`),
+      markUnread: (notificationId) => http.post(`/notifications/${notificationId}/unread`),
+      markAllRead: () => http.post('/notifications/read-all'),
+      remove: (notificationId) => http.delete(`/notifications/${notificationId}`),
+    },
+
     settings: {
       get: () => http.get('/settings'),
       update: (patch) => http.patch('/settings', patch),

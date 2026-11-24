@@ -20,7 +20,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 11    | Notifications and background jobs                | Done    | [phase-11](./releases/phase-11.md) |
 | 12    | Event infrastructure and real-time communication | Done    | [phase-12](./releases/phase-12.md) |
 | 13    | Synchronization engine                           | Done    | [phase-13](./releases/phase-13.md) |
-| 14    | Application updates and remote configuration     | Planned |                                    |
+| 14    | Application updates and remote configuration     | Done    | [phase-14](./releases/phase-14.md) |
 | 15    | API SDK and Rust compatibility                   | Planned |                                    |
 | 16    | Quality, security and performance                | Planned |                                    |
 | 17    | Final documentation and release                  | Planned |                                    |

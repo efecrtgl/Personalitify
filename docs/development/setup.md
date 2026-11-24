@@ -81,6 +81,20 @@ at another server.
 All variables are described in [`.env.example`](../../.env.example) and validated at startup.
 An invalid configuration stops the API with a list of the offending variables.
 
+### Administrators
+
+Releases, the announcement and the registration switch are managed in **Settings →
+Administration**, which is shown to accounts with the `admin` role. The role is granted
+from the command line only:
+
+```bash
+npm run admin:grant  -- you@example.com
+npm run admin:revoke -- you@example.com
+```
+
+The account is signed out everywhere so that the change takes effect at once; sign in
+again. See [updates-and-configuration.md](../architecture/updates-and-configuration.md).
+
 Problems? See [troubleshooting.md](./troubleshooting.md).
 
 ---
@@ -161,5 +175,18 @@ değişkenini ayarlayın.
 
 Tüm değişkenler [`.env.example`](../../.env.example) dosyasında açıklanmıştır ve başlangıçta
 doğrulanır. Geçersiz bir yapılandırmada API, hatalı değişkenleri listeleyerek durur.
+
+### Yöneticiler
+
+Sürümler, duyuru ve kayıt anahtarı **Ayarlar → Yönetim** bölümünden yönetilir; bu bölüm
+`admin` rolündeki hesaplara gösterilir. Rol yalnızca komut satırından verilir:
+
+```bash
+npm run admin:grant  -- siz@example.com
+npm run admin:revoke -- siz@example.com
+```
+
+Değişikliğin hemen geçerli olması için hesabın tüm oturumları kapatılır; yeniden giriş
+yapın. Ayrıntılar: [updates-and-configuration.md](../architecture/updates-and-configuration.md).
 
 Sorun mu yaşıyorsunuz? [troubleshooting.md](./troubleshooting.md) belgesine bakın.

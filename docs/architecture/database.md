@@ -381,6 +381,21 @@ The outcome of every operation a client pushed with an operation id: `userId`, `
 A repeated operation is answered from here instead of being carried out again.
 Indexes: `{ userId: 1, opId: 1 }` unique · `{ startedAt: 1 }` expiring after 30 days.
 
+### `appReleases`
+
+Published (or drafted) versions of the client applications: `appId`, `platform`,
+`channel`, `version`, `minSupportedVersion`, `mandatory`, `notes { tr, en }`,
+`downloadUrl`, `sha256`, `sizeBytes`, `rolloutPercent`, `publishedAt` (null: draft).
+Not user data. See [`updates-and-configuration.md`](./updates-and-configuration.md).
+Indexes: `{ appId: 1, platform: 1, channel: 1, version: 1 }` unique ·
+`{ appId: 1, publishedAt: -1 }`.
+
+### `remoteConfig`
+
+One document per configuration key the server overrides, `_id` = key: `value`, `enabled`,
+`rolloutPercent`, `appIds`, `description`, `updatedBy`. A key without a document has the
+default built into the clients. Not user data.
+
 ### `jobLocks`
 
 One document per background job, `_id` = job name: `owner`, `lockedUntil`,

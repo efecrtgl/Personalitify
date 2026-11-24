@@ -85,6 +85,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   REST API, exactly once per operation id; field-level merging and explicit conflicts;
   retention of history with `CURSOR_EXPIRED` for devices that were away too long; a
   reference replica in the API client; sync state per device in the settings.
+- Phase 14: application updates and remote configuration — a version check that tells a
+  client whether a newer release exists, whether it is mandatory and whether its own
+  version is still supported, with channels, platforms and gradual rollouts; a closed set
+  of remotely configurable settings with built-in defaults (an announcement for everyone,
+  and a server-enforced switch for registration); an administration API and settings
+  section for administrators, whose role is granted from the command line only.
 
 ### Fixed
 

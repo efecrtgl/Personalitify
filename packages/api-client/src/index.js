@@ -93,6 +93,24 @@ export function createApiClient(options) {
       push: (operations) => http.post('/sync/push', { operations }),
     },
 
+    platform: {
+      /** Whether a newer version of the calling client exists. Needs no sign-in. */
+      checkForUpdate: (query) => http.get('/updates/check', { query, auth: false }),
+      /** The remote configuration for the calling client. Needs no sign-in. */
+      config: (query) => http.get('/config', { query, auth: false }),
+    },
+
+    /** Requires the `admin` role. */
+    admin: {
+      listReleases: (query) => http.get('/admin/releases', { query }),
+      createRelease: (input) => http.post('/admin/releases', input),
+      updateRelease: (releaseId, patch) => http.patch(`/admin/releases/${releaseId}`, patch),
+      removeRelease: (releaseId) => http.delete(`/admin/releases/${releaseId}`),
+      listConfig: () => http.get('/admin/config'),
+      setConfig: (key, input) => http.put(`/admin/config/${key}`, input),
+      resetConfig: (key) => http.delete(`/admin/config/${key}`),
+    },
+
     settings: {
       get: () => http.get('/settings'),
       update: (patch) => http.patch('/settings', patch),

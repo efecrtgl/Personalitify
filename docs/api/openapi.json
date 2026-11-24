@@ -1,0 +1,3728 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Personalitify API",
+    "version": "0.1.0",
+    "description": "Central backend of the Personalitify ecosystem. Every client — web, the future Rust\ndesktop application, mobile and third-party integrations — uses this same API.\n\n**Conventions**\n\n- Successful responses are wrapped as `{ \"data\": …, \"meta\": … }`.\n- Failures are `{ \"error\": { \"code\", \"message\", \"details\", \"requestId\" } }`. Branch on\n  `code`; `message` is localized from `Accept-Language` (`tr` default, `en`).\n- Identifiers are UUID strings. Instants are ISO 8601 in UTC. Calendar dates are\n  `YYYY-MM-DD` in the user's time zone. Times of day are `HH:mm`.\n- Synchronized resources carry an integer `version`. Send it back as `baseVersion`\n  when updating; a stale version is merged field by field or rejected with\n  `409 VERSION_CONFLICT`.\n- Breaking changes are published under a new path prefix; this document describes\n  `/api/v1`.",
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Current API version"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Account",
+      "description": "Data export, security log and account deletion."
+    },
+    {
+      "name": "Authentication",
+      "description": "Registration, sign-in, token refresh and session management. Access tokens are short-lived JWTs; refresh tokens are opaque, single-use and rotated on every refresh. Browser clients (`clientType: \"web\"`) receive the refresh token as an HttpOnly cookie; all other clients receive it in the response body."
+    },
+    {
+      "name": "Devices",
+      "description": "Client installations registered to the account. A device is registered automatically when it signs in; its id is returned as `tokens.deviceId`."
+    },
+    {
+      "name": "Health",
+      "description": "Liveness and readiness probes. No authentication."
+    },
+    {
+      "name": "Settings",
+      "description": "Preferences that follow the user to every client: language, theme, time zone, date and time formats, notification and privacy preferences."
+    },
+    {
+      "name": "Users",
+      "description": "The signed-in account and its profile."
+    }
+  ],
+  "paths": {
+    "/account/export": {
+      "get": {
+        "operationId": "getAccountExport",
+        "tags": [
+          "Account"
+        ],
+        "summary": "Export all personal data",
+        "description": "Returns every record the account owns, grouped by type, in the same resource format the API uses elsewhere. Credentials and token hashes are never included.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "formatVersion": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "exportedAt": {
+                          "type": "string"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "emailVerified": {
+                              "type": "boolean"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": [
+                                "user",
+                                "admin"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "lastLoginAt": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "email",
+                            "emailVerified",
+                            "role",
+                            "createdAt",
+                            "lastLoginAt"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Account identity"
+                        },
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": {}
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "formatVersion",
+                        "exportedAt",
+                        "user",
+                        "data"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/security-log": {
+      "get": {
+        "operationId": "getAccountSecurityLog",
+        "tags": [
+          "Account"
+        ],
+        "summary": "List security-relevant account activity",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number, starting at 1",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Items per page",
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "sessionId": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "deviceId": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "ip": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "userAgent": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "action",
+                          "sessionId",
+                          "deviceId",
+                          "ip",
+                          "userAgent",
+                          "metadata",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "total",
+                        "totalPages"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account": {
+      "delete": {
+        "operationId": "deleteAccount",
+        "tags": [
+          "Account"
+        ],
+        "summary": "Delete the account permanently",
+        "description": "Requires the current password. Removes the account and all of its data.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `INVALID_CREDENTIALS`, `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "postAuthRegister",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Create an account",
+        "description": "Creates the account, its profile and settings, registers the device and signs it in. A verification email is sent.",
+        "security": [],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "tokens": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string",
+                              "description": "JWT sent as `Authorization: Bearer <token>`"
+                            },
+                            "tokenType": {
+                              "type": "string",
+                              "enum": [
+                                "Bearer"
+                              ]
+                            },
+                            "expiresIn": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Lifetime of the access token in seconds"
+                            },
+                            "accessTokenExpiresAt": {
+                              "type": "string"
+                            },
+                            "refreshToken": {
+                              "nullable": true,
+                              "description": "Null for browser clients, which receive it as an HttpOnly cookie",
+                              "type": "string"
+                            },
+                            "refreshTokenExpiresAt": {
+                              "type": "string"
+                            },
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "deviceId": {
+                              "type": "string",
+                              "description": "Server-side device id of this installation"
+                            }
+                          },
+                          "required": [
+                            "accessToken",
+                            "tokenType",
+                            "expiresIn",
+                            "accessTokenExpiresAt",
+                            "refreshToken",
+                            "refreshTokenExpiresAt",
+                            "sessionId",
+                            "deviceId"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Token set"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "emailVerified": {
+                              "type": "boolean"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": [
+                                "user",
+                                "admin"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "lastLoginAt": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "email",
+                            "emailVerified",
+                            "role",
+                            "createdAt",
+                            "lastLoginAt"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Account identity"
+                        },
+                        "profile": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "bio": {
+                              "type": "string"
+                            },
+                            "avatarColor": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "displayName",
+                            "bio",
+                            "avatarColor"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Profile"
+                        },
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "language": {
+                              "type": "string",
+                              "enum": [
+                                "tr",
+                                "en"
+                              ]
+                            },
+                            "theme": {
+                              "type": "string",
+                              "enum": [
+                                "system",
+                                "light",
+                                "dark"
+                              ]
+                            },
+                            "timeZone": {
+                              "type": "string"
+                            },
+                            "dateFormat": {
+                              "type": "string",
+                              "enum": [
+                                "dmy",
+                                "mdy",
+                                "ymd"
+                              ]
+                            },
+                            "timeFormat": {
+                              "type": "string",
+                              "enum": [
+                                "24h",
+                                "12h"
+                              ]
+                            },
+                            "weekStart": {
+                              "anyOf": [
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    1
+                                  ]
+                                },
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    6
+                                  ]
+                                },
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    7
+                                  ]
+                                }
+                              ],
+                              "description": "ISO weekday the week starts on: 1 Monday, 6 Saturday, 7 Sunday"
+                            },
+                            "notifications": {
+                              "type": "object",
+                              "properties": {
+                                "inApp": {
+                                  "type": "boolean"
+                                },
+                                "habitReminders": {
+                                  "type": "boolean"
+                                },
+                                "taskReminders": {
+                                  "type": "boolean"
+                                },
+                                "goalReminders": {
+                                  "type": "boolean"
+                                },
+                                "eventReminders": {
+                                  "type": "boolean"
+                                },
+                                "achievements": {
+                                  "type": "boolean"
+                                },
+                                "quietHours": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "start": {
+                                      "type": "string",
+                                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                      "description": "Time of day, HH:mm (24-hour)"
+                                    },
+                                    "end": {
+                                      "type": "string",
+                                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                      "description": "Time of day, HH:mm (24-hour)"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled",
+                                    "start",
+                                    "end"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "inApp",
+                                "habitReminders",
+                                "taskReminders",
+                                "goalReminders",
+                                "eventReminders",
+                                "achievements",
+                                "quietHours"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "privacy": {
+                              "type": "object",
+                              "properties": {
+                                "hideSensitivePreviews": {
+                                  "type": "boolean",
+                                  "description": "Hide journal and mood text in previews, summaries and notifications"
+                                }
+                              },
+                              "required": [
+                                "hideSensitivePreviews"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "language",
+                            "theme",
+                            "timeZone",
+                            "dateFormat",
+                            "timeFormat",
+                            "weekStart",
+                            "notifications",
+                            "privacy"
+                          ],
+                          "additionalProperties": false,
+                          "description": "User settings"
+                        }
+                      },
+                      "required": [
+                        "tokens",
+                        "user",
+                        "profile",
+                        "settings"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `EMAIL_ALREADY_REGISTERED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests — `RATE_LIMITED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$",
+                    "description": "Email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "description": "Password, 8 to 128 characters"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "language": {
+                    "default": "tr",
+                    "type": "string",
+                    "enum": [
+                      "tr",
+                      "en"
+                    ]
+                  },
+                  "timeZone": {
+                    "default": "Europe/Istanbul",
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "IANA time zone name, e.g. Europe/Istanbul"
+                  },
+                  "device": {
+                    "type": "object",
+                    "properties": {
+                      "installationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                        "description": "UUID generated once by the client installation and reused for every sign-in from it"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80,
+                        "description": "Human-readable device name"
+                      },
+                      "clientType": {
+                        "type": "string",
+                        "enum": [
+                          "web",
+                          "desktop",
+                          "mobile",
+                          "integration"
+                        ]
+                      },
+                      "platform": {
+                        "type": "string",
+                        "enum": [
+                          "web",
+                          "windows",
+                          "macos",
+                          "linux",
+                          "android",
+                          "ios"
+                        ]
+                      },
+                      "appId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64,
+                        "description": "Application identifier, e.g. personalitify-desktop"
+                      },
+                      "appVersion": {
+                        "type": "string",
+                        "maxLength": 32
+                      },
+                      "osVersion": {
+                        "type": "string",
+                        "maxLength": 64
+                      }
+                    },
+                    "required": [
+                      "installationId",
+                      "name",
+                      "clientType",
+                      "platform",
+                      "appId"
+                    ],
+                    "additionalProperties": false,
+                    "description": "The client installation that is signing in"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password",
+                  "displayName",
+                  "device"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "postAuthLogin",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Sign in",
+        "description": "Registers or refreshes the device and opens a session for it.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "tokens": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string",
+                              "description": "JWT sent as `Authorization: Bearer <token>`"
+                            },
+                            "tokenType": {
+                              "type": "string",
+                              "enum": [
+                                "Bearer"
+                              ]
+                            },
+                            "expiresIn": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Lifetime of the access token in seconds"
+                            },
+                            "accessTokenExpiresAt": {
+                              "type": "string"
+                            },
+                            "refreshToken": {
+                              "nullable": true,
+                              "description": "Null for browser clients, which receive it as an HttpOnly cookie",
+                              "type": "string"
+                            },
+                            "refreshTokenExpiresAt": {
+                              "type": "string"
+                            },
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "deviceId": {
+                              "type": "string",
+                              "description": "Server-side device id of this installation"
+                            }
+                          },
+                          "required": [
+                            "accessToken",
+                            "tokenType",
+                            "expiresIn",
+                            "accessTokenExpiresAt",
+                            "refreshToken",
+                            "refreshTokenExpiresAt",
+                            "sessionId",
+                            "deviceId"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Token set"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "emailVerified": {
+                              "type": "boolean"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": [
+                                "user",
+                                "admin"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "lastLoginAt": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "email",
+                            "emailVerified",
+                            "role",
+                            "createdAt",
+                            "lastLoginAt"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Account identity"
+                        },
+                        "profile": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "bio": {
+                              "type": "string"
+                            },
+                            "avatarColor": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "displayName",
+                            "bio",
+                            "avatarColor"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Profile"
+                        },
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "language": {
+                              "type": "string",
+                              "enum": [
+                                "tr",
+                                "en"
+                              ]
+                            },
+                            "theme": {
+                              "type": "string",
+                              "enum": [
+                                "system",
+                                "light",
+                                "dark"
+                              ]
+                            },
+                            "timeZone": {
+                              "type": "string"
+                            },
+                            "dateFormat": {
+                              "type": "string",
+                              "enum": [
+                                "dmy",
+                                "mdy",
+                                "ymd"
+                              ]
+                            },
+                            "timeFormat": {
+                              "type": "string",
+                              "enum": [
+                                "24h",
+                                "12h"
+                              ]
+                            },
+                            "weekStart": {
+                              "anyOf": [
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    1
+                                  ]
+                                },
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    6
+                                  ]
+                                },
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    7
+                                  ]
+                                }
+                              ],
+                              "description": "ISO weekday the week starts on: 1 Monday, 6 Saturday, 7 Sunday"
+                            },
+                            "notifications": {
+                              "type": "object",
+                              "properties": {
+                                "inApp": {
+                                  "type": "boolean"
+                                },
+                                "habitReminders": {
+                                  "type": "boolean"
+                                },
+                                "taskReminders": {
+                                  "type": "boolean"
+                                },
+                                "goalReminders": {
+                                  "type": "boolean"
+                                },
+                                "eventReminders": {
+                                  "type": "boolean"
+                                },
+                                "achievements": {
+                                  "type": "boolean"
+                                },
+                                "quietHours": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "start": {
+                                      "type": "string",
+                                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                      "description": "Time of day, HH:mm (24-hour)"
+                                    },
+                                    "end": {
+                                      "type": "string",
+                                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                      "description": "Time of day, HH:mm (24-hour)"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled",
+                                    "start",
+                                    "end"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "inApp",
+                                "habitReminders",
+                                "taskReminders",
+                                "goalReminders",
+                                "eventReminders",
+                                "achievements",
+                                "quietHours"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "privacy": {
+                              "type": "object",
+                              "properties": {
+                                "hideSensitivePreviews": {
+                                  "type": "boolean",
+                                  "description": "Hide journal and mood text in previews, summaries and notifications"
+                                }
+                              },
+                              "required": [
+                                "hideSensitivePreviews"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "language",
+                            "theme",
+                            "timeZone",
+                            "dateFormat",
+                            "timeFormat",
+                            "weekStart",
+                            "notifications",
+                            "privacy"
+                          ],
+                          "additionalProperties": false,
+                          "description": "User settings"
+                        }
+                      },
+                      "required": [
+                        "tokens",
+                        "user",
+                        "profile",
+                        "settings"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `INVALID_CREDENTIALS`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests — `RATE_LIMITED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$",
+                    "description": "Email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "device": {
+                    "type": "object",
+                    "properties": {
+                      "installationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                        "description": "UUID generated once by the client installation and reused for every sign-in from it"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80,
+                        "description": "Human-readable device name"
+                      },
+                      "clientType": {
+                        "type": "string",
+                        "enum": [
+                          "web",
+                          "desktop",
+                          "mobile",
+                          "integration"
+                        ]
+                      },
+                      "platform": {
+                        "type": "string",
+                        "enum": [
+                          "web",
+                          "windows",
+                          "macos",
+                          "linux",
+                          "android",
+                          "ios"
+                        ]
+                      },
+                      "appId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64,
+                        "description": "Application identifier, e.g. personalitify-desktop"
+                      },
+                      "appVersion": {
+                        "type": "string",
+                        "maxLength": 32
+                      },
+                      "osVersion": {
+                        "type": "string",
+                        "maxLength": 64
+                      }
+                    },
+                    "required": [
+                      "installationId",
+                      "name",
+                      "clientType",
+                      "platform",
+                      "appId"
+                    ],
+                    "additionalProperties": false,
+                    "description": "The client installation that is signing in"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password",
+                  "device"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "postAuthRefresh",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Exchange a refresh token for a new token set",
+        "description": "The presented refresh token becomes invalid immediately. Presenting an already used token closes the session (`REFRESH_TOKEN_REUSED`), except within a few seconds of the rotation, where a racing duplicate request is simply rejected.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "description": "JWT sent as `Authorization: Bearer <token>`"
+                        },
+                        "tokenType": {
+                          "type": "string",
+                          "enum": [
+                            "Bearer"
+                          ]
+                        },
+                        "expiresIn": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Lifetime of the access token in seconds"
+                        },
+                        "accessTokenExpiresAt": {
+                          "type": "string"
+                        },
+                        "refreshToken": {
+                          "nullable": true,
+                          "description": "Null for browser clients, which receive it as an HttpOnly cookie",
+                          "type": "string"
+                        },
+                        "refreshTokenExpiresAt": {
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "deviceId": {
+                          "type": "string",
+                          "description": "Server-side device id of this installation"
+                        }
+                      },
+                      "required": [
+                        "accessToken",
+                        "tokenType",
+                        "expiresIn",
+                        "accessTokenExpiresAt",
+                        "refreshToken",
+                        "refreshTokenExpiresAt",
+                        "sessionId",
+                        "deviceId"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Token set"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `INVALID_REFRESH_TOKEN`, `REFRESH_TOKEN_REUSED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests — `RATE_LIMITED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "description": "Required for native clients. Browser clients send the HttpOnly cookie instead.",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "postAuthLogout",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Sign out of the current session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout-all": {
+      "post": {
+        "operationId": "postAuthLogoutAll",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Sign out of every session on every device",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "revokedSessions": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "revokedSessions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-email": {
+      "post": {
+        "operationId": "postAuthVerifyEmail",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Confirm an email address with the emailed token",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "admin"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "lastLoginAt": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "emailVerified",
+                        "role",
+                        "createdAt",
+                        "lastLoginAt"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Account identity"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `INVALID_TOKEN`, `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  }
+                },
+                "required": [
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/resend-verification": {
+      "post": {
+        "operationId": "postAuthResendVerification",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Send the verification email again",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `EMAIL_ALREADY_VERIFIED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "operationId": "postAuthForgotPassword",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Request a password reset email",
+        "description": "Always answers 204, whether or not the address belongs to an account, so the endpoint cannot be used to discover registered emails.",
+        "security": [],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$",
+                    "description": "Email address"
+                  }
+                },
+                "required": [
+                  "email"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "operationId": "postAuthResetPassword",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Set a new password with the emailed token",
+        "description": "Signs the account out of every session.",
+        "security": [],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `INVALID_TOKEN`, `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "description": "Password, 8 to 128 characters"
+                  }
+                },
+                "required": [
+                  "token",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "operationId": "postAuthChangePassword",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Change the password of the signed-in account",
+        "description": "Every other session is signed out; the current one stays valid.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "revokedSessions": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "revokedSessions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `INVALID_CREDENTIALS`, `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "description": "Password, 8 to 128 characters"
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sessions": {
+      "get": {
+        "operationId": "getAuthSessions",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "List active sessions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "deviceId": {
+                            "type": "string"
+                          },
+                          "device": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "clientType": {
+                                "type": "string",
+                                "enum": [
+                                  "web",
+                                  "desktop",
+                                  "mobile",
+                                  "integration"
+                                ]
+                              },
+                              "platform": {
+                                "type": "string",
+                                "enum": [
+                                  "web",
+                                  "windows",
+                                  "macos",
+                                  "linux",
+                                  "android",
+                                  "ios"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "clientType",
+                              "platform"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "lastUsedAt": {
+                            "type": "string"
+                          },
+                          "expiresAt": {
+                            "type": "string"
+                          },
+                          "ip": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "userAgent": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "current": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "deviceId",
+                          "device",
+                          "createdAt",
+                          "lastUsedAt",
+                          "expiresAt",
+                          "ip",
+                          "userAgent",
+                          "current"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sessions/{sessionId}": {
+      "delete": {
+        "operationId": "deleteAuthSessionsSessionId",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Revoke one session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices": {
+      "get": {
+        "operationId": "getDevices",
+        "tags": [
+          "Devices"
+        ],
+        "summary": "List devices",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "installationId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "clientType": {
+                            "type": "string",
+                            "enum": [
+                              "web",
+                              "desktop",
+                              "mobile",
+                              "integration"
+                            ]
+                          },
+                          "platform": {
+                            "type": "string",
+                            "enum": [
+                              "web",
+                              "windows",
+                              "macos",
+                              "linux",
+                              "android",
+                              "ios"
+                            ]
+                          },
+                          "appId": {
+                            "type": "string"
+                          },
+                          "appVersion": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "osVersion": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "lastSeenAt": {
+                            "type": "string"
+                          },
+                          "syncCursor": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Highest event sequence number the device has acknowledged"
+                          },
+                          "lastSyncAt": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "current": {
+                            "type": "boolean",
+                            "description": "True for the device making the request"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "installationId",
+                          "name",
+                          "clientType",
+                          "platform",
+                          "appId",
+                          "appVersion",
+                          "osVersion",
+                          "lastSeenAt",
+                          "syncCursor",
+                          "lastSyncAt",
+                          "createdAt",
+                          "current"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Device"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices/current": {
+      "get": {
+        "operationId": "getDevicesCurrent",
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get the device making the request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "installationId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "clientType": {
+                          "type": "string",
+                          "enum": [
+                            "web",
+                            "desktop",
+                            "mobile",
+                            "integration"
+                          ]
+                        },
+                        "platform": {
+                          "type": "string",
+                          "enum": [
+                            "web",
+                            "windows",
+                            "macos",
+                            "linux",
+                            "android",
+                            "ios"
+                          ]
+                        },
+                        "appId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "lastSeenAt": {
+                          "type": "string"
+                        },
+                        "syncCursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Highest event sequence number the device has acknowledged"
+                        },
+                        "lastSyncAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "current": {
+                          "type": "boolean",
+                          "description": "True for the device making the request"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "installationId",
+                        "name",
+                        "clientType",
+                        "platform",
+                        "appId",
+                        "appVersion",
+                        "osVersion",
+                        "lastSeenAt",
+                        "syncCursor",
+                        "lastSyncAt",
+                        "createdAt",
+                        "current"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Device"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}": {
+      "patch": {
+        "operationId": "patchDevicesDeviceId",
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Rename a device or report its new application version",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "installationId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "clientType": {
+                          "type": "string",
+                          "enum": [
+                            "web",
+                            "desktop",
+                            "mobile",
+                            "integration"
+                          ]
+                        },
+                        "platform": {
+                          "type": "string",
+                          "enum": [
+                            "web",
+                            "windows",
+                            "macos",
+                            "linux",
+                            "android",
+                            "ios"
+                          ]
+                        },
+                        "appId": {
+                          "type": "string"
+                        },
+                        "appVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "osVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "lastSeenAt": {
+                          "type": "string"
+                        },
+                        "syncCursor": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Highest event sequence number the device has acknowledged"
+                        },
+                        "lastSyncAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "current": {
+                          "type": "boolean",
+                          "description": "True for the device making the request"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "installationId",
+                        "name",
+                        "clientType",
+                        "platform",
+                        "appId",
+                        "appVersion",
+                        "osVersion",
+                        "lastSeenAt",
+                        "syncCursor",
+                        "lastSyncAt",
+                        "createdAt",
+                        "current"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Device"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "osVersion": {
+                    "type": "string",
+                    "maxLength": 64
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDevicesDeviceId",
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Remove a device and sign it out",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "tags": [
+          "Health"
+        ],
+        "summary": "Liveness",
+        "description": "The process is running. `serverTime` lets clients estimate their clock offset from the server.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ok"
+                          ]
+                        },
+                        "service": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "apiVersion": {
+                          "type": "string"
+                        },
+                        "serverTime": {
+                          "type": "string"
+                        },
+                        "uptimeSeconds": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "service",
+                        "version",
+                        "apiVersion",
+                        "serverTime",
+                        "uptimeSeconds"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "getHealthReady",
+        "tags": [
+          "Health"
+        ],
+        "summary": "Readiness",
+        "description": "Answers 503 when a dependency needed to serve requests is unavailable.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ready",
+                            "unavailable"
+                          ]
+                        },
+                        "checks": {
+                          "type": "object",
+                          "properties": {
+                            "database": {
+                              "type": "string",
+                              "enum": [
+                                "up",
+                                "down"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "database"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "serverTime": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "checks",
+                        "serverTime"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "operationId": "getSettings",
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get settings",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "language": {
+                          "type": "string",
+                          "enum": [
+                            "tr",
+                            "en"
+                          ]
+                        },
+                        "theme": {
+                          "type": "string",
+                          "enum": [
+                            "system",
+                            "light",
+                            "dark"
+                          ]
+                        },
+                        "timeZone": {
+                          "type": "string"
+                        },
+                        "dateFormat": {
+                          "type": "string",
+                          "enum": [
+                            "dmy",
+                            "mdy",
+                            "ymd"
+                          ]
+                        },
+                        "timeFormat": {
+                          "type": "string",
+                          "enum": [
+                            "24h",
+                            "12h"
+                          ]
+                        },
+                        "weekStart": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            {
+                              "type": "number",
+                              "enum": [
+                                6
+                              ]
+                            },
+                            {
+                              "type": "number",
+                              "enum": [
+                                7
+                              ]
+                            }
+                          ],
+                          "description": "ISO weekday the week starts on: 1 Monday, 6 Saturday, 7 Sunday"
+                        },
+                        "notifications": {
+                          "type": "object",
+                          "properties": {
+                            "inApp": {
+                              "type": "boolean"
+                            },
+                            "habitReminders": {
+                              "type": "boolean"
+                            },
+                            "taskReminders": {
+                              "type": "boolean"
+                            },
+                            "goalReminders": {
+                              "type": "boolean"
+                            },
+                            "eventReminders": {
+                              "type": "boolean"
+                            },
+                            "achievements": {
+                              "type": "boolean"
+                            },
+                            "quietHours": {
+                              "type": "object",
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                },
+                                "start": {
+                                  "type": "string",
+                                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                  "description": "Time of day, HH:mm (24-hour)"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                  "description": "Time of day, HH:mm (24-hour)"
+                                }
+                              },
+                              "required": [
+                                "enabled",
+                                "start",
+                                "end"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "inApp",
+                            "habitReminders",
+                            "taskReminders",
+                            "goalReminders",
+                            "eventReminders",
+                            "achievements",
+                            "quietHours"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "privacy": {
+                          "type": "object",
+                          "properties": {
+                            "hideSensitivePreviews": {
+                              "type": "boolean",
+                              "description": "Hide journal and mood text in previews, summaries and notifications"
+                            }
+                          },
+                          "required": [
+                            "hideSensitivePreviews"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "language",
+                        "theme",
+                        "timeZone",
+                        "dateFormat",
+                        "timeFormat",
+                        "weekStart",
+                        "notifications",
+                        "privacy"
+                      ],
+                      "additionalProperties": false,
+                      "description": "User settings"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchSettings",
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Update settings",
+        "description": "Partial update. Nested objects are merged key by key.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "language": {
+                          "type": "string",
+                          "enum": [
+                            "tr",
+                            "en"
+                          ]
+                        },
+                        "theme": {
+                          "type": "string",
+                          "enum": [
+                            "system",
+                            "light",
+                            "dark"
+                          ]
+                        },
+                        "timeZone": {
+                          "type": "string"
+                        },
+                        "dateFormat": {
+                          "type": "string",
+                          "enum": [
+                            "dmy",
+                            "mdy",
+                            "ymd"
+                          ]
+                        },
+                        "timeFormat": {
+                          "type": "string",
+                          "enum": [
+                            "24h",
+                            "12h"
+                          ]
+                        },
+                        "weekStart": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            {
+                              "type": "number",
+                              "enum": [
+                                6
+                              ]
+                            },
+                            {
+                              "type": "number",
+                              "enum": [
+                                7
+                              ]
+                            }
+                          ],
+                          "description": "ISO weekday the week starts on: 1 Monday, 6 Saturday, 7 Sunday"
+                        },
+                        "notifications": {
+                          "type": "object",
+                          "properties": {
+                            "inApp": {
+                              "type": "boolean"
+                            },
+                            "habitReminders": {
+                              "type": "boolean"
+                            },
+                            "taskReminders": {
+                              "type": "boolean"
+                            },
+                            "goalReminders": {
+                              "type": "boolean"
+                            },
+                            "eventReminders": {
+                              "type": "boolean"
+                            },
+                            "achievements": {
+                              "type": "boolean"
+                            },
+                            "quietHours": {
+                              "type": "object",
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                },
+                                "start": {
+                                  "type": "string",
+                                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                  "description": "Time of day, HH:mm (24-hour)"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                  "description": "Time of day, HH:mm (24-hour)"
+                                }
+                              },
+                              "required": [
+                                "enabled",
+                                "start",
+                                "end"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "inApp",
+                            "habitReminders",
+                            "taskReminders",
+                            "goalReminders",
+                            "eventReminders",
+                            "achievements",
+                            "quietHours"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "privacy": {
+                          "type": "object",
+                          "properties": {
+                            "hideSensitivePreviews": {
+                              "type": "boolean",
+                              "description": "Hide journal and mood text in previews, summaries and notifications"
+                            }
+                          },
+                          "required": [
+                            "hideSensitivePreviews"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "language",
+                        "theme",
+                        "timeZone",
+                        "dateFormat",
+                        "timeFormat",
+                        "weekStart",
+                        "notifications",
+                        "privacy"
+                      ],
+                      "additionalProperties": false,
+                      "description": "User settings"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `VERSION_CONFLICT`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "language": {
+                    "type": "string",
+                    "enum": [
+                      "tr",
+                      "en"
+                    ]
+                  },
+                  "theme": {
+                    "type": "string",
+                    "enum": [
+                      "system",
+                      "light",
+                      "dark"
+                    ]
+                  },
+                  "timeZone": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "IANA time zone name, e.g. Europe/Istanbul"
+                  },
+                  "dateFormat": {
+                    "type": "string",
+                    "enum": [
+                      "dmy",
+                      "mdy",
+                      "ymd"
+                    ]
+                  },
+                  "timeFormat": {
+                    "type": "string",
+                    "enum": [
+                      "24h",
+                      "12h"
+                    ]
+                  },
+                  "weekStart": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "enum": [
+                          1
+                        ]
+                      },
+                      {
+                        "type": "number",
+                        "enum": [
+                          6
+                        ]
+                      },
+                      {
+                        "type": "number",
+                        "enum": [
+                          7
+                        ]
+                      }
+                    ],
+                    "description": "ISO weekday the week starts on: 1 Monday, 6 Saturday, 7 Sunday"
+                  },
+                  "notifications": {
+                    "type": "object",
+                    "properties": {
+                      "inApp": {
+                        "type": "boolean"
+                      },
+                      "habitReminders": {
+                        "type": "boolean"
+                      },
+                      "taskReminders": {
+                        "type": "boolean"
+                      },
+                      "goalReminders": {
+                        "type": "boolean"
+                      },
+                      "eventReminders": {
+                        "type": "boolean"
+                      },
+                      "achievements": {
+                        "type": "boolean"
+                      },
+                      "quietHours": {
+                        "type": "object",
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "start": {
+                            "type": "string",
+                            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                            "description": "Time of day, HH:mm (24-hour)"
+                          },
+                          "end": {
+                            "type": "string",
+                            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                            "description": "Time of day, HH:mm (24-hour)"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "privacy": {
+                    "type": "object",
+                    "properties": {
+                      "hideSensitivePreviews": {
+                        "type": "boolean",
+                        "description": "Hide journal and mood text in previews, summaries and notifications"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "baseVersion": {
+                    "description": "Version of the resource this change was based on. When it is stale the server merges non-overlapping fields or answers 409 VERSION_CONFLICT. Omit to apply to the latest version.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "operationId": "getUsersMe",
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get the signed-in user with profile and settings",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "emailVerified": {
+                              "type": "boolean"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": [
+                                "user",
+                                "admin"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "lastLoginAt": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "email",
+                            "emailVerified",
+                            "role",
+                            "createdAt",
+                            "lastLoginAt"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Account identity"
+                        },
+                        "profile": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "bio": {
+                              "type": "string"
+                            },
+                            "avatarColor": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "displayName",
+                            "bio",
+                            "avatarColor"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Profile"
+                        },
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "UUID"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Entity version, incremented on every change"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "language": {
+                              "type": "string",
+                              "enum": [
+                                "tr",
+                                "en"
+                              ]
+                            },
+                            "theme": {
+                              "type": "string",
+                              "enum": [
+                                "system",
+                                "light",
+                                "dark"
+                              ]
+                            },
+                            "timeZone": {
+                              "type": "string"
+                            },
+                            "dateFormat": {
+                              "type": "string",
+                              "enum": [
+                                "dmy",
+                                "mdy",
+                                "ymd"
+                              ]
+                            },
+                            "timeFormat": {
+                              "type": "string",
+                              "enum": [
+                                "24h",
+                                "12h"
+                              ]
+                            },
+                            "weekStart": {
+                              "anyOf": [
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    1
+                                  ]
+                                },
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    6
+                                  ]
+                                },
+                                {
+                                  "type": "number",
+                                  "enum": [
+                                    7
+                                  ]
+                                }
+                              ],
+                              "description": "ISO weekday the week starts on: 1 Monday, 6 Saturday, 7 Sunday"
+                            },
+                            "notifications": {
+                              "type": "object",
+                              "properties": {
+                                "inApp": {
+                                  "type": "boolean"
+                                },
+                                "habitReminders": {
+                                  "type": "boolean"
+                                },
+                                "taskReminders": {
+                                  "type": "boolean"
+                                },
+                                "goalReminders": {
+                                  "type": "boolean"
+                                },
+                                "eventReminders": {
+                                  "type": "boolean"
+                                },
+                                "achievements": {
+                                  "type": "boolean"
+                                },
+                                "quietHours": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean"
+                                    },
+                                    "start": {
+                                      "type": "string",
+                                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                      "description": "Time of day, HH:mm (24-hour)"
+                                    },
+                                    "end": {
+                                      "type": "string",
+                                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                      "description": "Time of day, HH:mm (24-hour)"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled",
+                                    "start",
+                                    "end"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "inApp",
+                                "habitReminders",
+                                "taskReminders",
+                                "goalReminders",
+                                "eventReminders",
+                                "achievements",
+                                "quietHours"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "privacy": {
+                              "type": "object",
+                              "properties": {
+                                "hideSensitivePreviews": {
+                                  "type": "boolean",
+                                  "description": "Hide journal and mood text in previews, summaries and notifications"
+                                }
+                              },
+                              "required": [
+                                "hideSensitivePreviews"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "createdAt",
+                            "updatedAt",
+                            "language",
+                            "theme",
+                            "timeZone",
+                            "dateFormat",
+                            "timeFormat",
+                            "weekStart",
+                            "notifications",
+                            "privacy"
+                          ],
+                          "additionalProperties": false,
+                          "description": "User settings"
+                        }
+                      },
+                      "required": [
+                        "user",
+                        "profile",
+                        "settings"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me/profile": {
+      "patch": {
+        "operationId": "patchUsersMeProfile",
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update the profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Entity version, incremented on every change"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "bio": {
+                          "type": "string"
+                        },
+                        "avatarColor": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "createdAt",
+                        "updatedAt",
+                        "displayName",
+                        "bio",
+                        "avatarColor"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Profile"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `VERSION_CONFLICT`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "bio": {
+                    "type": "string",
+                    "maxLength": 280
+                  },
+                  "avatarColor": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$",
+                    "description": "Color as #RRGGBB"
+                  },
+                  "baseVersion": {
+                    "description": "Version of the resource this change was based on. When it is stale the server merges non-overlapping fields or answers 409 VERSION_CONFLICT. Omit to apply to the latest version.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Access token from `POST /auth/login`, `/auth/register` or `/auth/refresh`."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message",
+              "requestId"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "INTERNAL_ERROR",
+                  "ROUTE_NOT_FOUND",
+                  "VALIDATION_FAILED",
+                  "MALFORMED_JSON",
+                  "PAYLOAD_TOO_LARGE",
+                  "RATE_LIMITED",
+                  "SERVICE_UNAVAILABLE",
+                  "UNAUTHENTICATED",
+                  "TOKEN_EXPIRED",
+                  "SESSION_REVOKED",
+                  "INVALID_CREDENTIALS",
+                  "INVALID_REFRESH_TOKEN",
+                  "REFRESH_TOKEN_REUSED",
+                  "INVALID_TOKEN",
+                  "FORBIDDEN",
+                  "EMAIL_ALREADY_REGISTERED",
+                  "EMAIL_ALREADY_VERIFIED",
+                  "NOT_FOUND",
+                  "CONFLICT",
+                  "VERSION_CONFLICT",
+                  "ID_ALREADY_EXISTS",
+                  "LIMIT_EXCEEDED",
+                  "INVALID_STATE",
+                  "CURSOR_EXPIRED",
+                  "UNKNOWN_ENTITY_TYPE"
+                ],
+                "description": "Stable machine-readable error code"
+              },
+              "message": {
+                "type": "string",
+                "description": "Localized, human-readable message"
+              },
+              "details": {
+                "description": "For VALIDATION_FAILED: an array of `{ path, location, code, message }`. For VERSION_CONFLICT: `{ entityType, entityId, currentVersion, conflictingFields, current }`."
+              },
+              "requestId": {
+                "type": "string",
+                "description": "Also sent as `X-Request-Id`"
+              }
+            }
+          }
+        },
+        "example": {
+          "error": {
+            "code": "VALIDATION_FAILED",
+            "message": "Some of the information provided is not valid.",
+            "details": [
+              {
+                "path": "email",
+                "location": "body",
+                "code": "invalid_email",
+                "message": "Enter a valid email address."
+              }
+            ],
+            "requestId": "0d5d0a0e-6f1c-4d0a-9d55-3f0f3c0e9a11"
+          }
+        }
+      }
+    }
+  }
+}

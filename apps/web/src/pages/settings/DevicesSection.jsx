@@ -15,6 +15,15 @@ import { useToast } from '../../ui/toast.jsx';
 
 const CLIENT_ICONS = { web: Globe, desktop: Laptop, mobile: Smartphone, integration: Plug };
 
+/** How far a device has followed the account: up to date, behind, or never synchronized. */
+function syncText(t, device, headSeq) {
+  if (!device.lastSyncAt) return t('settings:devices.sync.never');
+  const behind = Math.max(0, headSeq - device.syncCursor);
+  return behind === 0
+    ? t('settings:devices.sync.upToDate')
+    : t('settings:devices.sync.behind', { count: behind });
+}
+
 function RenameDialog({ device, onClose }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -72,6 +81,9 @@ export function DevicesSection() {
   const [removing, setRemoving] = useState(null);
 
   const devices = useQuery({ queryKey: queryKeys.devices, queryFn: () => api.devices.list() });
+  // The account’s latest position; without it the list simply shows no sync line.
+  const sync = useQuery({ queryKey: queryKeys.syncStatus, queryFn: () => api.sync.status() });
+  const headSeq = sync.data?.headSeq;
 
   const remove = useMutation({
     mutationFn: (deviceId) => api.devices.remove(deviceId),
@@ -115,6 +127,9 @@ export function DevicesSection() {
                     {' · '}
                     {t('settings:devices.lastSeen', { when: format.relative(device.lastSeenAt) })}
                   </p>
+                  {headSeq !== undefined && (
+                    <p className="mt-0.5 text-caption text-ink-3">{syncText(t, device, headSeq)}</p>
+                  )}
                 </div>
                 <IconButton
                   icon={Pencil}

@@ -142,7 +142,13 @@
     "removeTitle": "{{name}} kaldırılsın mı?",
     "removeDescription": "Cihazın oturumu kapatılır ve hesabınızdan kaldırılır. Daha sonra yeniden giriş yapabilir.",
     "removeConfirm": "Cihazı kaldır",
-    "removed": "Cihaz kaldırıldı."
+    "removed": "Cihaz kaldırıldı.",
+    "sync": {
+      "never": "Bu cihaz henüz eşitlenmedi",
+      "upToDate": "Eşitleme: güncel",
+      "behind_one": "Eşitleme: {{count}} değişiklik geride",
+      "behind_other": "Eşitleme: {{count}} değişiklik geride"
+    }
   },
   "account": {
     "title": "Hesabı sil",

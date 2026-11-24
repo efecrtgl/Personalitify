@@ -155,6 +155,13 @@ export const signedInRoutes = (me = account()) => ({
   'GET /dashboard': () => ok(emptyDashboard()),
   'GET /notifications': () => ok([], { page: 1, limit: 20, total: 0, totalPages: 1, unread: 0 }),
   'GET /categories': () => ok([]),
+  'GET /sync/status': () =>
+    ok({
+      headSeq: 0,
+      oldestCursor: 0,
+      retentionDays: 90,
+      device: { id: 'device-1', cursor: 0, lastSyncAt: null, behind: 0, canCatchUp: true },
+    }),
   'GET /goals': () => ok([]),
 });
 

@@ -162,6 +162,52 @@ describe('realtime', () => {
     expect(screen.queryByText('Su iç için zaman geldi (23:00).')).not.toBeInTheDocument();
   });
 
+  it('confirms its position to the server from time to time', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+    try {
+      const apiMock = mockApi({
+        ...signedInRoutes(),
+        'POST /sync/ack': ({ body }) =>
+          ok({
+            headSeq: body.cursor,
+            oldestCursor: 0,
+            retentionDays: 90,
+            device: {
+              id: 'device-1',
+              cursor: body.cursor,
+              lastSyncAt: null,
+              behind: 0,
+              canCatchUp: true,
+            },
+          }),
+      });
+      let cursor = null;
+      const realtime = fakeRealtime();
+      const connect = (options) => ({ ...realtime.connect(options), getCursor: () => cursor });
+      renderApp('/', { realtime: connect });
+      await screen.findByRole('heading', { level: 1 });
+      await waitFor(() => expect(realtime.connections).toHaveLength(1));
+
+      // Nothing to confirm before the connection knows a position.
+      vi.advanceTimersByTime(20_000);
+      expect(apiMock.calls('POST', '/sync/ack')).toHaveLength(0);
+
+      cursor = 41;
+      vi.advanceTimersByTime(20_000);
+      await waitFor(() => expect(apiMock.calls('POST', '/sync/ack')).toHaveLength(1));
+      expect(apiMock.calls('POST', '/sync/ack')[0].body).toEqual({ cursor: 41 });
+
+      // The same position is not confirmed twice; a new one is.
+      vi.advanceTimersByTime(40_000);
+      expect(apiMock.calls('POST', '/sync/ack')).toHaveLength(1);
+      cursor = 44;
+      vi.advanceTimersByTime(20_000);
+      await waitFor(() => expect(apiMock.calls('POST', '/sync/ack')).toHaveLength(2));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('closes the connection when the user signs out', async () => {
     mockApi({ ...signedInRoutes(), 'POST /auth/logout': () => noContent() });
     const realtime = fakeRealtime();

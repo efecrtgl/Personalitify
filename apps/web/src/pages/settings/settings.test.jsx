@@ -164,6 +164,38 @@ describe('settings', () => {
     await waitFor(() => expect(weekStart).toHaveValue('7'));
   });
 
+  it('shows how far each device has followed the account', async () => {
+    mockApi({
+      ...signedInRoutes(),
+      'GET /devices': () =>
+        ok([
+          device({ syncCursor: 120, lastSyncAt: new Date().toISOString() }),
+          device({
+            id: 'device-2',
+            name: 'Telefon',
+            clientType: 'mobile',
+            current: false,
+            syncCursor: 97,
+            lastSyncAt: '2026-11-20T09:00:00.000Z',
+          }),
+          device({ id: 'device-3', name: 'Eski tablet', current: false }),
+        ]),
+      'GET /sync/status': () =>
+        ok({
+          headSeq: 120,
+          oldestCursor: 0,
+          retentionDays: 90,
+          device: { id: 'device-1', cursor: 120, lastSyncAt: null, behind: 0, canCatchUp: true },
+        }),
+    });
+    renderApp('/settings/devices');
+
+    const row = async (name) => (await screen.findByText(name)).closest('li');
+    expect(await row('Chrome · Windows')).toHaveTextContent('Eşitleme: güncel');
+    expect(await row('Telefon')).toHaveTextContent('Eşitleme: 23 değişiklik geride');
+    expect(await row('Eski tablet')).toHaveTextContent('Bu cihaz henüz eşitlenmedi');
+  });
+
   it('lists devices, renames one and removes another after confirmation', async () => {
     const user = userEvent.setup();
     let devices = [

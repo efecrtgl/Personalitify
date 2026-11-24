@@ -142,7 +142,13 @@
     "removeTitle": "Remove {{name}}?",
     "removeDescription": "The device is signed out and removed from your account. It can sign in again later.",
     "removeConfirm": "Remove device",
-    "removed": "The device was removed."
+    "removed": "The device was removed.",
+    "sync": {
+      "never": "This device has not synchronized yet",
+      "upToDate": "Sync: up to date",
+      "behind_one": "Sync: {{count}} change behind",
+      "behind_other": "Sync: {{count}} changes behind"
+    }
   },
   "account": {
     "title": "Delete account",

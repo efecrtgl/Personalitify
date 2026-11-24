@@ -10,6 +10,9 @@ import { useAuth } from './AuthProvider.jsx';
 
 const RealtimeContext = createContext('offline');
 
+/** How often the device confirms its position while events keep arriving. */
+const ACK_INTERVAL_MS = 20_000;
+
 /**
  * Which cached data an event of each entity type makes stale. An event does not carry
  * enough to patch every view (a finished task changes the dashboard, the analytics and the
@@ -86,7 +89,22 @@ export function RealtimeProvider({ children, connect = createRealtime }) {
       },
     });
     realtime.connect();
+
+    // Tells the server how far this device has followed the account, so that the list of
+    // devices can show which ones are up to date. Not on every event: now and then.
+    let confirmed = null;
+    const confirm = () => {
+      const cursor = realtime.getCursor?.() ?? null;
+      if (cursor === null || cursor === confirmed) return;
+      confirmed = cursor;
+      api.sync.ack(cursor).catch(() => {
+        confirmed = null;
+      });
+    };
+    const confirming = setInterval(confirm, ACK_INTERVAL_MS);
+
     return () => {
+      clearInterval(confirming);
       realtime.disconnect();
       setConnection('offline');
     };

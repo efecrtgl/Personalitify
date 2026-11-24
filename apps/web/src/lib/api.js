@@ -51,6 +51,7 @@ export const queryKeys = {
   me: ['me'],
   sessions: ['auth', 'sessions'],
   devices: ['devices'],
+  syncStatus: ['sync', 'status'],
   securityLog: (page) => ['account', 'security-log', page],
   categories: ['categories'],
   dashboard: ['dashboard'],

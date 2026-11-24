@@ -1,0 +1,22 @@
+{
+  "greeting": "Hello {{name}},",
+  "signature": "The Personalitify team",
+  "ignore": "If you did not request this, you can safely ignore this email.",
+  "verifyEmail": {
+    "subject": "Confirm your email address",
+    "intro": "Welcome to Personalitify. Confirm your email address to secure your account.",
+    "action": "Confirm email address",
+    "expiry": "This link is valid for {{hours}} hours."
+  },
+  "resetPassword": {
+    "subject": "Reset your password",
+    "intro": "We received a request to reset the password of your Personalitify account.",
+    "action": "Choose a new password",
+    "expiry": "This link is valid for {{minutes}} minutes."
+  },
+  "passwordChanged": {
+    "subject": "Your password was changed",
+    "intro": "The password of your Personalitify account was just changed. All other sessions were signed out.",
+    "warning": "If this was not you, reset your password immediately."
+  }
+}

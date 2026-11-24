@@ -1,0 +1,22 @@
+{
+  "greeting": "Merhaba {{name}},",
+  "signature": "Personalitify ekibi",
+  "ignore": "Bu isteği siz yapmadıysanız bu e-postayı güvenle yok sayabilirsiniz.",
+  "verifyEmail": {
+    "subject": "E-posta adresinizi doğrulayın",
+    "intro": "Personalitify'a hoş geldiniz. Hesabınızı güvenceye almak için e-posta adresinizi doğrulayın.",
+    "action": "E-posta adresini doğrula",
+    "expiry": "Bu bağlantı {{hours}} saat geçerlidir."
+  },
+  "resetPassword": {
+    "subject": "Parolanızı sıfırlayın",
+    "intro": "Personalitify hesabınızın parolasını sıfırlamak için bir istek aldık.",
+    "action": "Yeni parola belirle",
+    "expiry": "Bu bağlantı {{minutes}} dakika geçerlidir."
+  },
+  "passwordChanged": {
+    "subject": "Parolanız değiştirildi",
+    "intro": "Personalitify hesabınızın parolası az önce değiştirildi. Diğer tüm oturumlar kapatıldı.",
+    "warning": "Bu işlemi siz yapmadıysanız parolanızı hemen sıfırlayın."
+  }
+}

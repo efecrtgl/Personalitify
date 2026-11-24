@@ -16,6 +16,7 @@ export const AUDIT_ACTIONS = Object.freeze({
   PASSWORD_RESET: 'account.password_reset',
   DATA_EXPORTED: 'account.data_exported',
   ACCOUNT_DELETED: 'account.deleted',
+  ADMIN_CHANGE: 'admin.change',
 });
 
 const RETENTION_SECONDS = 180 * 24 * 60 * 60;

@@ -10,7 +10,9 @@
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "test": "vitest run",
-    "docs:api": "node scripts/generate-openapi.js"
+    "docs:api": "node scripts/generate-openapi.js",
+    "admin:grant": "node scripts/admin-role.js grant",
+    "admin:revoke": "node scripts/admin-role.js revoke"
   },
   "dependencies": {
     "@personalitify/localization": "^0.1.0",

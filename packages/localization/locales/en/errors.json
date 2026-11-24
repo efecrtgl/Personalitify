@@ -24,6 +24,7 @@
   "INVALID_STATE": "This action is not possible right now.",
   "CURSOR_EXPIRED": "The synchronization position is too old. A full synchronization is required.",
   "UNKNOWN_ENTITY_TYPE": "Unknown record type.",
+  "REGISTRATION_CLOSED": "Creating new accounts is closed at the moment.",
   "validation": {
     "required": "This field is required.",
     "invalid_type": "This value has the wrong type.",

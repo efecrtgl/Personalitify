@@ -31,6 +31,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "admin:grant": "npm run admin:grant --workspace @personalitify/api --",
+    "admin:revoke": "npm run admin:revoke --workspace @personalitify/api --",
     "docs:api": "npm run docs:api --workspace @personalitify/api"
   },
   "devDependencies": {

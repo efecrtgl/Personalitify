@@ -6,7 +6,14 @@ import {
   passwordNeedsRehash,
   verifyPassword,
 } from '../../core/crypto.js';
-import { AppError, badRequest, conflict, fieldError, unauthenticated } from '../../core/errors.js';
+import {
+  AppError,
+  badRequest,
+  conflict,
+  fieldError,
+  registrationClosed,
+  unauthenticated,
+} from '../../core/errors.js';
 import { registerUserCollection } from '../../core/user-data.js';
 import {
   sendPasswordChangedEmail,
@@ -16,6 +23,7 @@ import {
 import { AUDIT_ACTIONS } from '../audit/audit-log.model.js';
 import { recordAudit } from '../audit/audit.service.js';
 import { registerDevice } from '../devices/devices.service.js';
+import { getServerConfigValue } from '../platform/platform.service.js';
 import { getUserPreferences, settingsService } from '../settings/settings.service.js';
 import { Profile } from '../users/profile.model.js';
 import { User, serializeUser } from '../users/user.model.js';
@@ -106,6 +114,8 @@ function assertPasswordAllowed(password, email) {
 }
 
 export async function register(input, client) {
+  // Checked on the server: hiding the form in a client would not close registration.
+  if ((await getServerConfigValue('registrationOpen')) === false) throw registrationClosed();
   const email = input.email.toLowerCase();
   assertPasswordAllowed(input.password, email);
 

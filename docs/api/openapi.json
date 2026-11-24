@@ -85,6 +85,14 @@
       "description": "What the server wants to tell the user: reminders for habits, tasks, goals and events, unlocked achievements and timers that ran out. Notifications are made by the server according to the user’s notification settings; clients list them, mark them as read and delete them. Each carries its kind and values, not a finished sentence."
     },
     {
+      "name": "Platform",
+      "description": "What a client asks the server about itself: whether a newer version exists, whether its own version is still supported, and the settings the server can change without a new release. These endpoints need no sign-in, so a client can ask before the user has an account. The server neither builds nor hosts applications; a release is a record that a version exists and where it can be fetched."
+    },
+    {
+      "name": "Administration",
+      "description": "Managing releases and remote configuration. Requires the `admin` role, which is granted from the command line (`npm run admin:grant -- <email>`), never through the API. Every change is written to the security log of the administrator who made it."
+    },
+    {
       "name": "Settings",
       "description": "Preferences that follow the user to every client: language, theme, time zone, date and time formats, notification and privacy preferences."
     },
@@ -28161,6 +28169,1582 @@
         }
       }
     },
+    "/updates/check": {
+      "get": {
+        "operationId": "getUpdatesCheck",
+        "tags": [
+          "Platform"
+        ],
+        "summary": "Check for a newer version",
+        "description": "`updateAvailable`: a newer published release is offered to this installation. `mandatory`: the client must not skip it. `supported: false`: the client is older than the oldest version still supported and should stop and ask for the update. Without `installationId` only releases rolled out to everyone are offered.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "personalitify-web",
+                "personalitify-desktop",
+                "personalitify-mobile"
+              ]
+            }
+          },
+          {
+            "name": "installationId",
+            "in": "query",
+            "required": false,
+            "description": "The installation’s own id; places it in gradual rollouts, always the same way",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "web",
+                "windows",
+                "macos",
+                "linux",
+                "android",
+                "ios"
+              ]
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": true,
+            "description": "major.minor.patch",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": "stable",
+              "type": "string",
+              "enum": [
+                "stable",
+                "beta"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "appId": {
+                          "type": "string",
+                          "enum": [
+                            "personalitify-web",
+                            "personalitify-desktop",
+                            "personalitify-mobile"
+                          ]
+                        },
+                        "platform": {
+                          "type": "string",
+                          "enum": [
+                            "web",
+                            "windows",
+                            "macos",
+                            "linux",
+                            "android",
+                            "ios"
+                          ]
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "stable",
+                            "beta"
+                          ]
+                        },
+                        "currentVersion": {
+                          "type": "string"
+                        },
+                        "supported": {
+                          "type": "boolean"
+                        },
+                        "minSupportedVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "updateAvailable": {
+                          "type": "boolean"
+                        },
+                        "mandatory": {
+                          "type": "boolean"
+                        },
+                        "latest": {
+                          "nullable": true,
+                          "type": "object",
+                          "properties": {
+                            "version": {
+                              "type": "string"
+                            },
+                            "channel": {
+                              "type": "string",
+                              "enum": [
+                                "stable",
+                                "beta"
+                              ]
+                            },
+                            "notes": {
+                              "type": "object",
+                              "properties": {
+                                "tr": {
+                                  "type": "string",
+                                  "maxLength": 4000
+                                },
+                                "en": {
+                                  "type": "string",
+                                  "maxLength": 4000
+                                }
+                              },
+                              "required": [
+                                "tr",
+                                "en"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "downloadUrl": {
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "nullable": true,
+                              "description": "Checksum of the download, when one is given",
+                              "type": "string"
+                            },
+                            "sizeBytes": {
+                              "nullable": true,
+                              "type": "number"
+                            },
+                            "publishedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "version",
+                            "channel",
+                            "notes",
+                            "downloadUrl",
+                            "sha256",
+                            "sizeBytes",
+                            "publishedAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "checkedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "appId",
+                        "platform",
+                        "channel",
+                        "currentVersion",
+                        "supported",
+                        "minSupportedVersion",
+                        "updateAvailable",
+                        "mandatory",
+                        "latest",
+                        "checkedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config": {
+      "get": {
+        "operationId": "getConfig",
+        "tags": [
+          "Platform"
+        ],
+        "summary": "Get the remote configuration",
+        "description": "Every key has a value: the server’s where one is set and applies to this client, otherwise the default that is built into the clients. Unknown keys never appear.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "personalitify-web",
+                "personalitify-desktop",
+                "personalitify-mobile"
+              ]
+            }
+          },
+          {
+            "name": "installationId",
+            "in": "query",
+            "required": false,
+            "description": "The installation’s own id; places it in gradual rollouts, always the same way",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "values": {
+                          "type": "object",
+                          "properties": {
+                            "announcement": {
+                              "nullable": true,
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 60,
+                                  "description": "Changes when the message changes"
+                                },
+                                "tone": {
+                                  "type": "string",
+                                  "enum": [
+                                    "info",
+                                    "warning"
+                                  ]
+                                },
+                                "message": {
+                                  "type": "object",
+                                  "properties": {
+                                    "tr": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 500
+                                    },
+                                    "en": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 500
+                                    }
+                                  },
+                                  "required": [
+                                    "tr",
+                                    "en"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "tone",
+                                "message"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "registrationOpen": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "announcement",
+                            "registrationOpen"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "fetchedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "values",
+                        "fetchedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/releases": {
+      "get": {
+        "operationId": "getAdminReleases",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "List releases, drafts included",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "personalitify-web",
+                "personalitify-desktop",
+                "personalitify-mobile"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "appId": {
+                            "type": "string",
+                            "enum": [
+                              "personalitify-web",
+                              "personalitify-desktop",
+                              "personalitify-mobile"
+                            ]
+                          },
+                          "platform": {
+                            "type": "string",
+                            "enum": [
+                              "any",
+                              "web",
+                              "windows",
+                              "macos",
+                              "linux",
+                              "android",
+                              "ios"
+                            ]
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "stable",
+                              "beta"
+                            ]
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "minSupportedVersion": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "mandatory": {
+                            "type": "boolean"
+                          },
+                          "notes": {
+                            "type": "object",
+                            "properties": {
+                              "tr": {
+                                "type": "string",
+                                "maxLength": 4000
+                              },
+                              "en": {
+                                "type": "string",
+                                "maxLength": 4000
+                              }
+                            },
+                            "required": [
+                              "tr",
+                              "en"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "downloadUrl": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "sizeBytes": {
+                            "nullable": true,
+                            "type": "number"
+                          },
+                          "rolloutPercent": {
+                            "type": "number"
+                          },
+                          "published": {
+                            "type": "boolean"
+                          },
+                          "publishedAt": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "appId",
+                          "platform",
+                          "channel",
+                          "version",
+                          "minSupportedVersion",
+                          "mandatory",
+                          "notes",
+                          "downloadUrl",
+                          "sha256",
+                          "sizeBytes",
+                          "rolloutPercent",
+                          "published",
+                          "publishedAt",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Application release"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postAdminReleases",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "Create a release",
+        "description": "A release is a draft, offered to nobody, until it is published.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "appId": {
+                          "type": "string",
+                          "enum": [
+                            "personalitify-web",
+                            "personalitify-desktop",
+                            "personalitify-mobile"
+                          ]
+                        },
+                        "platform": {
+                          "type": "string",
+                          "enum": [
+                            "any",
+                            "web",
+                            "windows",
+                            "macos",
+                            "linux",
+                            "android",
+                            "ios"
+                          ]
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "stable",
+                            "beta"
+                          ]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "minSupportedVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "mandatory": {
+                          "type": "boolean"
+                        },
+                        "notes": {
+                          "type": "object",
+                          "properties": {
+                            "tr": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "en": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "required": [
+                            "tr",
+                            "en"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "downloadUrl": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "sha256": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "sizeBytes": {
+                          "nullable": true,
+                          "type": "number"
+                        },
+                        "rolloutPercent": {
+                          "type": "number"
+                        },
+                        "published": {
+                          "type": "boolean"
+                        },
+                        "publishedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "appId",
+                        "platform",
+                        "channel",
+                        "version",
+                        "minSupportedVersion",
+                        "mandatory",
+                        "notes",
+                        "downloadUrl",
+                        "sha256",
+                        "sizeBytes",
+                        "rolloutPercent",
+                        "published",
+                        "publishedAt",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Application release"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict — `CONFLICT`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appId": {
+                    "type": "string",
+                    "enum": [
+                      "personalitify-web",
+                      "personalitify-desktop",
+                      "personalitify-mobile"
+                    ]
+                  },
+                  "platform": {
+                    "default": "any",
+                    "type": "string",
+                    "enum": [
+                      "any",
+                      "web",
+                      "windows",
+                      "macos",
+                      "linux",
+                      "android",
+                      "ios"
+                    ]
+                  },
+                  "channel": {
+                    "default": "stable",
+                    "type": "string",
+                    "enum": [
+                      "stable",
+                      "beta"
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "major.minor.patch"
+                  },
+                  "minSupportedVersion": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "major.minor.patch"
+                  },
+                  "mandatory": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "notes": {
+                    "default": {},
+                    "type": "object",
+                    "properties": {
+                      "tr": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "en": {
+                        "type": "string",
+                        "maxLength": 4000
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "downloadUrl": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 500,
+                    "format": "uri"
+                  },
+                  "sha256": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "sizeBytes": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "rolloutPercent": {
+                    "default": 100,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "published": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "appId",
+                  "version"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/releases/{releaseId}": {
+      "patch": {
+        "operationId": "patchAdminReleasesReleaseId",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "Change a release, publish or withdraw it",
+        "description": "The application, platform, channel and version of a release are fixed.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "releaseId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "appId": {
+                          "type": "string",
+                          "enum": [
+                            "personalitify-web",
+                            "personalitify-desktop",
+                            "personalitify-mobile"
+                          ]
+                        },
+                        "platform": {
+                          "type": "string",
+                          "enum": [
+                            "any",
+                            "web",
+                            "windows",
+                            "macos",
+                            "linux",
+                            "android",
+                            "ios"
+                          ]
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "stable",
+                            "beta"
+                          ]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "minSupportedVersion": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "mandatory": {
+                          "type": "boolean"
+                        },
+                        "notes": {
+                          "type": "object",
+                          "properties": {
+                            "tr": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "en": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "required": [
+                            "tr",
+                            "en"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "downloadUrl": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "sha256": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "sizeBytes": {
+                          "nullable": true,
+                          "type": "number"
+                        },
+                        "rolloutPercent": {
+                          "type": "number"
+                        },
+                        "published": {
+                          "type": "boolean"
+                        },
+                        "publishedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "appId",
+                        "platform",
+                        "channel",
+                        "version",
+                        "minSupportedVersion",
+                        "mandatory",
+                        "notes",
+                        "downloadUrl",
+                        "sha256",
+                        "sizeBytes",
+                        "rolloutPercent",
+                        "published",
+                        "publishedAt",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Application release"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "minSupportedVersion": {
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "major.minor.patch"
+                  },
+                  "mandatory": {
+                    "type": "boolean"
+                  },
+                  "notes": {
+                    "type": "object",
+                    "properties": {
+                      "tr": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "en": {
+                        "type": "string",
+                        "maxLength": 4000
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "downloadUrl": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 500,
+                    "format": "uri"
+                  },
+                  "sha256": {
+                    "nullable": true,
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "sizeBytes": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "rolloutPercent": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "published": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAdminReleasesReleaseId",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "Delete a release",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "releaseId",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Done. No content."
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found — `NOT_FOUND`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config": {
+      "get": {
+        "operationId": "getAdminConfig",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "List every configuration key with its stored value",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "enum": [
+                              "announcement",
+                              "registrationOpen"
+                            ]
+                          },
+                          "defaultValue": {},
+                          "overridden": {
+                            "type": "boolean",
+                            "description": "Whether the server holds a value for the key"
+                          },
+                          "value": {},
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "rolloutPercent": {
+                            "type": "number"
+                          },
+                          "appIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "personalitify-web",
+                                "personalitify-desktop",
+                                "personalitify-mobile"
+                              ]
+                            }
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "defaultValue",
+                          "overridden",
+                          "value",
+                          "enabled",
+                          "rolloutPercent",
+                          "appIds",
+                          "description",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/{key}": {
+      "put": {
+        "operationId": "putAdminConfigKey",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "Set the value of a configuration key",
+        "description": "The value must have the shape of its key: `announcement` is null or `{ id, tone, message: { tr, en } }`; `registrationOpen` is a boolean.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "announcement",
+                "registrationOpen"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "enum": [
+                            "announcement",
+                            "registrationOpen"
+                          ]
+                        },
+                        "defaultValue": {},
+                        "overridden": {
+                          "type": "boolean",
+                          "description": "Whether the server holds a value for the key"
+                        },
+                        "value": {},
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "rolloutPercent": {
+                          "type": "number"
+                        },
+                        "appIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "personalitify-web",
+                              "personalitify-desktop",
+                              "personalitify-mobile"
+                            ]
+                          }
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "defaultValue",
+                        "overridden",
+                        "value",
+                        "enabled",
+                        "rolloutPercent",
+                        "appIds",
+                        "description",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": {},
+                  "enabled": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "rolloutPercent": {
+                    "default": 100,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "appIds": {
+                    "default": [],
+                    "maxItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "personalitify-web",
+                        "personalitify-desktop",
+                        "personalitify-mobile"
+                      ]
+                    }
+                  },
+                  "description": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 300
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAdminConfigKey",
+        "tags": [
+          "Administration"
+        ],
+        "summary": "Return a configuration key to its default",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "announcement",
+                "registrationOpen"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "enum": [
+                            "announcement",
+                            "registrationOpen"
+                          ]
+                        },
+                        "defaultValue": {},
+                        "overridden": {
+                          "type": "boolean",
+                          "description": "Whether the server holds a value for the key"
+                        },
+                        "value": {},
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "rolloutPercent": {
+                          "type": "number"
+                        },
+                        "appIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "personalitify-web",
+                              "personalitify-desktop",
+                              "personalitify-mobile"
+                            ]
+                          }
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "defaultValue",
+                        "overridden",
+                        "value",
+                        "enabled",
+                        "rolloutPercent",
+                        "appIds",
+                        "description",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — `VALIDATION_FAILED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated — `SESSION_REVOKED`, `TOKEN_EXPIRED`, `UNAUTHENTICATED`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — `FORBIDDEN`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/settings": {
       "get": {
         "operationId": "getSettings",
@@ -30285,7 +31869,8 @@
                   "LIMIT_EXCEEDED",
                   "INVALID_STATE",
                   "CURSOR_EXPIRED",
-                  "UNKNOWN_ENTITY_TYPE"
+                  "UNKNOWN_ENTITY_TYPE",
+                  "REGISTRATION_CLOSED"
                 ],
                 "description": "Stable machine-readable error code"
               },

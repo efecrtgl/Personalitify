@@ -24,6 +24,7 @@
   "INVALID_STATE": "Bu işlem şu anda yapılamıyor.",
   "CURSOR_EXPIRED": "Eşitleme konumu çok eski. Tam eşitleme gerekiyor.",
   "UNKNOWN_ENTITY_TYPE": "Bilinmeyen kayıt türü.",
+  "REGISTRATION_CLOSED": "Yeni hesap oluşturma şu anda kapalı.",
   "validation": {
     "required": "Bu alan zorunludur.",
     "invalid_type": "Bu değerin türü hatalı.",

@@ -26,6 +26,7 @@ import { healthRouter } from './modules/health/health.routes.js';
 import { journalRouter } from './modules/journal/journal.routes.js';
 import { moodRouter } from './modules/mood/mood.routes.js';
 import { notificationsRouter } from './modules/notifications/notifications.routes.js';
+import { adminRouter, platformRouter } from './modules/platform/platform.routes.js';
 import { settingsRouter } from './modules/settings/settings.routes.js';
 import { syncRouter } from './modules/sync/sync.routes.js';
 import { tasksRouter } from './modules/tasks/tasks.routes.js';
@@ -53,6 +54,8 @@ const moduleRouters = [
   notificationsRouter,
   eventsRouter,
   syncRouter,
+  platformRouter,
+  adminRouter,
   devicesRouter,
   accountRouter,
 ];

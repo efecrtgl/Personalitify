@@ -27,6 +27,9 @@ export const unauthenticated = (code = ERROR_CODES.UNAUTHENTICATED, options) =>
 
 export const forbidden = (options) => new AppError(403, ERROR_CODES.FORBIDDEN, options);
 
+/** New accounts cannot be created right now (remote configuration `registrationOpen`). */
+export const registrationClosed = () => new AppError(403, ERROR_CODES.REGISTRATION_CLOSED);
+
 export const notFound = (options) => new AppError(404, ERROR_CODES.NOT_FOUND, options);
 
 export const conflict = (code = ERROR_CODES.CONFLICT, options) => new AppError(409, code, options);

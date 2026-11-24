@@ -35,4 +35,7 @@ export const ERROR_CODES = Object.freeze({
   // Synchronization
   CURSOR_EXPIRED: 'CURSOR_EXPIRED',
   UNKNOWN_ENTITY_TYPE: 'UNKNOWN_ENTITY_TYPE',
+
+  // Platform
+  REGISTRATION_CLOSED: 'REGISTRATION_CLOSED',
 });

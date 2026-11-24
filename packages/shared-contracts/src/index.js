@@ -8,3 +8,4 @@ export * from './analytics.js';
 export * from './wellbeing.js';
 export * from './progress.js';
 export * from './notifications.js';
+export * from './platform.js';

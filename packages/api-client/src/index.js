@@ -70,6 +70,30 @@ export function createApiClient(options) {
       update: (patch) => http.patch('/settings', patch),
     },
 
+    categories: {
+      list: () => http.get('/categories'),
+      create: (input) => http.post('/categories', input),
+      update: (categoryId, patch) => http.patch(`/categories/${categoryId}`, patch),
+      remove: (categoryId) => http.delete(`/categories/${categoryId}`),
+    },
+
+    habits: {
+      list: (query) => http.get('/habits', { query }),
+      get: (habitId) => http.get(`/habits/${habitId}`),
+      create: (input) => http.post('/habits', input),
+      update: (habitId, patch) => http.patch(`/habits/${habitId}`, patch),
+      remove: (habitId) => http.delete(`/habits/${habitId}`),
+      archive: (habitId) => http.post(`/habits/${habitId}/archive`),
+      unarchive: (habitId) => http.post(`/habits/${habitId}/unarchive`),
+      /** Habits of one day; omit `date` for today in the user's time zone. */
+      day: (date) => http.get('/habits/day', { query: { date } }),
+      history: (habitId, range) => http.get(`/habits/${habitId}/history`, { query: range }),
+      stats: (habitId) => http.get(`/habits/${habitId}/stats`),
+      /** Records progress, a skip, a postponement or a note for a day. */
+      setEntry: (habitId, date, input) => http.put(`/habits/${habitId}/entries/${date}`, input),
+      clearEntry: (habitId, date) => http.delete(`/habits/${habitId}/entries/${date}`),
+    },
+
     devices: {
       list: () => http.get('/devices'),
       current: () => http.get('/devices/current'),

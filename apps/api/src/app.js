@@ -11,8 +11,10 @@ import {
 } from './middleware/security.js';
 import { accountRouter } from './modules/account/account.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { categoriesRouter } from './modules/categories/categories.routes.js';
 import { devicesRouter } from './modules/devices/devices.routes.js';
 import { createDocsRouter } from './modules/docs/docs.routes.js';
+import { habitsRouter } from './modules/habits/habits.routes.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { settingsRouter } from './modules/settings/settings.routes.js';
 import { usersRouter } from './modules/users/users.routes.js';
@@ -25,6 +27,8 @@ const moduleRouters = [
   authRouter,
   usersRouter,
   settingsRouter,
+  categoriesRouter,
+  habitsRouter,
   devicesRouter,
   accountRouter,
 ];

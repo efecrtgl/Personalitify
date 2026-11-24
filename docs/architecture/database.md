@@ -135,6 +135,62 @@ entityVersion: 1 }` · `{ userId: 1, occurredAt: -1 }` · `{ createdAt: 1 }`.
 One document per user (`_id` = user id) holding the last assigned `seq`. Incremented
 atomically with `$inc`.
 
+### `categories` (synchronized)
+
+User-defined labels shared by habits, goals, tasks and events: `name`, `color`, `icon`,
+`sortOrder`. At most 100 per user.
+Indexes: `{ userId: 1, deletedAt: 1, sortOrder: 1 }`.
+
+Deleting a category does not cascade in the database. Each module subscribes to
+`category.deleted` and clears its own references through the entity service, so those
+changes are versioned and synchronized too.
+
+### `habits` (synchronized)
+
+| Field                                                | Notes                                                                         |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `name`, `description`, `color`, `icon`, `categoryId` |                                                                               |
+| `schedule`                                           | `mode` (`fixed` \| `flexible`), `recurrence` rule, `period`, `timesPerPeriod` |
+| `target`                                             | `kind` (`check` \| `count` \| `duration`), `value`, `unit`                    |
+| `startDate`, `endDate`                               | Calendar dates (`YYYY-MM-DD`) in the user's time zone                         |
+| `reminders`                                          | Embedded, at most 8: `{ time: "HH:mm", enabled }`                             |
+| `streakGoal`                                         | Optional streak length the user aims for                                      |
+| `archivedAt`                                         | Archived habits keep their history and leave the daily views                  |
+| `sortOrder`                                          |                                                                               |
+
+At most 200 per user.
+Indexes: `{ userId: 1, deletedAt: 1, archivedAt: 1, sortOrder: 1 }` ·
+`{ userId: 1, categoryId: 1 }`.
+
+### `habitCompletions` (synchronized, entity type `habitEntry`)
+
+What was recorded for one habit on one calendar day.
+
+| Field             | Notes                                                        |
+| ----------------- | ------------------------------------------------------------ |
+| `habitId`, `date` | Immutable; `date` is a calendar date in the user's time zone |
+| `status`          | `active` \| `skipped` \| `postponed`                         |
+| `value`           | Progress of the day                                          |
+| `target`          | Copy of the habit's target when the entry was written        |
+| `note`            |                                                              |
+| `postponedTo`     | The day an occurrence was moved to                           |
+| `completedAt`     | Instant at which `value` first reached `target`              |
+
+Indexes: `{ userId: 1, habitId: 1, date: 1 }` unique among live documents (partial on
+`deletedAt` being null) · `{ userId: 1, date: 1 }` · `{ userId: 1, postponedTo: 1 }` partial.
+
+Design notes:
+
+- One document per habit and day keeps the collection bounded by time, not by taps:
+  counting to eight glasses of water updates one entry eight times.
+- The unique index makes "the entry of that day" a well-defined thing even when two devices
+  write the first progress of a day at the same moment; the loser of that race updates the
+  winner's entry.
+- `target` is stored on the entry so that raising a habit's target later does not turn past
+  completed days into incomplete ones.
+- Streaks and completion rates are not stored. They are derived from the entries and the
+  schedule on request, so they can never disagree with the data.
+
 ## Account export and deletion
 
 `core/user-data.js` keeps a registry of every collection that holds personal data. Export

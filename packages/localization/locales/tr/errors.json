@@ -46,6 +46,12 @@
     "password_same_as_email": "Parola, e-posta adresiyle aynı olamaz.",
     "password_unchanged": "Yeni parola mevcut paroladan farklı olmalıdır.",
     "end_before_start": "Bitiş, başlangıçtan önce olamaz.",
+    "unknown_reference": "Bu kayıt mevcut değil.",
+    "duplicate_value": "Aynı değer birden fazla kez girilmiş.",
+    "range_too_long": "Aralık en fazla {{maximum}} gün olabilir.",
+    "outside_habit_dates": "Bu tarih, kaydın etkin olduğu tarihlerin dışında.",
+    "date_in_future": "Bu tarih gelecekte.",
+    "must_be_later": "Daha ileri bir tarih seçin.",
     "invalid": "Bu değer geçerli değil."
   }
 }

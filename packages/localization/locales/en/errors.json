@@ -46,6 +46,12 @@
     "password_same_as_email": "The password must not be the same as the email address.",
     "password_unchanged": "The new password must be different from the current one.",
     "end_before_start": "The end must not be before the start.",
+    "unknown_reference": "This item does not exist.",
+    "duplicate_value": "The same value appears more than once.",
+    "range_too_long": "The range may cover at most {{maximum}} days.",
+    "outside_habit_dates": "This date is outside the dates the item is active.",
+    "date_in_future": "This date is in the future.",
+    "must_be_later": "Choose a later date.",
     "invalid": "This value is not valid."
   }
 }

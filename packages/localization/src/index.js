@@ -1,9 +1,15 @@
+import enAuth from '../locales/en/auth.json' with { type: 'json' };
 import enCommon from '../locales/en/common.json' with { type: 'json' };
 import enEmails from '../locales/en/emails.json' with { type: 'json' };
 import enErrors from '../locales/en/errors.json' with { type: 'json' };
+import enHome from '../locales/en/home.json' with { type: 'json' };
+import enSettings from '../locales/en/settings.json' with { type: 'json' };
+import trAuth from '../locales/tr/auth.json' with { type: 'json' };
 import trCommon from '../locales/tr/common.json' with { type: 'json' };
 import trEmails from '../locales/tr/emails.json' with { type: 'json' };
 import trErrors from '../locales/tr/errors.json' with { type: 'json' };
+import trHome from '../locales/tr/home.json' with { type: 'json' };
+import trSettings from '../locales/tr/settings.json' with { type: 'json' };
 
 /** Language used when a client expresses no preference. */
 export const DEFAULT_LANGUAGE = 'tr';
@@ -18,8 +24,22 @@ export const LANGUAGE_LOCALES = Object.freeze({ tr: 'tr-TR', en: 'en-US' });
 
 /** Catalogs in the shape i18next expects: language -> namespace -> messages. */
 export const resources = Object.freeze({
-  tr: { common: trCommon, errors: trErrors, emails: trEmails },
-  en: { common: enCommon, errors: enErrors, emails: enEmails },
+  tr: {
+    auth: trAuth,
+    common: trCommon,
+    emails: trEmails,
+    errors: trErrors,
+    home: trHome,
+    settings: trSettings,
+  },
+  en: {
+    auth: enAuth,
+    common: enCommon,
+    emails: enEmails,
+    errors: enErrors,
+    home: enHome,
+    settings: enSettings,
+  },
 });
 
 export const NAMESPACES = Object.freeze(Object.keys(resources[DEFAULT_LANGUAGE]));

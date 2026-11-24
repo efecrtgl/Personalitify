@@ -3,11 +3,63 @@
     "name": "Personalitify",
     "tagline": "Your life. Your rhythm. Your progress."
   },
-  "connection": {
-    "checking": "Checking the server connection…",
-    "online": "Connected to the server",
-    "offline": "The server cannot be reached",
-    "retry": "Try again",
-    "apiVersion": "API version {{version}}"
+  "optional": "(optional)",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "loading": "Loading…",
+  "errorTitle": "Something went wrong",
+  "errorDescription": "This could not be loaded. Please try again.",
+  "retry": "Try again",
+  "close": "Close",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "dismiss": "Dismiss",
+  "save": "Save",
+  "saved": "Changes saved",
+  "previous": "Previous",
+  "next": "Next",
+  "pageOf": "Page {{page}} of {{total}}",
+  "nav": {
+    "primary": "Main navigation",
+    "home": "Home",
+    "settings": "Settings",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to content"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "userMenu": {
+    "label": "Account menu",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign out"
+  },
+  "errors": {
+    "network": "The server cannot be reached. Check your connection and try again.",
+    "unreachableTitle": "No connection to the server",
+    "generic": "Something went wrong. Please try again.",
+    "conflict": "This was changed on another device. The latest version has been loaded."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "action": "Go to home"
+  },
+  "weekdays": {
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday",
+    "7": "Sunday"
   }
 }

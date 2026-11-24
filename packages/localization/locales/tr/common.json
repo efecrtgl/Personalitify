@@ -3,11 +3,63 @@
     "name": "Personalitify",
     "tagline": "Hayatın. Ritmin. İlerlemen."
   },
-  "connection": {
-    "checking": "Sunucu bağlantısı denetleniyor…",
-    "online": "Sunucuya bağlı",
-    "offline": "Sunucuya ulaşılamıyor",
-    "retry": "Yeniden dene",
-    "apiVersion": "API sürümü {{version}}"
+  "optional": "(isteğe bağlı)",
+  "showPassword": "Parolayı göster",
+  "hidePassword": "Parolayı gizle",
+  "loading": "Yükleniyor…",
+  "errorTitle": "Bir sorun oluştu",
+  "errorDescription": "Bu içerik yüklenemedi. Lütfen yeniden deneyin.",
+  "retry": "Yeniden dene",
+  "close": "Kapat",
+  "cancel": "Vazgeç",
+  "confirm": "Onayla",
+  "dismiss": "Kapat",
+  "save": "Kaydet",
+  "saved": "Değişiklikler kaydedildi",
+  "previous": "Önceki",
+  "next": "Sonraki",
+  "pageOf": "Sayfa {{page}} / {{total}}",
+  "nav": {
+    "primary": "Ana gezinme",
+    "home": "Ana sayfa",
+    "settings": "Ayarlar",
+    "openMenu": "Menüyü aç",
+    "closeMenu": "Menüyü kapat",
+    "skipToContent": "İçeriğe geç"
+  },
+  "theme": {
+    "label": "Tema",
+    "system": "Sistem",
+    "light": "Açık",
+    "dark": "Koyu"
+  },
+  "language": {
+    "label": "Dil"
+  },
+  "userMenu": {
+    "label": "Hesap menüsü",
+    "profile": "Profil",
+    "settings": "Ayarlar",
+    "signOut": "Çıkış yap"
+  },
+  "errors": {
+    "network": "Sunucuya ulaşılamıyor. Bağlantınızı denetleyip yeniden deneyin.",
+    "unreachableTitle": "Sunucuyla bağlantı yok",
+    "generic": "Bir sorun oluştu. Lütfen yeniden deneyin.",
+    "conflict": "Bu kayıt başka bir cihazda değiştirildi. En güncel hâli yüklendi."
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "description": "Aradığınız sayfa mevcut değil veya taşınmış.",
+    "action": "Ana sayfaya dön"
+  },
+  "weekdays": {
+    "1": "Pazartesi",
+    "2": "Salı",
+    "3": "Çarşamba",
+    "4": "Perşembe",
+    "5": "Cuma",
+    "6": "Cumartesi",
+    "7": "Pazar"
   }
 }

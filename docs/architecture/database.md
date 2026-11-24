@@ -345,6 +345,26 @@ Indexes: `{ userId: 1, entryId: 1, replacedAt: -1 }`.
 One per user and calendar day: `date`, `score` (1–5), `emotions` (from a fixed list), `note`.
 Indexes: `{ userId: 1, date: 1 }` unique among live documents.
 
+### `xpGrants`
+
+The XP ledger: one row per thing that earned XP. `userId`, `key` (names the thing, for
+example `task:<id>` or `mood:<date>`), `rule`, `amount`, `entityType`, `entityId`, `date`
+(the user's calendar date the XP belongs to), `createdAt`. The total XP is the sum of a
+user's rows; see [`achievements.md`](./achievements.md).
+Indexes: `{ userId: 1, key: 1 }` unique · `{ userId: 1, entityType: 1, entityId: 1 }` ·
+`{ userId: 1, date: 1 }` · `{ userId: 1, createdAt: -1 }`.
+
+### `userProgress`
+
+One per user, `_id` = user id: `bestStreak` (the longest habit streak in days ever seen;
+only raised) and `backfilledAt` (set once the records that existed before the progress
+system was first used have been counted).
+
+### `achievements` (synchronized, entity type `achievement`)
+
+An unlocked achievement: `key`, `unlockedAt`. Created by the server only, never removed.
+Indexes: `{ userId: 1, key: 1 }` unique among live documents.
+
 ### References between entities
 
 There are no database-level cascades. `core/entity/references.js` registers, per reference,

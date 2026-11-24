@@ -63,6 +63,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   completion, adjustable lengths, daily and weekly focus time); journal entries and notes in
   Markdown with tags, accent-insensitive search, pinning and a restorable history of earlier
   versions; a daily mood entry with feelings and a note, a month calendar and statistics.
+- Phase 10: achievements and progress — XP granted by the server from the user's own
+  records by published rules (once per record, taken back when the record is undone),
+  levels, 21 achievements that stay once reached, and a screen that shows the level, every
+  achievement with its progress, the rules and the latest XP earned.
 
 ### Fixed
 

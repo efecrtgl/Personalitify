@@ -51,6 +51,14 @@ Server state is held in the TanStack Query cache. The signed-in user (`user`, `p
 4. On failure, restore the previous state. A `VERSION_CONFLICT` reloads the server state and
    tells the user their other device got there first.
 
+### The dashboard
+
+The dashboard is one request (`GET /dashboard`) and one cache entry. Its figures summarize
+every module, so `AppProviders` watches the mutation cache and marks the dashboard stale
+after any successful change, instead of each module having to know that a dashboard
+exists. The widget layout is not part of the dashboard response: it lives in
+`settings.dashboard.widgets` and therefore follows the user to every device.
+
 ## Design system
 
 ### Tokens

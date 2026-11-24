@@ -13,7 +13,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 4     | Habits and routines                              | Done    | [phase-04](./releases/phase-04.md) |
 | 5     | Goals and tasks                                  | Done    | [phase-05](./releases/phase-05.md) |
 | 6     | Calendar and planning                            | Done    | [phase-06](./releases/phase-06.md) |
-| 7     | Personal dashboard                               | Planned |                                    |
+| 7     | Personal dashboard                               | Done    | [phase-07](./releases/phase-07.md) |
 | 8     | Analytics and insights                           | Planned |                                    |
 | 9     | Focus, journal and mood                          | Planned |                                    |
 | 10    | Achievements and gamification                    | Planned |                                    |

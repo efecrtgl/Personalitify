@@ -64,7 +64,11 @@ Indexes: `{ userId: 1 }` unique.
 ### `userSettings` (synchronized)
 
 One per user, `_id` = user id. `language`, `theme`, `timeZone`, `dateFormat`, `timeFormat`,
-`weekStart`, `notifications { … quietHours }`, `privacy`.
+`weekStart`, `notifications { … quietHours }`, `privacy`, `dashboard.widgets`.
+
+`dashboard.widgets` is the user's order and visibility of dashboard widgets. Only what the
+user arranged is stored; on read the list is completed with every known widget, so a widget
+added to the product later appears on existing dashboards without a migration.
 Indexes: `{ userId: 1 }` unique.
 
 Profile and settings are separate documents because they change for different reasons and

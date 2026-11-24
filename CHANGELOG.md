@@ -48,6 +48,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   unified calendar that merges events, tasks and habits into display-ready items in the
   user's time zone; overlap detection; rescheduling by day and time; month, week and day
   views in the web client with drag-and-drop.
+- Phase 7: personal dashboard — one aggregation endpoint with today's progress, habits and
+  tasks, upcoming entries, active goals, the last seven days compared with the week before,
+  streaks, recent activity and rule-based insights that state how they were determined;
+  widgets that can be rearranged, hidden and restored, with the layout stored in the
+  account.
 
 ### Fixed
 

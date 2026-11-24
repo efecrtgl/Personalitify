@@ -6,7 +6,7 @@ import {
   closeRealtime,
   connectionCount,
 } from '../src/modules/realtime/realtime.server.js';
-import { getApp, loginUser, registerUser } from './helpers/client.js';
+import { getApp, loginUser, registerUser, serverUrl } from './helpers/client.js';
 import { useTestDatabase } from './helpers/database.js';
 
 /** Polls with real timers until `check` passes. */
@@ -28,10 +28,8 @@ describe('realtime', () => {
   const open = [];
 
   beforeAll(async () => {
-    const server = getApp();
-    attachRealtime(server);
-    if (!server.listening) await new Promise((resolve) => server.once('listening', resolve));
-    url = `http://127.0.0.1:${server.address().port}`;
+    attachRealtime(getApp());
+    url = serverUrl();
   });
   afterEach(() => {
     vi.useRealTimers();

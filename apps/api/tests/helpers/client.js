@@ -1,24 +1,30 @@
 import { randomUUID } from 'node:crypto';
+import { once } from 'node:events';
 import { createServer } from 'node:http';
 import request from 'supertest';
 import { createApp } from '../../src/app.js';
 
 export const API = '/api/v1';
 
-let server;
 /**
  * One listening HTTP server per test file, shared by every request of that file.
- * Passing the bare Express application to supertest would open and close a new server for
- * each request, hundreds of times per run.
+ *
+ * It is listening before the first test runs. supertest, given a server that has no address
+ * yet, starts it on a port of its own and closes it after the request — which would open
+ * and close a listener for every single request and leave no stable address for anything
+ * else (a realtime client, the API client) to connect to.
  */
+const server = createServer(createApp());
+server.listen(0, '127.0.0.1');
+server.unref();
+await once(server, 'listening');
+
 export function getApp() {
-  if (!server) {
-    server = createServer(createApp());
-    server.listen(0, '127.0.0.1');
-    server.unref();
-  }
   return server;
 }
+
+/** The address of the shared test server, for clients that connect over the network. */
+export const serverUrl = () => `http://127.0.0.1:${server.address().port}`;
 
 export function deviceInput(overrides = {}) {
   return {

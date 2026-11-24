@@ -79,6 +79,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   with their token or their session; a gap-aware reader in the API client that delivers
   every event once and in order; the web client now updates live and announces new
   notifications.
+- Phase 13: synchronization engine — snapshots for a full copy, a change feed that returns
+  the newest state of what changed after a cursor (with tombstones), per-device positions,
+  and a push endpoint that carries out queued operations through the same routes as the
+  REST API, exactly once per operation id; field-level merging and explicit conflicts;
+  retention of history with `CURSOR_EXPIRED` for devices that were away too long; a
+  reference replica in the API client; sync state per device in the settings.
 
 ### Fixed
 

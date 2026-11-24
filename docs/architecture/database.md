@@ -374,6 +374,13 @@ Indexes: `{ userId: 1, dedupeKey: 1 }` unique — including deleted ones, so a d
 reminder is not made again · `{ userId: 1, deletedAt: 1, createdAt: -1 }` ·
 `{ userId: 1, deletedAt: 1, readAt: 1 }` · `{ createdAt: 1 }`.
 
+### `syncOperations`
+
+The outcome of every operation a client pushed with an operation id: `userId`, `opId`,
+`deviceId`, `method`, `path`, `state`, `status`, `outcome`, `startedAt`, `finishedAt`.
+A repeated operation is answered from here instead of being carried out again.
+Indexes: `{ userId: 1, opId: 1 }` unique · `{ startedAt: 1 }` expiring after 30 days.
+
 ### `jobLocks`
 
 One document per background job, `_id` = job name: `owner`, `lockedUntil`,

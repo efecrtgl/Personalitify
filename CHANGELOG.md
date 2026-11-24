@@ -58,6 +58,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   punctuality and breakdowns, goal pace against time, and a written period report whose
   every line names its rule. Charts come with explanations, exact values on hover and a
   table for screen readers; the series can be exported as CSV and the page printed.
+- Phase 9: focus timer, journal and mood — a timer for focus sessions and breaks whose
+  times are kept by the server (one active session per account, pause and resume, automatic
+  completion, adjustable lengths, daily and weekly focus time); journal entries and notes in
+  Markdown with tags, accent-insensitive search, pinning and a restorable history of earlier
+  versions; a daily mood entry with feelings and a note, a month calendar and statistics.
 
 ### Fixed
 

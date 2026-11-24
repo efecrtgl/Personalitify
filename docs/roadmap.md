@@ -15,7 +15,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 6     | Calendar and planning                            | Done    | [phase-06](./releases/phase-06.md) |
 | 7     | Personal dashboard                               | Done    | [phase-07](./releases/phase-07.md) |
 | 8     | Analytics and insights                           | Done    | [phase-08](./releases/phase-08.md) |
-| 9     | Focus, journal and mood                          | Planned |                                    |
+| 9     | Focus, journal and mood                          | Done    | [phase-09](./releases/phase-09.md) |
 | 10    | Achievements and gamification                    | Planned |                                    |
 | 11    | Notifications and background jobs                | Planned |                                    |
 | 12    | Event infrastructure and real-time communication | Planned |                                    |

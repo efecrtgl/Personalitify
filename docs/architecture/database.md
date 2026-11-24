@@ -64,7 +64,11 @@ Indexes: `{ userId: 1 }` unique.
 ### `userSettings` (synchronized)
 
 One per user, `_id` = user id. `language`, `theme`, `timeZone`, `dateFormat`, `timeFormat`,
-`weekStart`, `notifications { … quietHours }`, `privacy`, `dashboard.widgets`.
+`weekStart`, `notifications { … quietHours }`, `privacy`, `focus`, `dashboard.widgets`.
+
+`focus` holds the timer lengths in minutes (`focusMinutes`, `shortBreakMinutes`,
+`longBreakMinutes`) and `longBreakEvery`. Accounts created before the timer existed read
+the defaults.
 
 `dashboard.widgets` is the user's order and visibility of dashboard widgets. Only what the
 user arranged is stored; on read the list is completed with every known widget, so a widget
@@ -276,6 +280,71 @@ Design notes:
 - **The unified calendar is not stored.** `GET /calendar` builds it per request from
   events, tasks and habits.
 
+### `focusSessions` (synchronized, entity type `focusSession`)
+
+| Field                                 | Notes                                                  |
+| ------------------------------------- | ------------------------------------------------------ |
+| `kind`                                | `focus`, `short_break`, `long_break`                   |
+| `status`                              | `running`, `paused`, `completed`, `cancelled`          |
+| `active`                              | True while running or paused; internal, never returned |
+| `plannedMinutes`                      | 1–180                                                  |
+| `startedAt`, `pausedAt`, `endedAt`    | Instants, always set by the server                     |
+| `pausedSeconds`                       | Time spent paused so far                               |
+| `elapsedSeconds`                      | Time spent without pauses; final once ended            |
+| `date`                                | The user's calendar date when the session started      |
+| `note`, `taskId`, `habitId`, `goalId` | Optional note and links                                |
+
+Indexes: `{ userId: 1, deletedAt: 1, date: 1 }` · `{ userId: 1, deletedAt: 1, startedAt: -1 }` ·
+`{ userId: 1, taskId: 1 }` · `{ userId: 1 }` unique where `active` is true and the document
+is not deleted.
+
+Design notes:
+
+- **The server owns the clock.** Clients ask to start, pause, resume and finish; they never
+  send a duration. The end of a running session is derived (`startedAt + plannedMinutes +
+pausedSeconds`), so there is nothing to keep in step while it runs.
+- **One active session per user is an index, not a check.** Two devices starting at the same
+  moment cannot both succeed.
+- **A session that runs out is completed when it is next read**, at its planned end, whether
+  or not any client was open.
+
+### `journalEntries` (synchronized, entity type `journalEntry`)
+
+| Field           | Notes                                               |
+| --------------- | --------------------------------------------------- |
+| `kind`          | `journal` (about a day) or `note`                   |
+| `title`, `body` | `body` is Markdown, at most 50,000 characters       |
+| `date`          | The day the entry is about, in the user's time zone |
+| `tags`          | Lower case, at most 12                              |
+| `pinned`        | Pinned entries are listed first                     |
+| `searchText`    | Title, text and tags folded for searching; internal |
+
+At most 5000 per user.
+Indexes: `{ userId: 1, deletedAt: 1, pinned: -1, date: -1, updatedAt: -1 }` ·
+`{ userId: 1, deletedAt: 1, tags: 1 }`.
+
+Design notes:
+
+- **Search is a folded copy, not a text index.** `searchText` is lower case, without accents
+  and with every form of the letter i as one, so a search behaves the same in Turkish and
+  English and matches inside words. It is scanned within one user's entries, which the
+  per-user limit keeps small.
+- **Lists never return bodies**, only a plain-text preview — and no preview when the user
+  hides sensitive previews.
+
+### `journalRevisions`
+
+Earlier contents of journal entries: `userId`, `entryId`, `entryVersion`, `title`, `body`,
+`replacedAt`. Written by the server when the title or body of an entry is replaced; the
+newest 20 per entry are kept, and all are removed with the entry. Not a synchronized entity:
+revisions are history kept by the server, read on request.
+Indexes: `{ userId: 1, entryId: 1, replacedAt: -1 }`.
+
+### `moodEntries` (synchronized, entity type `moodEntry`)
+
+One per user and calendar day: `date`, `score` (1–5), `emotions` (from a fixed list), `note`.
+Indexes: `{ userId: 1, date: 1 }` unique among live documents.
+
 ### References between entities
 
 There are no database-level cascades. `core/entity/references.js` registers, per reference,
@@ -287,6 +356,9 @@ service:
 | `category` | habits, goals, tasks (`categoryId`)          |
 | `goal`     | sub-goals (`parentGoalId`), tasks (`goalId`) |
 | `habit`    | goals (`habitIds`), tasks (`habitId`)        |
+
+Calendar events and focus sessions are detached in the same way from a deleted task, habit
+or goal (`taskId`, `habitId`, `goalId`).
 
 ## Account export and deletion
 

@@ -91,6 +91,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   of remotely configurable settings with built-in defaults (an announcement for everyone,
   and a server-enforced switch for registration); an administration API and settings
   section for administrators, whose role is granted from the command line only.
+- Phase 15: API client and Rust compatibility — JSON Schema documents for every entity
+  type and the shared envelopes, generated next to the API reference; the JavaScript
+  client reaches every operation of the API, enforced by a test; contract tests that use
+  the API as a native client would; a README for the client package and the integration
+  guide for the planned Rust desktop client.
 
 ### Fixed
 

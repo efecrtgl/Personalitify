@@ -8,6 +8,15 @@ The Personalitify API is plain HTTP + JSON and is the same for every client.
   `/api/v1/docs`.
 - **Regenerate:** `npm run docs:api`. A test fails when the committed file is out of date.
 
+## Reference documents
+
+- [`openapi.json`](./openapi.json) — every endpoint (OpenAPI 3.0), generated from the
+  routes that exist.
+- [`schemas/`](./schemas/index.json) — the shape of every entity and of the shared
+  envelopes as standalone JSON Schema documents, for generating types in other languages.
+
+Both are regenerated with `npm run docs:api`, and tests fail when they fall behind the code.
+
 ## Envelope
 
 Success:

@@ -1,5 +1,6 @@
 import { API_PREFIX } from '@personalitify/shared-contracts';
 import express from 'express';
+import { getConfig } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { generalRateLimit } from './middleware/rate-limit.js';
 import { requestContext } from './middleware/request-context.js';
@@ -65,6 +66,9 @@ export function createApp() {
   const app = express();
   app.disable('x-powered-by');
   app.set('query parser', 'simple');
+  // Behind reverse proxies the client's address is taken from X-Forwarded-For, trusting
+  // exactly as many hops as are configured — never the header as a whole.
+  app.set('trust proxy', getConfig().trustProxyHops);
 
   app.use(requestContext);
   app.use(securityHeaders());

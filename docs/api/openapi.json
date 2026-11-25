@@ -31141,7 +31141,7 @@
           "Sync"
         ],
         "summary": "Carry out queued operations",
-        "description": "Each operation is a request the client would have made while online: a method, a path below the API prefix and a body, with an id (`opId`) the client chose. Operations are carried out in order, each exactly like that request, and each gets its own outcome — one failing does not stop the next. Sending an operation again with the same `opId` returns its first outcome (`replayed: true`) without doing anything twice. Sign-in, account, device and synchronization operations cannot be pushed. At most 100 operations per request.",
+        "description": "Each operation is a request the client would have made while online: a method, a path below the API prefix and a body, with an id (`opId`) the client chose. Operations are carried out in order, each exactly like that request, and each gets its own outcome — one failing does not stop the next. Sending an operation again with the same `opId` returns its first outcome (`replayed: true`) without doing anything twice. Sign-in, account, device and synchronization operations cannot be pushed. At most 100 operations per request, and 30 requests a minute.",
         "security": [
           {
             "bearerAuth": []

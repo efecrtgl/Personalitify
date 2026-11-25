@@ -77,6 +77,9 @@ achievementSchema.index(
   { unique: true, partialFilterExpression: { deletedAt: { $type: 'null' } } },
 );
 
+// For listing a user's achievements; the partial unique index above cannot serve it.
+achievementSchema.index({ userId: 1, deletedAt: 1 });
+
 export const Achievement = mongoose.model('Achievement', achievementSchema);
 
 export function serializeAchievement(achievement) {

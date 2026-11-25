@@ -29,6 +29,10 @@ moodEntrySchema.index(
   { unique: true, partialFilterExpression: { deletedAt: { $type: 'null' } } },
 );
 
+// The unique index above is partial, and a query for `deletedAt: null` (which also matches a
+// missing field) cannot use a partial index. Reading a range needs an index of its own.
+moodEntrySchema.index({ userId: 1, deletedAt: 1, date: 1 });
+
 export const MoodEntry = mongoose.model('MoodEntry', moodEntrySchema);
 
 export function serializeMoodEntry(entry) {

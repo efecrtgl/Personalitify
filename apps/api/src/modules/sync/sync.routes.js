@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { createModule } from '../../core/routing.js';
 import { idSchema } from '../../core/validation.js';
+import { pushRateLimit } from '../../middleware/rate-limit.js';
 import {
   MAX_CHANGES_PER_READ,
   MAX_OPERATIONS_PER_PUSH,
@@ -137,6 +138,7 @@ sync.post(
   '/push',
   {
     summary: 'Carry out queued operations',
+    middleware: [pushRateLimit],
     description:
       'Each operation is a request the client would have made while online: a method, a ' +
       'path below the API prefix and a body, with an id (`opId`) the client chose. ' +
@@ -144,7 +146,7 @@ sync.post(
       'its own outcome — one failing does not stop the next. Sending an operation again ' +
       'with the same `opId` returns its first outcome (`replayed: true`) without doing ' +
       'anything twice. Sign-in, account, device and synchronization operations cannot be ' +
-      `pushed. At most ${MAX_OPERATIONS_PER_PUSH} operations per request.`,
+      `pushed. At most ${MAX_OPERATIONS_PER_PUSH} operations per request, and 30 requests a minute.`,
     body: z.strictObject({
       operations: z
         .array(

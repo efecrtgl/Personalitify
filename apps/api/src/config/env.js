@@ -44,6 +44,9 @@ const schema = z.object({
   ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(365).default(30),
   COOKIE_SECURE: booleanFlag,
+  // How many reverse proxies stand in front of the API. Needed for the client's real address
+  // (rate limits, security log); 0 when clients connect directly.
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(10).default(0),
 
   SYNC_RETENTION_DAYS: z.coerce.number().int().min(7).max(3650).default(90),
 
@@ -71,6 +74,26 @@ export function parseEnv(source) {
     );
   }
   const value = result.data;
+
+  // Settings that are fine on a developer machine and dangerous on the internet.
+  if (value.NODE_ENV === 'production') {
+    const unsafe = [];
+    if (!value.COOKIE_SECURE) {
+      unsafe.push('COOKIE_SECURE must be true: the refresh cookie may only travel over HTTPS');
+    }
+    const insecure = value.WEB_ORIGINS.filter((origin) => !origin.startsWith('https://'));
+    if (insecure.length > 0) {
+      unsafe.push(`WEB_ORIGINS must use https (found ${insecure.join(', ')})`);
+    }
+    if (!value.PUBLIC_WEB_URL.startsWith('https://')) {
+      unsafe.push('PUBLIC_WEB_URL must use https: it is put into e-mailed links');
+    }
+    if (unsafe.length > 0) {
+      throw new Error(
+        `Unsafe production configuration:\n${unsafe.map((item) => `  - ${item}`).join('\n')}`,
+      );
+    }
+  }
   return Object.freeze({
     env: value.NODE_ENV,
     isProduction: value.NODE_ENV === 'production',
@@ -79,6 +102,7 @@ export function parseEnv(source) {
     host: value.API_HOST,
     port: value.API_PORT,
     webOrigins: value.WEB_ORIGINS,
+    trustProxyHops: value.TRUST_PROXY_HOPS,
     publicWebUrl: value.PUBLIC_WEB_URL.replace(/\/$/, ''),
     mongoUri: value.MONGODB_URI,
     auth: Object.freeze({

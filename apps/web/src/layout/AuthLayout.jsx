@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { Suspense } from 'react';
 import { Outlet } from 'react-router';
+import { PageFallback } from '../ui/feedback.jsx';
 import { Card } from '../ui/display.jsx';
 import { Brand } from './Brand.jsx';
 import { LanguageMenu, ThemeMenu } from './PreferenceMenus.jsx';
@@ -19,7 +21,9 @@ export function AuthLayout() {
       <main className="flex flex-1 items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <Card as="div" className="p-6 shadow-raised sm:p-8">
-            <Outlet />
+            <Suspense fallback={<PageFallback />}>
+              <Outlet />
+            </Suspense>
           </Card>
           <p className="mt-6 text-center text-caption text-ink-3">{t('common:app.tagline')}</p>
         </div>

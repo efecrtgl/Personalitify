@@ -27,7 +27,7 @@ export function GoalCard({ goal }) {
         <div className="flex items-start gap-3">
           <ItemBadge icon={goal.icon} color={goal.color} />
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-body font-semibold text-ink">{goal.title}</h3>
+            <h2 className="truncate text-body font-semibold text-ink">{goal.title}</h2>
             <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-ink-2">
               <span>{t(`goals:horizon.${goal.horizon}`)}</span>
               {STATUS_TONES[goal.status] && (

@@ -22,6 +22,16 @@ export function Skeleton({ className }) {
 }
 
 /** A stack of skeleton rows for list-like content. */
+/** Shown in the page area while the code of a page is being fetched. */
+export function PageFallback() {
+  const { t } = useTranslation();
+  return (
+    <div className="flex min-h-48 items-center justify-center">
+      <Spinner label={t('common:loading')} />
+    </div>
+  );
+}
+
 export function SkeletonList({ rows = 3, className }) {
   const { t } = useTranslation();
   return (

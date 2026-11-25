@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { BarChartArea } from '../../charts/BarSeries.jsx';
 import { cn } from '../../lib/cn.js';
 import { weekdayOf } from '../../lib/dates.js';
 import { useFormat } from '../../lib/format.js';
@@ -306,34 +306,17 @@ export function WeekWidget({ data }) {
         </p>
       </div>
 
-      <div className="h-40" aria-hidden="true">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={rows} margin={{ top: 4, right: 0, bottom: 0, left: -24 }}>
-            <CartesianGrid vertical={false} stroke="var(--pfy-line)" />
-            <XAxis
-              dataKey="label"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: 'var(--pfy-ink-3)', fontSize: 12 }}
-            />
-            <YAxis
-              domain={[0, 100]}
-              ticks={[0, 50, 100]}
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: 'var(--pfy-ink-3)', fontSize: 12 }}
-            />
-            <Bar
-              dataKey="percent"
-              fill="var(--pfy-success)"
-              radius={[5, 5, 0, 0]}
-              maxBarSize={36}
-              // The grow-in restarts on every container resize, which reads as flicker.
-              isAnimationActive={false}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <BarChartArea
+        rows={rows.map((row) => ({
+          label: row.label,
+          title: format.calendarWeekdayDate(row.date),
+          value: row.percent,
+          display: t('dashboard:progress.fraction', { done: row.completed, total: row.due }),
+        }))}
+        scale="percent"
+        color="var(--pfy-success)"
+        height="h-40"
+      />
       <div className="sr-only">
         <table>
           <caption>{t('dashboard:week.tableCaption')}</caption>

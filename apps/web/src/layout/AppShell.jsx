@@ -1,5 +1,5 @@
 import { LogOut, Menu as MenuIcon, Settings, UserRound, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { cn } from '../lib/cn.js';
@@ -7,6 +7,7 @@ import { useFormat } from '../lib/format.js';
 import { useAuth } from '../providers/AuthProvider.jsx';
 import { IconButton } from '../ui/Button.jsx';
 import { Avatar } from '../ui/display.jsx';
+import { PageFallback } from '../ui/feedback.jsx';
 import { Menu } from '../ui/overlays.jsx';
 import { Brand } from './Brand.jsx';
 import { EmailVerificationBanner } from './EmailVerificationBanner.jsx';
@@ -216,7 +217,10 @@ export function AppShell() {
           <UpdateBanner />
           <AnnouncementBanner />
           {user && !user.emailVerified && <EmailVerificationBanner />}
-          <Outlet />
+          {/* The frame stays; only the page area waits for a page that is being fetched. */}
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

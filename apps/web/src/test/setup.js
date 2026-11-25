@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
+
+// Pages are loaded on demand. The first render of a page in a test worker fetches and
+// evaluates its module, which on a busy machine can take longer than the default second.
+configure({ asyncUtilTimeout: 5000 });
 
 // --- Browser APIs that jsdom does not provide ------------------------------------------
 

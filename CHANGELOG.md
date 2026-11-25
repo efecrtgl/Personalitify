@@ -96,9 +96,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   client reaches every operation of the API, enforced by a test; contract tests that use
   the API as a native client would; a README for the client package and the integration
   guide for the planned Rust desktop client.
+- Phase 16: quality, security and performance — pages and the chart library are loaded on
+  demand; production refuses unsafe settings; a setting for reverse proxies; limits on
+  pushes, realtime connections and replays; automated accessibility checks on every main
+  screen; a test that every busy query is served by an index; security and performance
+  documents and a security policy.
 
 ### Fixed
 
+- Mood entries of a month and the list of unlocked achievements were read by scanning
+  their whole collections; both now have an index.
+- Goal cards skipped a heading level.
 - Days after a habit was archived are no longer counted as missed in the dashboard's weekly
   figures.
 - Tables provided for screen readers could make a page scroll sideways on narrow screens.

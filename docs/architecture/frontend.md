@@ -107,6 +107,11 @@ the shape of the content), empty (what it is and what to do next) and error (wit
 
 ### Accessibility
 
+Automated rules (axe) run over every main screen in the test suite
+(`src/test/accessibility.test.jsx`): names of controls, labels, roles, landmarks, heading
+order. Color contrast cannot be computed without a layout engine and is checked by hand
+against the design tokens.
+
 - Native elements first: `<dialog>` for modals and the mobile drawer (focus trap, Escape,
   inert background), `<select>` for simple choices, radio inputs behind segmented controls.
 - `Field` wires label, hint and error to the control (`aria-describedby`, `aria-invalid`);
@@ -131,6 +136,17 @@ Rules every chart follows:
 - text uses ink tokens, never the series color; a missing value is drawn as no bar and
   named in words, not as zero;
 - bars do not animate in: the animation restarts whenever the container is resized.
+
+### Code splitting
+
+Every routed page is its own chunk (`lazy` in `App.jsx`), and the chart library is loaded
+the first time a chart is shown. The application frame — navigation, top bar, providers —
+is in the first download; while a page is being fetched only the page area waits. See
+[`performance.md`](./performance.md) for sizes.
+
+Two consequences for code: a page must be importable on its own (no page imports another
+page for its side effects), and anything that imports the chart library directly would
+pull it back into the first download — charts go through `charts/BarSeries.jsx`.
 
 ## Internationalization
 

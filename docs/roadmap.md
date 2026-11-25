@@ -22,7 +22,7 @@ documented, committed and pushed. Each completed phase has a report in
 | 13    | Synchronization engine                           | Done    | [phase-13](./releases/phase-13.md) |
 | 14    | Application updates and remote configuration     | Done    | [phase-14](./releases/phase-14.md) |
 | 15    | API SDK and Rust compatibility                   | Done    | [phase-15](./releases/phase-15.md) |
-| 16    | Quality, security and performance                | Planned |                                    |
+| 16    | Quality, security and performance                | Done    | [phase-16](./releases/phase-16.md) |
 | 17    | Final documentation and release                  | Planned |                                    |
 
 ## Cross-phase note on events

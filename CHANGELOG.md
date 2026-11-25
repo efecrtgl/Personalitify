@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.1.0] — 2026-11-25
+
+The first release: the backend and the web client, built in eighteen phases (0–17).
+
 ### Added
 
 - Phase 0: architecture overview, architecture decision records, roadmap and contribution
@@ -101,6 +107,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); ver
   pushes, realtime connections and replays; automated accessibility checks on every main
   screen; a test that every busy query is served by an index; security and performance
   documents and a security policy.
+- Phase 17: final documentation — a full Turkish README and an English one with
+  screenshots of the running application, an index of all documents, and more entries in
+  the troubleshooting guide (email, production settings, rate limits, reverse proxies,
+  administrators).
 
 ### Fixed
 

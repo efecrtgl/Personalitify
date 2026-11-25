@@ -55,6 +55,42 @@ in roughly one run out of five, in a different test file each time, and never on
 - If it keeps happening, exclude `node.exe` from tools that inject code into processes
   (shell customizers, overlays, some antivirus products).
 
+### Verification or password-reset emails do not arrive
+
+Without `SMTP_HOST` in `.env` no email is sent. The message, with its link, is written to
+the API log instead (the `[api]` lines of `npm run dev`). Fill in the `SMTP_*` variables
+and `MAIL_FROM` to send real email.
+
+### "Unsafe production configuration"
+
+With `NODE_ENV=production` the API refuses to start with settings that are only safe on a
+developer machine. The message lists each one:
+
+- `COOKIE_SECURE` must be `true`
+- every entry of `WEB_ORIGINS` must start with `https://`
+- `PUBLIC_WEB_URL` must start with `https://`
+
+To try a production build locally without HTTPS, keep `NODE_ENV=development`.
+
+### "Too many requests" (HTTP 429)
+
+Requests are limited per client address and minute: 300 in general, 10 for sign-in,
+registration and password endpoints, 30 for `POST /sync/push`. The response carries a
+`Retry-After` header; wait that long. Scripts that seed data should pause between batches.
+
+### Behind a reverse proxy everyone shares one rate limit
+
+The API sees the proxy's address instead of the client's. Set `TRUST_PROXY_HOPS` to the
+number of proxies in front of the API (1 for a single nginx or Caddy). Do not set it higher
+than the real number: a client could then choose its own address.
+
+### The Administration section is not shown, or registration was closed by mistake
+
+The section appears only for accounts with the `admin` role, which is granted from the
+command line: `npm run admin:grant -- you@example.com`, then sign in again. Closing
+registration never locks out existing accounts; an administrator can open it again in
+**Settings → Administration**.
+
 ### `npm install` fails
 
 Check `node --version`: Node.js 22 or newer is required.
@@ -114,6 +150,42 @@ hiç görülmedi.
 - Testleri yeniden çalıştırın; temiz geçen çalıştırma geçerli sonuçtur.
 - Sürekli tekrarlanıyorsa, süreçlere kod enjekte eden araçlarda (kabuk özelleştiriciler,
   ekran katmanları, bazı antivirüs ürünleri) `node.exe` için istisna tanımlayın.
+
+### Doğrulama veya parola sıfırlama e-postaları gelmiyor
+
+`.env` içinde `SMTP_HOST` yoksa e-posta gönderilmez. İleti, bağlantısıyla birlikte API
+günlüğüne yazılır (`npm run dev` çıktısındaki `[api]` satırları). Gerçek e-posta göndermek
+için `SMTP_*` değişkenlerini ve `MAIL_FROM` değerini doldurun.
+
+### "Unsafe production configuration"
+
+`NODE_ENV=production` iken API, yalnızca geliştirici makinesinde güvenli olan ayarlarla
+başlamayı reddeder. Mesaj her birini listeler:
+
+- `COOKIE_SECURE` değeri `true` olmalıdır
+- `WEB_ORIGINS` içindeki her adres `https://` ile başlamalıdır
+- `PUBLIC_WEB_URL` `https://` ile başlamalıdır
+
+Üretim derlemesini HTTPS olmadan yerelde denemek için `NODE_ENV=development` bırakın.
+
+### "Too many requests" (HTTP 429)
+
+İstekler istemci adresi başına dakikalık olarak sınırlanır: genel olarak 300; giriş, kayıt
+ve parola uç noktaları için 10; `POST /sync/push` için 30. Yanıtta `Retry-After` başlığı
+bulunur; o kadar bekleyin. Veri yükleyen betikler gruplar arasında beklemelidir.
+
+### Ters vekil (reverse proxy) arkasında herkes aynı istek sınırını paylaşıyor
+
+API, istemcinin değil vekilin adresini görüyor. `TRUST_PROXY_HOPS` değerini API'nin
+önündeki vekil sayısına ayarlayın (tek bir nginx veya Caddy için 1). Gerçek sayıdan büyük
+bir değer vermeyin: o durumda istemci kendi adresini seçebilir.
+
+### Yönetim bölümü görünmüyor veya kayıt yanlışlıkla kapatıldı
+
+Bölüm yalnızca `admin` rolündeki hesaplara gösterilir; rol komut satırından verilir:
+`npm run admin:grant -- siz@example.com`, ardından yeniden giriş yapın. Kaydı kapatmak var
+olan hesapları hiçbir zaman dışarıda bırakmaz; bir yönetici **Ayarlar → Yönetim** bölümünden
+yeniden açabilir.
 
 ### `npm install` başarısız oluyor
 
